@@ -1,0 +1,26 @@
+{
+	"extends": "../../../../tsconfig.json",
+	"compilerOptions": {
+		"target": "ES2020",
+		"module": "ESNext",
+		"jsx": "react-jsx",
+		//"outDir": "../../../dist/frontend",
+		"types": [], // Tambahkan jika berinteraksi dengan DOM
+		"lib": [
+			"DOM",
+			"ES2020"
+		], // Sesuaikan dengan lingkungan browser
+		"baseUrl": "./",
+		"paths": {
+			"@browser/*": [
+				"*"
+			]
+		}
+	},
+	"include": [
+		"admin/**/*"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

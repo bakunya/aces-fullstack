@@ -1,0 +1,37 @@
+name = "aces-fullstack"
+main = "src/index.ts"
+compatibility_date = "2025-01-15"
+
+assets = { directory = "public" }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "aces-fullstack"
+database_id = "c1e0bedb-9e16-4268-b4dc-e9ed75e41b70"
+migrations_table = "d1_migrations"
+migrations_dir = "migrations"
+
+# compatibility_flags = [ "nodejs_compat" ]
+
+# [vars]
+# MY_VAR = "my-variable"
+
+# [[kv_namespaces]]
+# binding = "MY_KV_NAMESPACE"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# [[r2_buckets]]
+# binding = "MY_BUCKET"
+# bucket_name = "my-bucket"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = ""
+
+# [ai]
+# binding = "AI"
+
+# [observability]
+# enabled = true
+# head_sampling_rate = 1
