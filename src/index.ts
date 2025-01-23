@@ -23,9 +23,10 @@ app.post("/logout", async (c: Context) => {
 })
 
 app.route("/admin/", adminRoutes)
-app.route("/asesi/", asesiRoutes)
 app.route("/asesor/", asesorRoutes)
 app.route("/developer/", developerRoutes)
+
+app.route("/", asesiRoutes)
 
 app.onError(errorHandlerController)
 

@@ -17,7 +17,7 @@ export async function shouldDeveloper(c: Context, next: Next) {
 
 	const crypt = new Crypto(crypto.subtle, key)
 	const user = await crypt.decrypt<UserTypeCookie<InternalUser>>(token)
-
+	
 	if(user.role === InternalUserRole.DEVELOPER) {
 		c.set("decodedToken", user)
 		return await next()

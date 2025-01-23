@@ -5,7 +5,7 @@ import { match } from "ts-pattern";
 
 export function getDashboardUrlFromUserCookie(user: UserTypeCookie<unknown>): string | AppError {
 	return match(user.type)
-		.with(UserType.ASESI, () => "/asesi/dashboard")
+		.with(UserType.ASESI, () => "/dashboard")
 		.with(UserType.ASESOR, () => "/asesor/dashboard")
 		.with(UserType.INTERNAL_USER, () => {
 			const u = user as UserTypeCookie<InternalUser>

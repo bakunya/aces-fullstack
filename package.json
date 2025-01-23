@@ -9,7 +9,8 @@
 		"asesor:tw": "tailwindcss -i src/adapter/presenter/css/asesor.css -o public/assets/css/asesor.css --watch",
 		"shared:tw": "tailwindcss -i src/adapter/presenter/css/shared.css -o public/assets/css/shared.css --watch",
 		"dev:tw": "npm-run-all --parallel admin:tw developer:tw asesor:tw asesi:tw shared:tw ",
-		"vite": "vite build --watch --mode development --config vite.config.js"
+		"vite": "vite build --watch --mode development --config vite.config.js",
+		"lint": "eslint ."
 	},
 	"dependencies": {
 		"bcryptjs": "^2.4.3",
@@ -24,6 +25,6 @@
 		"npm-run-all": "^4.1.5",
 		"tailwindcss": "^3.4.17",
 		"vite": "^6.0.7",
-		"wrangler": "^3.103.1"
+		"wrangler": "^3.105.0"
 	}
 }

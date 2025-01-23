@@ -6,10 +6,10 @@ function Page() {
 			<div className="flex flex-col">
 				<h1 className="text-4xl mb-2">Landing Page</h1>
 				<div className="flex flex-col gap-5 mt-9">
+					<a href="/login" className="p-4 bg-blue-400">Login asesi</a>
+					<a href="/asesor/login" className="p-4 bg-blue-400">Login asesor</a>
 					<a href="/admin/login" className="p-4 bg-blue-400">Login admin</a>
 					<a href="/developer/login" className="p-4 bg-blue-400">Login developer</a>
-					<a href="/asesi/login" className="p-4 bg-blue-400">Login asesi</a>
-					<a href="/asesor/login" className="p-4 bg-blue-400">Login asesor</a>
 				</div>
 			</div>
 		</div>

@@ -19,12 +19,12 @@ export async function shouldGuest(c: Context, next: Next) {
 
 	const crypt = new Crypto(crypto.subtle, key)
 	const user = await crypt.decrypt<UserTypeCookie<unknown>>(token)
-
+	
 	const dashboardUrl = getDashboardUrlFromUserCookie(user)
 	if (dashboardUrl instanceof AppError) throw dashboardUrl
 
-	const path = c.req.path.split("/")[1] as "asesor" | "admin" | "asesi" | "developer"
-
+	const path = c.req.path.split("/")[1] as "asesor" | "admin" | "login" /*asesi*/ | "developer"
+	
 	return match([path, user.type])
 		.with(["asesor", UserType.ASESOR], () => {
 			return c.html(<HasLoginPage
@@ -32,7 +32,7 @@ export async function shouldGuest(c: Context, next: Next) {
 				userType={ (user as UserTypeCookie<InternalUser>)?.role?.toLocaleLowerCase?.() ?? user.type.toLocaleLowerCase() }
 			/>)
 		})
-		.with(["asesi", UserType.ASESI], () => {
+		.with(["login", UserType.ASESI], () => {
 			return c.html(<HasLoginPage
 				dashboardUrl={ dashboardUrl }
 				userType={ (user as UserTypeCookie<InternalUser>)?.role?.toLocaleLowerCase?.() ?? user.type.toLocaleLowerCase() }

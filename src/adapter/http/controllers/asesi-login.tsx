@@ -32,5 +32,5 @@ export async function asesiLoginController(c: Context) {
 		sameSite: 'Strict',
 	})
 
-	return c.redirect("/asesi/dashboard")
+	return c.redirect("/dashboard")
 }
