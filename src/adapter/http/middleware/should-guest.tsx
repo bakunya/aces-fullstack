@@ -1,6 +1,8 @@
 import { HasLoginPage } from "@presenter/pages/shared/has-login";
+import { UnauthorizedPage } from "@presenter/pages/shared/unauthorized";
 import { Context } from "@src/adapter/http/contracts/binding";
 import { UserType, UserTypeCookie } from "@src/adapter/http/contracts/cookie/user-type";
+import { getDashboardUrlFromUserCookie } from "@src/adapter/utils/get-dashboard-url";
 import { AppError } from "@src/application/error/AppError";
 import { InternalUser } from "@src/domain/InternalUser";
 import { Crypto } from "@src/infra/crypto";
@@ -18,12 +20,31 @@ export async function shouldGuest(c: Context, next: Next) {
 	const crypt = new Crypto(crypto.subtle, key)
 	const user = await crypt.decrypt<UserTypeCookie<unknown>>(token)
 
-	return match(user.type)
-		.with(UserType.ASESI, () => c.html(<HasLoginPage dashboardUrl="/asesi/dashboard" userType={ user.type.toLocaleLowerCase() } />))
-		.with(UserType.ASESOR, () => c.html(<HasLoginPage dashboardUrl="/asesor/dashboard" userType={ user.type.toLocaleLowerCase() } />))
-		.with(UserType.INTERNAL_USER, () => {
-			const u = user as UserTypeCookie<InternalUser>
-			return c.html(<HasLoginPage dashboardUrl={`/${u.role.toLocaleLowerCase()}/dashboard`} userType={ u.role.toLocaleLowerCase() } />)
+	const dashboardUrl = getDashboardUrlFromUserCookie(user)
+	if (dashboardUrl instanceof AppError) throw dashboardUrl
+
+	const path = c.req.path.split("/")[1] as "asesor" | "admin" | "asesi" | "developer"
+
+	return match([path, user.type])
+		.with(["asesor", UserType.ASESOR], () => {
+			return c.html(<HasLoginPage
+				dashboardUrl={ dashboardUrl }
+				userType={ (user as UserTypeCookie<InternalUser>)?.role?.toLocaleLowerCase?.() ?? user.type.toLocaleLowerCase() }
+			/>)
 		})
-		.otherwise(() => AppError.unknown("User type not found"))
+		.with(["asesi", UserType.ASESI], () => {
+			return c.html(<HasLoginPage
+				dashboardUrl={ dashboardUrl }
+				userType={ (user as UserTypeCookie<InternalUser>)?.role?.toLocaleLowerCase?.() ?? user.type.toLocaleLowerCase() }
+			/>)
+		})
+		.with(["developer", UserType.INTERNAL_USER], () => {
+			return c.html(<HasLoginPage
+				dashboardUrl={ dashboardUrl }
+				userType={ (user as UserTypeCookie<InternalUser>)?.role?.toLocaleLowerCase?.() ?? user.type.toLocaleLowerCase() }
+			/>)
+		})
+		.otherwise(() => {
+			return c.html(<UnauthorizedPage dashboardUrl={ dashboardUrl } />)
+		})
 }

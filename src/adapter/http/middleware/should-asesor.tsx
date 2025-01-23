@@ -1,6 +1,8 @@
-import { HasLoginPage } from "@presenter/pages/shared/has-login";
+import { UnauthorizedPage } from "@presenter/pages/shared/unauthorized";
 import { Context } from "@src/adapter/http/contracts/binding";
 import { UserType, UserTypeCookie } from "@src/adapter/http/contracts/cookie/user-type";
+import { getDashboardUrlFromUserCookie } from "@src/adapter/utils/get-dashboard-url";
+import { AppError } from "@src/application/error/AppError";
 import { Asesor } from "@src/domain/Asesor";
 import { Crypto } from "@src/infra/crypto";
 import { Next } from "hono";
@@ -20,6 +22,9 @@ export async function shouldAsesor(c: Context, next: Next) {
 		c.set("decodedToken", user)
 		return await next()
 	}
-	// return c.redirect("/asesor/login")
-	return c.notFound()
+	
+	const dashboardUrl = getDashboardUrlFromUserCookie(user)
+	if (dashboardUrl instanceof AppError) throw dashboardUrl
+
+	return c.html(<UnauthorizedPage dashboardUrl={ dashboardUrl } />)
 }

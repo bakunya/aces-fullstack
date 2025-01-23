@@ -1,4 +1,4 @@
-import { getAssetsUrl } from "@src/adapter/utils/getAssetsUrl";
+import { getAssetsUrl } from "@src/adapter/utils/get-assets-url";
 import { JSX } from "hono/jsx/jsx-runtime";
 
 export function AdminHTML({ children, js, css }: { js: string[], css: string[], children: JSX.Element }) {
