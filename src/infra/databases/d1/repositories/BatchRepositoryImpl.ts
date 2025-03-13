@@ -1,93 +1,84 @@
+import { BatchDTO } from "@src/application/dto/batch";
 import { AppError } from "@src/application/error/AppError";
 import { BatchRepository } from "@src/application/repositories/BatchRepository";
-import { Batch } from "@src/domain/Batch";
-import { BatchModule } from "@src/domain/BatchModule";
-
-
-const batches = [
-	{
-		id: "1",
-		asesorId: '1',
-		asesiId: '1',
-		name: 'Batch 1',
-	},
-	{
-		id: "2",
-		asesorId: '1',
-		asesiId: '2',
-		name: 'Batch 2',
-	},
-	{
-		id: "3",
-		asesorId: '2',
-		asesiId: '3',
-		name: 'Batch 3',
-	},
-	{
-		id: "4",
-		asesorId: '2',
-		asesiId: '4',
-		name: 'Batch 4',
-	}
-]
-
-const modules = [
-	{ id: '1', batchId: '1', name: 'Module 1 of Batch 1' },
-	{ id: '2', batchId: '1', name: 'Module 2 of Batch 1' },
-	{ id: '3', batchId: '1', name: 'Module 3 of Batch 1' },
-	{ id: '4', batchId: '1', name: 'Module 4 of Batch 1' },
-	{ id: '5', batchId: '2', name: 'Module 1 of Batch 2' },
-	{ id: '6', batchId: '2', name: 'Module 2 of Batch 2' },
-	{ id: '7', batchId: '2', name: 'Module 3 of Batch 2' },
-	{ id: '8', batchId: '2', name: 'Module 4 of Batch 2' },
-	{ id: '9', batchId: '3', name: 'Module 1 of Batch 3' },
-	{ id: '10', batchId: '3', name: 'Module 2 of Batch 3' },
-	{ id: '11', batchId: '3', name: 'Module 3 of Batch 3' },
-	{ id: '12', batchId: '3', name: 'Module 4 of Batch 3' },
-	{ id: '13', batchId: '4', name: 'Module 1 of Batch 4' },
-	{ id: '14', batchId: '4', name: 'Module 2 of Batch 4' },
-	{ id: '15', batchId: '4', name: 'Module 3 of Batch 4' },
-	{ id: '16', batchId: '4', name: 'Module 4 of Batch 4' },
-]
-
+import { BatchJoinOrganization } from "@src/infra/databases/d1/dto/aggregations";
+import { BatchAssessment } from "@src/domain/BatchAssessment";
+import { CreateBatch } from "@src/domain/CreateBatch";
 
 
 export class BatchRepositoryImpl implements BatchRepository {
-	constructor(private readonly DB: D1Database) {}
+	constructor(private readonly DB: D1Database) { }
 
-	getBatchByAsesorId(asesorId: string) {
-		return Promise.resolve(batches.filter((x) => x.asesorId === asesorId));
+	async getBatchByToken(token: string): Promise<BatchDTO> {
+		const data = await this.DB.prepare(`SELECT batches.*, organizations.name FROM batches JOIN organizations ON batches.organization_uuid = organizations.uuid WHERE token = ?`)
+			.bind(token)
+			.first() as unknown as BatchJoinOrganization;
+
+		if (!data) throw AppError.notFound("Batch not found");
+
+		return {
+			...data,
+			organization_name: data.name,
+		}
 	}
 
-	getBatchDetailByAsesiId(asesiId: string) {
-		let batch = batches.find((x) => x.asesiId === asesiId);
-		if (!batch) throw AppError.notFound('Batch not found');
-		let module = modules.filter((x) => x.batchId === batch.id);
-		if (!module.length) throw AppError.notFound('Module not found');
-		return Promise.resolve({
-			batch: Batch.create(
-				batch.asesorId,
-				batch.asesiId,
-				batch.name,
-				batch.id
-			),
-			modules: module.map((x) => new BatchModule(x.id, x.batchId, x.name))
-		});
+	async getBatchById(id: string): Promise<BatchDTO> {
+		const data = await this.DB.prepare(`SELECT batches.*, organizations.name FROM batches JOIN organizations ON batches.organization_uuid = organizations.uuid WHERE batches.uuid = ?`)
+			.bind(id)
+			.first() as unknown as BatchJoinOrganization;
+
+		if (!data) throw AppError.notFound("Batch not found");
+
+		return {
+			...data,
+			organization_name: data.name,
+		}
+	}
+	
+	async getAssessmentList(): Promise<BatchAssessment[]> {
+		const data = (await this.DB.prepare(`
+			SELECT 
+				batches.uuid,
+				batches.token,
+				batches.title,
+				organizations.name,
+				batches.batch_timestamp_start 
+			FROM batches 
+			JOIN organizations ON batches.organization_uuid = organizations.uuid
+			ORDER BY batches.batch_timestamp_start DESC
+			`)
+			.all())
+			.results as unknown as BatchJoinOrganization[];
+
+		return data.map(item => BatchAssessment.create(item.uuid, item.token, item.title, item.name, item.batch_timestamp_start))
 	}
 
-	getBatchDetailById(batchId: string) {
-		let batch = batches.find((x) => x.asesiId === batchId);
-		if (!batch) throw AppError.notFound('Batch not found');
-		let module = modules.filter((x) => x.batchId === batch.id);
-		if (!module.length) throw AppError.notFound('Module not found');
-		return Promise.resolve({
-			batch: Batch.create(
-				batch.asesorId,
-				batch.asesiId,
-				batch.name,
-				batch.id
-			),
-			modules: module.map((x) => new BatchModule(x.id, x.batchId, x.name))
-		});
+	async getLastBatchToken(): Promise<number> {
+		const data = await this.DB.prepare(`SELECT token FROM batches ORDER BY token DESC LIMIT 1`)
+			.first() as unknown as { token: string };
+		
+		const integer = parseInt(data.token)
+
+		if (isNaN(integer)) throw AppError.conversion("Token is not a number");
+		return integer;
+	}
+
+	async createBatch(batch: CreateBatch): Promise<void> {
+		try {
+			await this.DB.prepare(`INSERT INTO batches (uuid, organization_uuid, token, title) VALUES (?, ?, ?, ?)`)
+				.bind(batch.uuid, batch.organization_uuid, batch.token, batch.title)
+				.run();
+		} catch (error: any) {
+			if (error.cause.message === "UNIQUE constraint failed: batches.token: SQLITE_CONSTRAINT") {
+				throw AppError.database(error.cause.message, `Batch ${batch.title}: Token ${batch.token} already exists`)
+			}
+			throw error
+		}
+	}
+
+	async updateTitle(batchId: string, title: string): Promise<void> {
+		await this.DB.prepare(`UPDATE batches SET title = ? WHERE uuid = ?`)
+			.bind(title, batchId)
+			.run();
 	}
 }

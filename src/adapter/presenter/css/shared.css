@@ -1,5 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@config "./shared.config.js";
+@import "tailwindcss" source(none);
+@source "../pages/shared";
+@source "../components";
+@source "../ts/utils";
+@plugin "daisyui" { themes: emerald --default; }

@@ -1,8 +1,12 @@
-import { Batch } from "@src/domain/Batch"
-import { BatchModule } from "@src/domain/BatchModule"
+import { BatchDTO } from "@src/application/dto/batch"
+import { BatchAssessment } from "@src/domain/BatchAssessment"
+import { CreateBatch } from "@src/domain/CreateBatch"
 
 export interface BatchRepository {
-	getBatchByAsesorId(asesorId: string): Promise<Batch[]>
-	getBatchDetailById(batchId: string): Promise<{ batch: Batch, modules: BatchModule[] }>
-	getBatchDetailByAsesiId(asesiId: string): Promise<{ batch: Batch, modules: BatchModule[] }>
+	getBatchByToken(token: string): Promise<BatchDTO>
+	getBatchById(id: string): Promise<BatchDTO>
+	getAssessmentList(): Promise<BatchAssessment[]>
+	getLastBatchToken(): Promise<number>
+	createBatch(batch: CreateBatch): Promise<void>
+	updateTitle(batchId: string, title: string): Promise<void>
 }

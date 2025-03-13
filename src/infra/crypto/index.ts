@@ -1,7 +1,8 @@
+import { ICrypt } from "@src/application/crypto/Crypt";
 import { AppError } from "@src/application/error/AppError";
 import { Base64U8Arr } from "@src/infra/utils/Base64U8Arr";
 
-export class Crypto {
+export class Crypto implements ICrypt {
 	static async generateEncryptKey(): Promise<string> {
 		const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]) as CryptoKey;
 		const exportedKey = await crypto.subtle.exportKey("raw", key) as ArrayBuffer;

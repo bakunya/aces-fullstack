@@ -15,7 +15,7 @@ export function getAssetsUrl(key: string[]): Record<'js' | 'css', string[]> {
 			files.js.push(`/assets/generated/${jsFile}`)
 		}
 
-		const cssFile = meta[`src/adapter/presenter/ts/${v}/index.ts`].css?.map?.((v: string) => `/assets/generated/${v}`)
+		const cssFile = meta[`src/adapter/presenter/ts/${v}/index.ts`]?.css?.map?.((v: string) => `/assets/generated/${v}`)
 		if (cssFile) {
 			files.css.push(...cssFile)
 		}

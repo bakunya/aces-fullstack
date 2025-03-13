@@ -1,6 +1,5 @@
 export enum UserType {
 	ASESI = 'ASESI',
-	ASESOR = 'ASESOR',
 	INTERNAL_USER = 'INTERNAL_USER',
 }
 

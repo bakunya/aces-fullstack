@@ -1,7 +1,7 @@
 import { SharedHTMLHOC } from "@presenter/html/shared";
 
 type TProps = {
-	dashboardUrl: string,
+	dashboardUrl?: string,
 }
 
 function Page({ dashboardUrl }: TProps) {
@@ -11,7 +11,7 @@ function Page({ dashboardUrl }: TProps) {
 				<h1 className="text-lg">401</h1>
 				<h1>Unauthorized</h1>
 				<div className="flex gap-5">
-					<a href={ dashboardUrl }>Kembali ke Dashboard</a>
+					{ dashboardUrl && <a href={ dashboardUrl }>Kembali ke Dashboard</a> }
 				</div>
 			</div>
 		</div>

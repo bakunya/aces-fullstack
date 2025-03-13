@@ -12,6 +12,7 @@ export function AsesiHTML({ children, js, css }: { js: string[], css: string[], 
 			<body>
 				{ children }
 
+				<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
 				{ js.map((file) => <script type="module" src={ file }></script>) }
 			</body>
 		</html>

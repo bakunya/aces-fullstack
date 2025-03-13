@@ -1,35 +1,28 @@
 import { AsesiRepository } from "@src/application/repositories/AsesiRepository";
 import { Asesi } from "@src/domain/Asesi";
-
-const seeds = [
-	{
-		id: "1",
-		username: 'user 1',
-		password: "$2a$12$u.mGdtJKJEqZ6BXQ/.kPIuFsCEneIPypnIiqOWs0/qf0yv5q3GTF2",
-	},
-	{
-		id: "2",
-		username: 'user 2',
-		password: "$2a$12$u.mGdtJKJEqZ6BXQ/.kPIuFsCEneIPypnIiqOWs0/qf0yv5q3GTF2",
-	},
-	{
-		id: "3",
-		username: 'user 3',
-		password: "$2a$12$u.mGdtJKJEqZ6BXQ/.kPIuFsCEneIPypnIiqOWs0/qf0yv5q3GTF2",
-	},
-	{
-		id: "4",
-		username: 'user 4',
-		password: "$2a$12$u.mGdtJKJEqZ6BXQ/.kPIuFsCEneIPypnIiqOWs0/qf0yv5q3GTF2",
-	}
-]
+import { TablePerson } from "@src/infra/databases/d1/dto/tables";
 
 export class AsesiRepositoryImpl implements AsesiRepository {
-	constructor(DB: D1Database) {}
+	constructor(private readonly DB: D1Database) { }
 
-	async getByUsername(username: string): Promise<Asesi | undefined> {
-		const data = seeds.find((x) => x.username === username);
+	async getUniqueInBatch(batch_uuid: string, username: string, email: string): Promise<Asesi | undefined> {
+		const data = await this.DB.prepare(`SELECT * FROM persons WHERE batch_uuid = ? AND username = ? AND email = ?`)
+			.bind(batch_uuid, username, email)
+			.first() as unknown as TablePerson;
 		if (!data) return undefined;
-		return new Asesi(data.username, data.id, data.password);
+		return Asesi.create(
+			data.batch_uuid,
+			data.organization_uuid,
+			data.name,
+			data.email,
+			data.username,
+			data.hash,
+			data.uuid,
+			data.gender,
+			data.nip,
+			data.ca_assessor_uuid,
+			data.intray_assessor_uuid,
+			data.interview_assessor_uuid
+		)
 	}
 }

@@ -10,8 +10,11 @@ export function SharedHTML({ children, js, css }: { js: string[], css: string[],
 				{ css.map((file) => <link rel="stylesheet" href={ file } />) }
 			</head>
 			<body>
+				<div id="alert-container"></div>
+
 				{ children }
 
+				<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
 				{ js.map((file) => <script type="module" src={ file }></script>) }
 			</body>
 		</html>

@@ -10,15 +10,22 @@
 			"DOM",
 			"ES2020"
 		], // Sesuaikan dengan lingkungan browser
-		"baseUrl": "./",
+		"baseUrl": "../../",
 		"paths": {
+			"@request_contracts/*": [
+				"./http/contracts/request/*"
+			],
+			"@response_contracts/*": [
+				"./http/contracts/response/*"
+			],
 			"@browser/*": [
-				"*"
-			]
+				"./presenter/ts/*"
+			],
 		}
 	},
 	"include": [
-		"admin/**/*"
+		"**/*",
+		"../../http/contracts/response/*"
 	],
 	"exclude": [
 		"node_modules"

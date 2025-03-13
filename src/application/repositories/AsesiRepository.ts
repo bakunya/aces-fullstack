@@ -1,5 +1,5 @@
 import { Asesi } from "@src/domain/Asesi";
 
 export interface AsesiRepository {
-	getByUsername(username: string): Promise<Asesi | undefined>
+	getUniqueInBatch(batch_uuid: string, username: string, email: string): Promise<Asesi | undefined>
 }

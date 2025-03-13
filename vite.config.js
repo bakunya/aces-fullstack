@@ -1,3 +1,4 @@
+import path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -11,13 +12,17 @@ export default defineConfig({
 			input: {
 				"admin": 'src/adapter/presenter/ts/admin/index.ts',
 				"asesi": 'src/adapter/presenter/ts/asesi/index.ts',
+				"admin-organization": 'src/adapter/presenter/ts/admin-organization/index.ts',
+				"admin-batch-detail": 'src/adapter/presenter/ts/admin-batch-detail/index.ts',
 			},
 		},
 	},
 	resolve: {
 		alias: {
-			'@browser': 'src/adapter/presenter/ts'
-		},
+			'@browser': path.resolve(__dirname, 'src/adapter/presenter/ts'),
+			'@request_contracts': path.resolve(__dirname, 'src/adapter/http/contracts/request'),
+			'@response_contracts': path.resolve(__dirname, 'src/adapter/http/contracts/response'),
+		}
 	},
 	esbuild: {
 		jsxInject: `import React from 'react'`,

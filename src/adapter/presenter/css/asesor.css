@@ -1,5 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@config "./asesor.config.js";
+@import "tailwindcss" source(none);
+@source "../pages/asesor";
+@source "../components";
+@source "../ts/asesor";
+@source "../ts/utils";
+@plugin "daisyui" { themes: emerald --default; }

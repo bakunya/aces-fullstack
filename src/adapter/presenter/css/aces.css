@@ -1,0 +1,6 @@
+@import "tailwindcss" source(none);
+@source "../pages/aces";
+@source "../components";
+@source "../ts/aces";
+@source "../ts/utils";
+@plugin "daisyui" { themes: emerald --default; }
