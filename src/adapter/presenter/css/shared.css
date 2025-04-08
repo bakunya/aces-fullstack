@@ -3,3 +3,5 @@
 @source "../components";
 @source "../ts/utils";
 @plugin "daisyui" { themes: emerald --default; }
+
+@import url("./quill.css");

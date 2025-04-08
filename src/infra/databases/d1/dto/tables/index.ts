@@ -1,4 +1,4 @@
-export type TableUser = {	
+export type TableUser = {
 	uuid: string;
 	fullname: string;
 	username: string;
@@ -63,7 +63,9 @@ export type TableModule = {
 	uuid: string;
 	type: string;
 	title: string;
+	description: string;
 	created: string;
+	status: number;
 	updated?: string;
 }
 
@@ -75,9 +77,116 @@ export type TableUserHash = {
 }
 
 export type TableModuleType = {
-    id: number;
-    type: string;
+	id: number;
+	type: string;
 	category: string;
-    created: string;
-    updated: string | null; // Bisa null jika belum pernah diupdate
+	created: string;
+	updated: string | null; // Bisa null jika belum pernah diupdate
 }
+
+export type TableCaseAnalysElement = {
+	id: string;
+	name: string;
+	domain: string;
+	description: string;
+	created: string;
+	updated?: string;
+}
+
+export type TableModCaElement = {
+	id: string;
+	id_element: string;
+	id_mod_ca_question: string;
+	created: string;
+	updated?: string;
+}
+
+export type TableModIntrayIntro = {
+	id: number;
+	mod_uuid: string;
+	title: string;
+	name: string;
+	content: string;
+	created: string;
+	updated?: string;
+};
+
+export type TableModIntrayOutro = {
+	id: number;
+	mod_uuid: string;
+	title: string;
+	name: string;
+	content: string;
+	created: string;
+	updated?: string;
+};
+
+export type TableModIntrayTask1 = {
+	id: number;
+	mod_uuid: string;
+	title: string;
+	name: string;
+	time_in_seconds: number;
+	content: string;
+	label_1: string;
+	label_2: string;
+	label_3: string;
+	created: string;
+	updated?: string;
+};
+
+export type TableModIntrayTask2 = {
+	id: number;
+	mod_uuid: string;
+	title: string;
+	name: string;
+	time_in_seconds: number;
+	content: string;
+	label_1: string;
+	label_2: string;
+	label_3: string;
+	label_4: string;
+	created: string;
+	updated?: string;
+};
+
+export type TableModIntrayTask3 = {
+	id: number;
+	mod_uuid: string;
+	title: string;
+	name: string;
+	time_in_seconds: number;
+	content: string;
+	label_1: string;
+	label_2: string;
+	label_3: string;
+	created: string;
+	updated?: string;
+};
+
+export type TableModIntrayTask4 = {
+	id: number;
+	mod_uuid: string;
+	title: string;
+	name: string;
+	time_in_seconds: number;
+	content: string;
+	label_1: string;
+	label_2: string;
+	label_3: string;
+	label_4: string;
+	created: string;
+	updated?: string;
+};
+
+export type TableModIntrayTask5 = {
+	id: number;
+	mod_uuid: string;
+	title: string;
+	name: string;
+	time_in_seconds: number;
+	content: string;
+	label_1: string;
+	created: string;
+	updated?: string;
+};

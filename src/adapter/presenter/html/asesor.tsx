@@ -20,7 +20,7 @@ export function AsesorHTML({ children, js, css }: { js: string[], css: string[],
 }
 
 export function AsesorHTMLHOC<T extends {} = {}>(Component: (props: T) => JSX.Element, { css, js, viteGenerated }: { viteGenerated?: string[], css?: string[], js?: string[] } = {}) {
-	const files = getAssetsUrl(viteGenerated ?? [])
+	const files = getAssetsUrl(["shared", ...(viteGenerated ?? [])])
 
 	const jsFiles = [...js ?? [], ...files.js]
 	const cssFiles = [...css ?? [], ...files.css]

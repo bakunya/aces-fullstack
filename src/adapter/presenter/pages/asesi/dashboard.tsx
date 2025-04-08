@@ -1,11 +1,6 @@
 import { AsesiHTMLHOC } from "@presenter/html/asesi";
-import { Batch } from "@src/domain/Batch";
-import { BatchModule } from "@src/domain/BatchModule";
 
-type Props = {
-	batch: Batch,
-	modules: BatchModule[]
-}
+type Props = { }
 
 function Page(data: Props) {
 	return (

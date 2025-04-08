@@ -8,6 +8,7 @@ import { UuidImpl } from "@src/infra/utils/Uuid"
 import { OrganizationUsecase } from "@src/application/usecase/Organization"
 import { DateImpl } from "@src/infra/date"
 import { OrganizationTable } from "@presenter/pages/batch/components/organization-table"
+import { ulidFactory } from "ulid-workers"
 
 
 export async function batchHxCreateOrganizationController(c: Context) {
@@ -20,7 +21,7 @@ export async function batchHxCreateOrganizationController(c: Context) {
 		throw AppError.request("Invalid request")
 	}
 
-	const uuid = new UuidImpl()
+	const uuid = new UuidImpl(ulidFactory())
 	const organizationRepository = new OrganizationRepositoryImpl(c.env.DB)
 
 	const createOrganizationUsecase = new CreateOrganizationwUsecase(organizationRepository, uuid)

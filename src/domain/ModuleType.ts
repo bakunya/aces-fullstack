@@ -22,7 +22,6 @@ export class ModuleCategoryMapping {
 export enum ModuleType {
 	Abstract = 'abstract',
 	Aime = 'aime',
-	Ca = 'ca',
 	Csi = 'csi',
 	Ggate = 'ggate',
 	Gmate = 'gmate',
@@ -51,7 +50,7 @@ export class ModuleTypeMapping {
 
 export class ModuleTypeDomain {
 	constructor(
-		public readonly type: string,
+		public readonly type: ModuleType,
 		public readonly category: string,
 		public readonly id?: number,
 	) { }

@@ -1,9 +1,6 @@
 import { AsesorHTMLHOC } from "@presenter/html/asesor";
-import { Batch } from "@src/domain/Batch";
 
-type Props = {
-	batch: Batch[]
-}
+type Props = { }
 
 function Page(data: Props) {
 	return (

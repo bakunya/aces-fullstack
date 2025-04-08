@@ -23,5 +23,10 @@ export async function errorHandlerController(err: AppError | Error | HTTPRespons
 		if(err.type === AppErrorType.NotFoundError) return c.html(<NotFoundPage message={err.message} />, 404)
 		return c.text(err.toString(), 500)
 	}
+	if(c.req.header("hx-request") === "true") {
+		const header: HxHeaderError = { requestError: "Internal server error" }
+		c.res.headers.set("HX-Trigger", JSON.stringify(header))
+		return c.text("", 500)
+	}
 	return c.text(err.message, 500)
 }

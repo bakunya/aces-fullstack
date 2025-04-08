@@ -22,7 +22,7 @@ export function SharedHTML({ children, js, css }: { js: string[], css: string[],
 }
 
 export function SharedHTMLHOC<T extends {} = {}>(Component: (props: T) => JSX.Element, { viteGenerated, css, js }: { viteGenerated?: string[], css?: string[], js?: string[] } = {}) {
-	const files = getAssetsUrl(viteGenerated ?? [])
+	const files = getAssetsUrl(["shared", ...(viteGenerated ?? [])])
 
 	const jsFiles = [...js ?? [], ...files.js]
 	const cssFiles = [...css ?? [], ...files.css]

@@ -5,5 +5,6 @@ import { ModuleRepositoryImpl } from "@src/infra/databases/d1/repositories/Modul
 export async function acesModulesController(c: Context) {
 	const moduleImpl = ModuleRepositoryImpl.create(c.env.DB)
 	const modules = await moduleImpl.getAll()
+	
 	return c.html(<AcesModulesPage modules={modules} />)
 }

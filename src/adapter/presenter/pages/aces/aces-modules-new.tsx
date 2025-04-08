@@ -36,6 +36,10 @@ const Page = ({ modules, users }: { users: User[], modules: ModuleTypes[] }) => 
 					<legend className="fieldset-legend">Judul Module</legend>
 					<input name="module_title" required type="text" className="w-full input" placeholder="Type here" />
 				</fieldset>
+				<fieldset className="fieldset w-full">
+					<legend className="fieldset-legend">Waktu (di menit)</legend>
+					<input name="module_maxtime" required type="number" min={1} className="w-full input" placeholder="Type here" />
+				</fieldset>
 				<button type="submit" className="btn btn-neutral mt-5">Simpan</button>
 			</form>
 		</div>

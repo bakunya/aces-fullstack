@@ -21,11 +21,18 @@
 			"@browser/*": [
 				"./presenter/ts/*"
 			],
-		}
+			"@presenter/*": [
+				"./presenter/*"
+			],
+		},
+		"typeRoots": [
+			"./global.d.ts"
+		]
 	},
 	"include": [
 		"**/*",
-		"../../http/contracts/response/*"
+		"../../http/contracts/response/*",
+		"global.d.ts" 
 	],
 	"exclude": [
 		"node_modules"

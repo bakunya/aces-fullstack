@@ -1,4 +1,5 @@
 import { AcesTMLHOC } from "@presenter/html/aces";
+import { ModuleStatusMapping } from "@src/domain/Module";
 import { route } from "@src/infra/singeleton/RouteCollection";
 
 type Modules = {
@@ -6,6 +7,8 @@ type Modules = {
 	type: string
 	title: string
 	category: string
+	status: number
+	developer_name: string
 }
 
 const Page = ({ modules }: { modules: Modules[] }) => {
@@ -23,6 +26,8 @@ const Page = ({ modules }: { modules: Modules[] }) => {
 							<th>Judul</th>
 							<th>Kategori</th>
 							<th>Tipe</th>
+							<th>Status</th>
+							<th>Developer</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -31,6 +36,8 @@ const Page = ({ modules }: { modules: Modules[] }) => {
 								<td>{ module.title }</td>
 								<td>{ module.category }</td>
 								<td>{ module.type }</td>
+								<td>{ ModuleStatusMapping.toString(module.status) }</td>
+								<td>{ module.developer_name }</td>
 							</tr>
 						)) }
 					</tbody>

@@ -14,11 +14,15 @@ export default defineConfig({
 				"asesi": 'src/adapter/presenter/ts/asesi/index.ts',
 				"admin-organization": 'src/adapter/presenter/ts/admin-organization/index.ts',
 				"admin-batch-detail": 'src/adapter/presenter/ts/admin-batch-detail/index.ts',
+				"case-analys-dev": 'src/adapter/presenter/ts/case-analys-dev/index.ts',
+				"intray-dev": 'src/adapter/presenter/ts/intray-dev/index.ts',
+				"shared": 'src/adapter/presenter/ts/shared/index.ts',
 			},
 		},
 	},
 	resolve: {
 		alias: {
+			'@presenter': path.resolve(__dirname, 'src/adapter/presenter'),
 			'@browser': path.resolve(__dirname, 'src/adapter/presenter/ts'),
 			'@request_contracts': path.resolve(__dirname, 'src/adapter/http/contracts/request'),
 			'@response_contracts': path.resolve(__dirname, 'src/adapter/http/contracts/response'),

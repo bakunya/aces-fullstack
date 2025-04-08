@@ -1,8 +1,8 @@
 -- Migration number: 0007 	 2025-03-12T06:14:26.544Z
 CREATE TABLE mod_gpq_gmate (
     [mod_uuid] TEXT PRIMARY KEY,
-    [gpq_uuid] TEXT NOT NULL,
-    [gmate_uuid] TEXT NOT NULL,
+    [gpq_mod_uuid] TEXT NOT NULL,
+    [gmate_mod_uuid] TEXT NOT NULL,
     [created] TEXT NOT NULL DEFAULT ((strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc'))),
     [updated] TEXT
 );
@@ -14,8 +14,8 @@ BEGIN
     UPDATE mod_gpq_gmate SET updated = (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')) WHERE mod_uuid=NEW.mod_uuid;
 END;
 
-INSERT INTO mod_gpq_gmate (mod_uuid, gpq_uuid, gmate_uuid) VALUES (
+INSERT INTO mod_gpq_gmate (mod_uuid, gpq_mod_uuid, gmate_mod_uuid) VALUES (
     '979b8d98-565e-440f-afce-e29e96407790',
-    'b1ddf643-4de2-4dc0-9f5c-303d59b5f150',
-    'd201052f-5e10-4ab6-9ac4-e405fd3b6db9'
+    'q4yGxmhn2JebYQY7U8rUXt',
+    'bcnecqL6zF4PgUxfNWHn1a'
 );

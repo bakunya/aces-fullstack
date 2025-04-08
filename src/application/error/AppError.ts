@@ -57,6 +57,10 @@ export class AppError extends Error {
 		return new AppError(AppErrorType.ConversionError, msg, userMessage);
 	}
 
+	static usecase(msg: string, userMessage?: string): AppError {
+		return new AppError(AppErrorType.UnknownError, msg, userMessage);
+	}
+
 	toString(): string {
 		return `AppError: ${this.type} - ${this.message}`;
 	}
