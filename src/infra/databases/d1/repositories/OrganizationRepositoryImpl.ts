@@ -19,7 +19,7 @@ export class OrganizationRepositoryImpl implements OrganizationRepository {
 	}
 
 	async all(): Promise<OrganizationEntity[]> {
-		const stmt = this.db.prepare("SELECT * FROM organizations")
+		const stmt = this.db.prepare("SELECT * FROM organizations ORDER BY created DESC")
 		return (await stmt.all<TableOrganization>())
 			.results
 			.map((itm) => OrganizationEntity.create(

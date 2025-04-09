@@ -4,6 +4,7 @@ import { CaseAnalysRepositoryImpl } from "@src/infra/databases/d1/repositories/C
 import { HxCaseAnalysQuestionUpdate, HxCaseAnalysQuestionUpdateUrlParam } from "@src/adapter/http/contracts/request/hx-case-analys-question";
 import { UuidImpl } from "@src/infra/utils/Uuid";
 import { ulidFactory } from "ulid-workers";
+import { HTMX_EVENTS } from "@src/adapter/constant/htmx-events";
 
 export async function hxModuleCaseAnalysQuestionUpdateController(c: Context) {
 	const questionId = c.req.param(HxCaseAnalysQuestionUpdateUrlParam.questionId)
@@ -14,10 +15,9 @@ export async function hxModuleCaseAnalysQuestionUpdateController(c: Context) {
 	const usecase = CaseAnalysQuestionUpdateUsecase.create(CaseAnalysRepositoryImpl.create(c.env.DB), UuidImpl.create(ulidFactory()))
 	await usecase.execute(Number(questionId), body)
 
+	const trigger: Record<string, any> = { onSuccess: "Success update main content" }
+	trigger[`${HTMX_EVENTS.MODULE_GetCaseAnalysMainContent}`] = true
 	
-	c.res.headers.set("HX-Trigger", JSON.stringify({ 
-		"caseAnalysMainContentReload": null, 
-		"onSuccess": "Success update main content"
-	}))
+	c.res.headers.set("HX-Trigger", JSON.stringify(trigger))
 	return c.text("", 201)
 }

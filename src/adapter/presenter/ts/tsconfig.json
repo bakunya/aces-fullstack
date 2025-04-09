@@ -24,6 +24,9 @@
 			"@presenter/*": [
 				"./presenter/*"
 			],
+			"@constant/*": [
+				"./constant/*"
+			]
 		},
 		"typeRoots": [
 			"./global.d.ts"
@@ -31,6 +34,7 @@
 	},
 	"include": [
 		"**/*",
+		"../../constant/*",
 		"../../http/contracts/response/*",
 		"global.d.ts" 
 	],

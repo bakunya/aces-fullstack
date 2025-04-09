@@ -1,6 +1,7 @@
 import { CaseAnalysAssignmentList } from "@presenter/components/case-analys-assignment-list";
 import { QuillElement } from "@presenter/components/quill-element";
 import { ModuleHTMLHOC } from "@presenter/html/module";
+import { HTMX_EVENTS } from "@src/adapter/constant/htmx-events";
 import { route } from "@src/infra/singeleton/RouteCollection";
 
 type TElement = {
@@ -41,7 +42,7 @@ const Page = ({ caseAnalys, elements }: { elements: Map<string, TElement>, caseA
 						<div
 							hx-target="this"
 							hx-swap="innerHTML"
-							hx-trigger="caseAnalysMainContentReload from:body"
+							hx-trigger={`${HTMX_EVENTS.MODULE_GetCaseAnalysMainContent} from:body`}
 							hx-get={ route("get.module.hx.case_analysis.id.dev.main.content", [caseAnalys[0].modUuid]) }
 						>
 							<QuillElement initFunction="initMainContentEditor()" dataSaved={ caseAnalys[0].mainContent } />
@@ -57,7 +58,7 @@ const Page = ({ caseAnalys, elements }: { elements: Map<string, TElement>, caseA
 					<div
 						hx-target="this"
 						hx-swap="innerHTML"
-						hx-trigger="caseAnalysAssignmentListReload from:body"
+						hx-trigger={`${HTMX_EVENTS.MODULE_GetCaseAnalysAssignmentList} from:body`}
 						hx-get={route("get.module.hx.case_analysis.id.dev.assignment.list", [caseAnalys[0].modUuid])}
 					>
 						<CaseAnalysAssignmentList caseAnalys={ caseAnalys } elements={ elements } />

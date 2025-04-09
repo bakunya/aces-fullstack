@@ -1,7 +1,6 @@
 import { BatchHTMLHOC } from "@presenter/html/batch";
-import { BatchRoleNav } from "@presenter/pages/batch/components/batch-role-nav";
-import { AssessmentTable } from "@presenter/pages/batch/components/assessment-table";
-
+import { BatchRoleNav } from "@presenter/pages/aces/components/batch-role-nav";
+import { AssessmentTable } from "@presenter/pages/aces/components/assessment-table";
 
 interface PageProps {
 	assessment: {

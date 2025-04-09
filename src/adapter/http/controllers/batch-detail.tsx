@@ -1,4 +1,4 @@
-import { BatchBatchDetailPage } from "@presenter/pages/batch/batch-detail"
+import { BatchBatchDetailPage } from "@presenter/pages/aces/batch-detail"
 import { Context } from "@src/adapter/http/contracts/binding"
 import { BatchUsecase } from "@src/application/usecase/Batch"
 import { BatchRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchRepositoryImpl"

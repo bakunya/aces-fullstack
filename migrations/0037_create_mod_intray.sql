@@ -3,6 +3,7 @@ CREATE TABLE mod_intray (
     [mod_uuid] TEXT PRIMARY KEY, -- reference to modules table
     [maxtime] INTEGER, -- in minutes
     [time_in_minutes] INTEGER NOT NULL DEFAULT 120,
+	[pages] INTEGER NOT NULL DEFAULT 6,
     -- [maxtime] INTEGER,
     [created] TEXT NOT NULL DEFAULT ((strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc'))),
     [updated] TEXT
@@ -12,3 +13,5 @@ CREATE TRIGGER update_mod_intray AFTER UPDATE ON mod_intray
 BEGIN
     UPDATE mod_intray SET updated = (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')) WHERE mod_uuid=NEW.mod_uuid;
 END;
+
+INSERT INTO mod_intray (mod_uuid) VALUES ('oUxJMANwEzQDg2b7SF71EV');

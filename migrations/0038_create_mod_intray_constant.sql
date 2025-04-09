@@ -1,12 +1,12 @@
 -- Migration number: 0038 	 2025-03-25T05:08:17.240Z
 CREATE TABLE mod_intray_constant (
-    [id] INTEGER PRIMARY KEY,
-    [task] INTEGER NOT NULL,
-    [code] TEXT NOT NULL,
-    [domain] TEXT NOT NULL,
-    [element] TEXT NOT NULL,
-    [created] TEXT NOT NULL DEFAULT ((strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc'))),
-    [updated] TEXT
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `page` INTEGER NOT NULL,
+  `code` TEXT NOT NULL,
+  `domain` TEXT NOT NULL,
+  `element` TEXT NOT NULL,
+  `created` TEXT NOT NULL DEFAULT ((strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc'))),
+  `updated` TEXT
 );
 
 CREATE TRIGGER update_mod_intray_constant AFTER UPDATE ON mod_intray_constant
@@ -14,7 +14,7 @@ BEGIN
     UPDATE mod_intray_constant SET updated = (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')) WHERE uuid=NEW.uuid;
 END;
 
-INSERT INTO mod_intray_constant (id, task, code, domain, element) VALUES
+INSERT INTO mod_intray_constant (id, page, code, domain, element) VALUES
     (1, 1, 'ANA:ITEM', 'Analyzing', 'Item Listing'),
     (2, 1, 'ANA:ISSUE', 'Analyzing', 'Issue Listing'),
     (3, 1, 'ANA:ORIGINAL', 'Analyzing', 'Original Listing'),

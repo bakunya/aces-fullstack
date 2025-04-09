@@ -1,3 +1,4 @@
+import { HTMX_EVENTS } from "@src/adapter/constant/htmx-events";
 import { Context } from "@src/adapter/http/contracts/binding";
 import { HxIntrayDevSectionUpdateUrlParam } from "@src/adapter/http/contracts/request/hx-intray-dev-section-update";
 import { IntrayTableMapping, IntrayTableString } from "@src/application/repositories/IntrayRepository";
@@ -11,9 +12,9 @@ export async function hxModuleIntraySectionUpdateDevController(c: Context) {
 	const usecase = IntraySectionUpdateUsecase.create(IntrayRepositoryImpl.create(c.env.DB))
 	await usecase.execute(body, IntrayTableMapping.getFromKeyString(sectionType))
 
-	c.res.headers.set("HX-Trigger", JSON.stringify({ 
-		"intraySectionDevReload": null, 
-		"onSuccess": "Success update intray section"
-	}))
+	const trigger: Record<string, any> = { onSuccess: "Success update intray section" }
+	trigger[`${HTMX_EVENTS.MODULE_GetIntraySection}`] = true
+
+	c.res.headers.set("HX-Trigger", JSON.stringify(trigger))
 	return c.text("", 201)
 }

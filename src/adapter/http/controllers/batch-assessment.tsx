@@ -1,6 +1,6 @@
 import { Context } from "@src/adapter/http/contracts/binding"
 import { DateImpl } from "@src/infra/date"
-import { BatchAssessmentPage } from "@presenter/pages/batch/assessment"
+import { BatchAssessmentPage } from "@presenter/pages/aces/assessment"
 import { GetAssessmentListUsecase } from "@src/application/usecase/GetAssessmentList"
 import { BatchRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchRepositoryImpl"
 

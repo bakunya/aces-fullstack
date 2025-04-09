@@ -10,7 +10,6 @@ import authRoutes from '@src/adapter/http/routes/auth'
 import userRoutes from '@src/adapter/http/routes/user/dashboard'
 import appRoutes from '@src/adapter/http/routes/app'
 import acesRoutes from '@src/adapter/http/routes/aces'
-import batchRoutes from '@src/adapter/http/routes/batch'
 import moduleRoutes from '@src/adapter/http/routes/module'
 
 const app = new Hono()
@@ -34,7 +33,6 @@ app.post("/logout", async (c: Context) => {
 
 app.route("/app/", appRoutes)
 app.route("/aces/", acesRoutes)
-app.route("/batch/", batchRoutes)
 app.route("/module/", moduleRoutes)
 app.route("/asesor/", asesorRoutes)
 

@@ -6,6 +6,7 @@ import { IntrayTask3, TIntrayTask3Props } from "@presenter/components/intray-tas
 import { IntrayTask4, TIntrayTask4Props } from "@presenter/components/intray-task-4-dev";
 import { IntrayTask5, TIntrayTask5Props } from "@presenter/components/intray-task-5-dev";
 import { ModuleHTMLHOC } from "@presenter/html/module";
+import { HTMX_EVENTS } from "@src/adapter/constant/htmx-events";
 import { IntrayTableString } from "@src/application/repositories/IntrayRepository";
 import { route } from "@src/infra/singeleton/RouteCollection";
 import { match } from "ts-pattern";
@@ -51,7 +52,7 @@ const Page = ({ paths, module, sectionType, intray }: TProps) => {
 				<div
 					hx-target="this"
 					hx-swap="innerHTML"
-					hx-trigger="intraySectionDevReload from:body"
+					hx-trigger={`${HTMX_EVENTS.MODULE_GetIntraySection} from:body`}
 					hx-get={route("get.module.hx.dashboard.intray.id.dev.section.section_type", [module.uuid, sectionType.replaceAll("mod_", "")])}
 				>
 					{ match(sectionType)

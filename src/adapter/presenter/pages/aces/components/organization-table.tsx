@@ -45,9 +45,9 @@ export function OrganizationTable({ organizations }: OrganizationTableProps) {
 						<td className="px-6 py-4">
 							<button 
 								trigger="modal" 
-								target="#modal-new-batch"
-								modal-submit-url={ route("post.batch.organization.organization_id.batch", [organization.uuid]) }
+								data-target="#modal-new-batch"
 								modal-title={`Batch ${ organization.name }`}
+								modal-submit-url={ route("post.aces.organization.organization_id.batch", [organization.uuid]) }
 								className="text-xs cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md"
 							>Tambah</button>
 							<button className="ml-2 text-xs cursor-pointer px-4 py-2 bg-teal-600 text-white rounded-md">Lihat</button>

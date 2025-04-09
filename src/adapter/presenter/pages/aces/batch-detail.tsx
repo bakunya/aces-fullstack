@@ -1,6 +1,6 @@
 import { BatchHTMLHOC } from "@presenter/html/batch";
-import { BatchRoleNav } from "@presenter/pages/batch/components/batch-role-nav";
-import { BatchNav } from "@presenter/pages/batch/components/batch-nav";
+import { BatchRoleNav } from "@presenter/pages/aces/components/batch-role-nav";
+import { BatchNav } from "@presenter/pages/aces/components/batch-nav";
 import { route } from "@src/infra/singeleton/RouteCollection";
 
 interface PageProps {
@@ -84,5 +84,5 @@ function Page({ batch }: PageProps) {
 }
 
 export const BatchBatchDetailPage = BatchHTMLHOC(Page, {
-	viteGenerated: ["Batch-batch-detail"]
+	viteGenerated: ["aces-batch-detail"]
 });

@@ -10,10 +10,9 @@ export default defineConfig({
 		minify: process.env.npm_lifecycle_script.includes("--mode production") ? "esbuild" : false,
 		rollupOptions: {
 			input: {
-				"admin": 'src/adapter/presenter/ts/admin/index.ts',
 				"asesi": 'src/adapter/presenter/ts/asesi/index.ts',
-				"admin-organization": 'src/adapter/presenter/ts/admin-organization/index.ts',
-				"admin-batch-detail": 'src/adapter/presenter/ts/admin-batch-detail/index.ts',
+				"aces-organization": 'src/adapter/presenter/ts/aces-organization/index.ts',
+				"aces-batch-detail": 'src/adapter/presenter/ts/aces-batch-detail/index.ts',
 				"case-analys-dev": 'src/adapter/presenter/ts/case-analys-dev/index.ts',
 				"intray-dev": 'src/adapter/presenter/ts/intray-dev/index.ts',
 				"shared": 'src/adapter/presenter/ts/shared/index.ts',
@@ -22,6 +21,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
+			'@constant': path.resolve(__dirname, 'src/adapter/constant'),
 			'@presenter': path.resolve(__dirname, 'src/adapter/presenter'),
 			'@browser': path.resolve(__dirname, 'src/adapter/presenter/ts'),
 			'@request_contracts': path.resolve(__dirname, 'src/adapter/http/contracts/request'),
