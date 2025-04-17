@@ -15,6 +15,7 @@ export type TableUser = {
 export type TablePerson = {
 	uuid: string;
 	batch_uuid: string;
+	batch_group_id: number;
 	organization_uuid: string;
 	name: string;
 	email: string;
@@ -22,7 +23,7 @@ export type TablePerson = {
 	hash: string;
 	gender: string;
 	nip: string;
-	ca_assessor_uuid: string;
+	case_analysis_assessor_uuid: string;
 	intray_assessor_uuid: string;
 	interview_assessor_uuid: string;
 	created: string;
@@ -84,109 +85,11 @@ export type TableModuleType = {
 	updated: string | null; // Bisa null jika belum pernah diupdate
 }
 
-export type TableCaseAnalysElement = {
-	id: string;
-	name: string;
-	domain: string;
-	description: string;
+export type TableBatchModule = {
+	batch_uuid: string;
+	module_uuid: string;
+	uuid: string;
 	created: string;
 	updated?: string;
+	priority: number;
 }
-
-export type TableModCaElement = {
-	id: string;
-	id_element: string;
-	id_mod_ca_question: string;
-	created: string;
-	updated?: string;
-}
-
-export type TableModIntrayIntro = {
-	id: number;
-	mod_uuid: string;
-	title: string;
-	name: string;
-	content: string;
-	created: string;
-	updated?: string;
-};
-
-export type TableModIntrayOutro = {
-	id: number;
-	mod_uuid: string;
-	title: string;
-	name: string;
-	content: string;
-	created: string;
-	updated?: string;
-};
-
-export type TableModIntrayTask1 = {
-	id: number;
-	mod_uuid: string;
-	title: string;
-	name: string;
-	time_in_seconds: number;
-	content: string;
-	label_1: string;
-	label_2: string;
-	label_3: string;
-	created: string;
-	updated?: string;
-};
-
-export type TableModIntrayTask2 = {
-	id: number;
-	mod_uuid: string;
-	title: string;
-	name: string;
-	time_in_seconds: number;
-	content: string;
-	label_1: string;
-	label_2: string;
-	label_3: string;
-	label_4: string;
-	created: string;
-	updated?: string;
-};
-
-export type TableModIntrayTask3 = {
-	id: number;
-	mod_uuid: string;
-	title: string;
-	name: string;
-	time_in_seconds: number;
-	content: string;
-	label_1: string;
-	label_2: string;
-	label_3: string;
-	created: string;
-	updated?: string;
-};
-
-export type TableModIntrayTask4 = {
-	id: number;
-	mod_uuid: string;
-	title: string;
-	name: string;
-	time_in_seconds: number;
-	content: string;
-	label_1: string;
-	label_2: string;
-	label_3: string;
-	label_4: string;
-	created: string;
-	updated?: string;
-};
-
-export type TableModIntrayTask5 = {
-	id: number;
-	mod_uuid: string;
-	title: string;
-	name: string;
-	time_in_seconds: number;
-	content: string;
-	label_1: string;
-	created: string;
-	updated?: string;
-};

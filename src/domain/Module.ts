@@ -1,6 +1,6 @@
 import { ModuleCategory, ModuleCategoryMapping, ModuleType, ModuleTypeMapping } from './ModuleType'
 
-enum ModuleStatus {
+export enum ModuleStatus {
 	Disabled = -1,
 	Developing = 0,
 	Reviewing = 1,

@@ -9,6 +9,10 @@ import { CreateBatch } from "@src/domain/CreateBatch";
 export class BatchRepositoryImpl implements BatchRepository {
 	constructor(private readonly DB: D1Database) { }
 
+	static create(db: D1Database): BatchRepositoryImpl {
+		return new BatchRepositoryImpl(db)
+	}
+
 	async getBatchByToken(token: string): Promise<BatchDTO> {
 		const data = await this.DB.prepare(`SELECT batches.*, organizations.name FROM batches JOIN organizations ON batches.organization_uuid = organizations.uuid WHERE token = ?`)
 			.bind(token)

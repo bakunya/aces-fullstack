@@ -9,7 +9,7 @@ CREATE TABLE persons (
     [username] TEXT NOT NULL DEFAULT '',
     [hash] TEXT NOT NULL,
     -- other person fields
-	[gender] TEXT,
+	[gender] TEXT CHECK (gender IN('perempuan', 'laki-laki')),
 	[nip] TEXT,
     --
     [case_analysis_assessor_uuid] TEXT,
@@ -17,7 +17,10 @@ CREATE TABLE persons (
     [interview_assessor_uuid] TEXT,
     [created] TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')),
 	[updated] TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')),
-	UNIQUE (batch_uuid, username, email)
+	-- UNIQUE (batch_uuid, username, email)
+	UNIQUE (batch_uuid, username),
+    UNIQUE (batch_uuid, email),
+    UNIQUE (batch_uuid, nip)
 );
 
 CREATE INDEX idx_persons_batch_uuid ON persons (batch_uuid);

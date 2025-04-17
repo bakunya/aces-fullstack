@@ -16,11 +16,22 @@ document.addEventListener("DOMContentLoaded", () => {
 				})
 			})
 			.with("#modal-new-batch", () => {
+				const modalTitle = el.getAttribute("modal-title")
+				const submitUrl = el.getAttribute("modal-submit-url")
+				const modalEl = (document.querySelector(target!) as HTMLDialogElement)
+				if (!(submitUrl || modalEl)) return
 				el.addEventListener("click", () => {
-					if (target) {
-						const modalEl = (document.querySelector(target) as HTMLDialogElement)
-						modalEl?.showModal()
-					}
+					modalEl.querySelector(".title")!.textContent = modalTitle || ""
+					const form = modalEl.querySelector("form") as HTMLFormElement
+					form.action = submitUrl!
+					modalEl?.showModal()
+					// if (target) {
+					// 	if modalEl
+					// 	modalEl?.querySelector(".title")
+					// 	const form = modalEl.querySelector("form") as HTMLFormElement
+					// 	form.setAttribute("action", submitUrl)
+					// 	modalEl?.showModal()
+					// }
 				})
 			})
 			.otherwise(() => {})

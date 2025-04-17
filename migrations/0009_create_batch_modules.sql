@@ -3,9 +3,9 @@ CREATE TABLE batch_modules (
     [uuid] TEXT PRIMARY KEY, -- uuid
     [batch_uuid] TEXT NOT NULL, -- batches(id)
     [module_uuid] TEXT NOT NULL, -- modules(id)
-    [type] TEXT NOT NULL, -- modules(type)
-	[priority] INTEGER,
-    [updated] TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')),
+	[priority] INTEGER DEFAULT NULL,
+	[created] TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')),
+    [updated] TEXT,
 	UNIQUE (batch_uuid, module_uuid)
 );
 

@@ -1,6 +1,6 @@
 import { Module } from "@src/domain/Module";
 import { ModuleRepository } from "@src/application/repositories/ModuleRepository";
-import { TableModuleType, TableUser } from "@src/infra/databases/d1/dto/tables";
+import { TableModule, TableModuleType, TableUser } from "@src/infra/databases/d1/dto/tables";
 import { ModuleJoinModuleType } from "@src/infra/databases/d1/dto/aggregations";
 import { ModuleDeveloper } from "@src/application/dto/module-developer";
 import { ModuleGetAll } from "@src/application/dto/module-get-all";
@@ -63,6 +63,24 @@ export class ModuleRepositoryImpl implements ModuleRepository {
 		const rows = (await this.db.prepare('SELECT * FROM module_types').all()).results as TableModuleType[];
 		return rows
 	}
+
+	
+	async getAllWithModuleType() {
+		const rows = (await this.db.prepare(`
+			SELECT
+				m.*,
+				mt.type,
+				mt.category
+			FROM
+				modules m
+			JOIN
+				module_types mt ON m.type = mt.type
+			WHERE m.status = 3
+		`).all()).results as unknown as (TableModule & { type: string, category: string })[]
+
+		return rows.map((v) => Module.create(v.uuid, v.type, v.title, v.category, v.status, v.description))
+	}
+
 
 	async getModuleType(type: string): Promise<TableModuleType> {
 		const row = (await this.db.prepare('SELECT * FROM module_types WHERE type = ? LIMIT 1').bind(type).first()) as TableModuleType;

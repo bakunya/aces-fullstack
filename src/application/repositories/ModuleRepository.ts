@@ -9,6 +9,7 @@ export interface ModuleRepository {
 	getModuleType(type: string): Promise<TableModuleType>
 	getModuleByDeveloper(uuid: string): Promise<Module[]>
 	getById(uuid: string): Promise<Module>
+	getAllWithModuleType(): Promise<Module[]>
 	insert(module: Module, developer: ModuleDeveloper): Promise<void>
 }
 

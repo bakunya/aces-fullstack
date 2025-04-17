@@ -18,5 +18,5 @@ export async function batchOrganizationCreateBatchController(c: Context) {
 	const usecase = new CreateBatchUsecase(batchRepository, new UuidImpl(ulidFactory()))
 	const uuid = await usecase.execute(data)
 
-	return c.redirect(route("get.batch.batch.batch_id", [uuid]))
+	return c.redirect(route("get.aces.batch.batch_id", [uuid]))
 }
