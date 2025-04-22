@@ -1,8 +1,0 @@
-@import "tailwindcss" source(none);
-@source "../pages/batch";
-@source "../components";
-@source "../ts/batch";
-@source "../ts/utils";
-@plugin "daisyui" { themes: emerald --default; }
-
-@import url("./quill.css");

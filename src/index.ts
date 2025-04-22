@@ -4,13 +4,10 @@ import { errorHandlerController } from '@src/adapter/http/controllers/error-hand
 import { landingPageController } from '@src/adapter/http/controllers/landing-page'
 import { Crypto } from '@src/infra/crypto'
 import { routeAll, RouteCollection } from '@src/infra/singeleton/RouteCollection'
-import asesiRoutes from '@src/adapter/http/routes/asesi'
 import asesorRoutes from '@src/adapter/http/routes/asesor'
 import authRoutes from '@src/adapter/http/routes/auth'
-import userRoutes from '@src/adapter/http/routes/user/dashboard'
 import appRoutes from '@src/adapter/http/routes/app'
 import acesRoutes from '@src/adapter/http/routes/aces'
-import moduleRoutes from '@src/adapter/http/routes/module'
 
 const app = new Hono()
 
@@ -33,12 +30,9 @@ app.post("/logout", async (c: Context) => {
 
 app.route("/app/", appRoutes)
 app.route("/aces/", acesRoutes)
-app.route("/module/", moduleRoutes)
 app.route("/asesor/", asesorRoutes)
 
 app.route("/auth/", authRoutes)
-app.route("/user/", userRoutes)
-app.route("/", asesiRoutes)
 
 app.onError(errorHandlerController)
 

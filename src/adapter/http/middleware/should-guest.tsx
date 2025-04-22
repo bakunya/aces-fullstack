@@ -23,8 +23,7 @@ export async function shouldGuest(c: Context, next: Next) {
 	} as UserTypeCookie<User | Asesi>
 
 	return match(user.type)
-		.with(UserType.INTERNAL_USER, () => c.redirect(route("get.user.dashboard")))
-		.with(UserType.ASESI, () => c.redirect(route("get.dashboard")))
+		.with(UserType.INTERNAL_USER, () => c.redirect(route("get.auth.dashboard")))
 		.otherwise(() => {
 			deleteCookie(c, "token")
 			deleteCookie(c, "batch")
