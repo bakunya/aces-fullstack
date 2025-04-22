@@ -1,5 +1,5 @@
 import { Uuid } from "@src/application/uuid"
-import { Hash } from "@src/application/crypto/Hash"
+import { ICrypt } from "@src/application/crypto/Crypt"
 import { AppError } from "@src/application/error/AppError"
 import { TablePerson } from "@src/infra/databases/d1/dto/tables"
 
@@ -73,12 +73,12 @@ export class PersonDomain {
 		)
 	}
 
-	async hashing(instance: Hash) {
-		this.hash = await instance.hash(this.hash)
+	async hashing(instance: ICrypt) {
+		this.hash = await instance.encrypt(this.hash)
 	}
 
-	async compare(instance: Hash, plain: string) {
-		return await instance.compare(plain, this.hash)
+	async compare(instance: ICrypt, plain: string) {
+		return (await instance.decrypt(plain)) === this.hash
 	}
 
 	setNewId(instance: Uuid) {

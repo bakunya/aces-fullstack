@@ -1,3 +1,5 @@
+import { route } from "@src/infra/singeleton/RouteCollection"
+
 type Props = {
 	persons: {
 		batchId: string,
@@ -51,7 +53,10 @@ export function PersonTable({ persons, shouldShow }: Props) {
 							<td className="px-6 py-4">{ x.gender }</td>
 							<td className="px-6 py-4">
 								<div className="flex gap-2">
-									<button className="btn btn-error btn-sm">Hapus</button>
+									<button 
+										className="btn btn-error btn-sm"
+										hx-delete={ route("delete.aces.hx.batch.batch_id.person.person_id", [x.batchId, x.id!]) }
+									>Hapus</button>
 									<button 
 										className="btn btn-primary btn-sm"
 										x-on:click={`setPerson('${JSON.stringify(x)}')`}

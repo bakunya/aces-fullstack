@@ -1,5 +1,5 @@
 import { PersonMutationRequest } from "@src/adapter/http/contracts/request/hx-batch-person-mutation";
-import { Hash } from "@src/application/crypto/Hash";
+import { ICrypt } from "@src/application/crypto/Crypt";
 import { AppError } from "@src/application/error/AppError";
 import { BatchRepository } from "@src/application/repositories/BatchRepository";
 import { PersonRepository } from "@src/application/repositories/PersonRepository";
@@ -10,16 +10,16 @@ export class PersonMutationUsecase {
 	constructor(
 		private readonly personRepo: PersonRepository,
 		private readonly batchRepo: BatchRepository,
-		private readonly hash: Hash,
+		private readonly crypt: ICrypt,
 		private readonly uuid: Uuid
 	) { }
 
 	static create(
 		personRepo: PersonRepository,
 		batchRepo: BatchRepository,
-		hash: Hash,
+		crypt: ICrypt,
 		uuid: Uuid
-	) { return new PersonMutationUsecase(personRepo, batchRepo, hash, uuid) }
+	) { return new PersonMutationUsecase(personRepo, batchRepo, crypt, uuid) }
 
 	async execute(batchId: string, personData: PersonMutationRequest) {
 		if (Boolean(personData.person_id.trim())) {
@@ -34,7 +34,7 @@ export class PersonMutationUsecase {
 				hash: personData.person_password.trim(),
 			})
 			if (Boolean(personData.person_password.trim())) {
-				const hashedPassword = await this.hash.hash(personData.person_password)
+				const hashedPassword = await this.crypt.encrypt(personData.person_password)
 				personDomain.hash = hashedPassword
 			}
 			await this.personRepo.updateOne(personDomain)
@@ -55,7 +55,7 @@ export class PersonMutationUsecase {
 			domain.isValidEmail()
 			domain.setNewId(this.uuid)
 			domain.serializeGender()
-			await domain.hashing(this.hash)
+			await domain.hashing(this.crypt)
 			await this.personRepo.createOne(domain)
 		}
 	}

@@ -22,6 +22,7 @@ import { acesGetPersonTableController } from "@src/adapter/http/controllers/aces
 import { acesGetPersonMutationFormController } from "@src/adapter/http/controllers/aces-get-person-mutation-form";
 import { acesGetUploaderTableController } from "@src/adapter/http/controllers/aces-get-person-uploader";
 import { acesGetUploaderManagementController } from "@src/adapter/http/controllers/aces-get-person-management";
+import { acesDeleteBatchPersonController } from "@src/adapter/http/controllers/aces-delete-batch-person";
 
 const acesRoutes = new Hono()
 
@@ -44,6 +45,7 @@ acesRoutes.delete("hx/batch/:batch_id/module/:module_id", batchHxDeleteBatchModu
 acesRoutes.get("hx/batch/:batch_id/batch_module_table", acesGetBatchModuleTableController)
 acesRoutes.get("hx/batch/:batch_id/form_add_batch_module", acesGetFormAddBatchModuleController)
 acesRoutes.post("hx/batch/:batch_id/person", acesCreateBatchPersonController)
+acesRoutes.delete("hx/batch/:batch_id/person/:person_id", acesDeleteBatchPersonController)
 acesRoutes.put("hx/batch/:batch_id/person", hxBatchPersonMutationController)
 acesRoutes.get("hx/batch/:batch_id/person_table", acesGetPersonTableController)
 acesRoutes.get("hx/batch/:batch_id/person_uploader", acesGetUploaderTableController)

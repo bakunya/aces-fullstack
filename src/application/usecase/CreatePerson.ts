@@ -1,5 +1,5 @@
 import { PersonRequest } from "@src/adapter/http/contracts/request/hx-create-person"
-import { Hash } from "@src/application/crypto/Hash"
+import { ICrypt } from "@src/application/crypto/Crypt"
 import { AppError } from "@src/application/error/AppError"
 import { BatchRepository } from "@src/application/repositories/BatchRepository"
 import { PersonRepository } from "@src/application/repositories/PersonRepository"
@@ -10,17 +10,17 @@ export class CreatePersonUsecase {
 	constructor(
 		private readonly personRepository: PersonRepository,
 		private readonly batchRepo: BatchRepository,
-		private readonly hash: Hash,
+		private readonly crypt: ICrypt,
 		private readonly uuid: Uuid,
 	) {}
 
 	static create(
 		personRepository: PersonRepository,
 		batchRepo: BatchRepository,
-		hash: Hash,
+		crypt: ICrypt,
 		uuid: Uuid,
 	): CreatePersonUsecase {
-		return new CreatePersonUsecase(personRepository, batchRepo, hash, uuid)
+		return new CreatePersonUsecase(personRepository, batchRepo, crypt, uuid)
 	}
 
 	async execute(batchId: string, persons: PersonRequest[]): Promise<void> {
@@ -42,7 +42,7 @@ export class CreatePersonUsecase {
 			domain.isValidEmail()
 			domain.setNewId(this.uuid)
 			domain.serializeGender()
-			await domain.hashing(this.hash)
+			await domain.hashing(this.crypt)
 			personDomains.push(domain)
 		}
 		await this.personRepository.insertMany(personDomains)

@@ -1,7 +1,7 @@
 import { ulidFactory } from "ulid-workers"
 import { Context } from "@src/adapter/http/contracts/binding"
 import { PersonRepositoryImpl } from "@src/infra/databases/d1/repositories/PersonRepositoryImpl"
-import { HashImpl } from "@src/infra/crypto/HashImpl"
+import { Crypto } from "@src/infra/crypto"
 import { UuidImpl } from "@src/infra/utils/Uuid"
 import { BatchRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchRepositoryImpl"
 import { HxPersonMutationRequestUrlParam, PersonMutationRequest } from "@src/adapter/http/contracts/request/hx-batch-person-mutation"
@@ -16,7 +16,7 @@ export async function hxBatchPersonMutationController(c: Context) {
 	const usecase = PersonMutationUsecase.create(
 		PersonRepositoryImpl.create(c.env.DB),
 		BatchRepositoryImpl.create(c.env.DB),
-		HashImpl.create(),
+		Crypto.create(crypto.subtle, c.env.SUBTLE_PRIVATE_KEY), 
 		UuidImpl.create(ulidFactory())
 	)
 	await usecase.execute(batchID, body)

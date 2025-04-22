@@ -12,6 +12,10 @@ export class Crypto implements ICrypt {
 
 	constructor(private readonly subtle: SubtleCrypto, private readonly encryptKey?: string) { }
 
+	static create(subtle: SubtleCrypto, encryptKey?: string): Crypto {
+		return new Crypto(subtle, encryptKey)
+	}
+
 	async encrypt<T>(raw: T): Promise<string> {
 		if (!this.encryptKey) {
 			throw AppError.crypto("Encrypt key not found");

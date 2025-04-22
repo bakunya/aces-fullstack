@@ -2,7 +2,7 @@ import { Context } from "@src/adapter/http/contracts/binding"
 import { BodyRequest, HxCreatePersonUrlParam, PersonRequest } from "@src/adapter/http/contracts/request/hx-create-person"
 import { CreatePersonUsecase } from "@src/application/usecase/CreatePerson"
 import { PersonRepositoryImpl } from "@src/infra/databases/d1/repositories/PersonRepositoryImpl"
-import { HashImpl } from "@src/infra/crypto/HashImpl"
+import { Crypto } from "@src/infra/crypto"
 import { UuidImpl } from "@src/infra/utils/Uuid"
 import { ulidFactory } from "ulid-workers"
 import { BatchRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchRepositoryImpl"
@@ -17,7 +17,7 @@ export async function acesCreateBatchPersonController(c: Context) {
 	const usecase = CreatePersonUsecase.create(
 		PersonRepositoryImpl.create(c.env.DB), 
 		BatchRepositoryImpl.create(c.env.DB),
-		HashImpl.create(), 
+		Crypto.create(crypto.subtle, c.env.SUBTLE_PRIVATE_KEY), 
 		UuidImpl.create(ulidFactory())
 	)
 	await usecase.execute(batchID, persons)

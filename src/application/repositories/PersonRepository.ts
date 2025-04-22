@@ -7,4 +7,5 @@ export interface PersonRepository {
 	createOne(person: PersonDomain): Promise<void>;
 	getCountByBatchId(batchId: string): Promise<number>;
 	getUniqueInBatch(batch_uuid: string, username: string, email: string): Promise<PersonDomain | undefined>
+	deletePersonInBatch(personId: string, batchId: string): Promise<void>;
 }

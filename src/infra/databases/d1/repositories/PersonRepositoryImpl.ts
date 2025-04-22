@@ -95,4 +95,9 @@ export class PersonRepositoryImpl implements PersonRepository {
 		if (!data) return undefined;
 		return PersonDomain.fromRow(data)
 	}
+
+	async deletePersonInBatch(personId: string, batchId: string): Promise<void> {
+		await this.db.prepare(`DELETE FROM persons WHERE uuid = ? AND batch_uuid = ?`)
+			.bind(personId, batchId).run()
+	}
 }
