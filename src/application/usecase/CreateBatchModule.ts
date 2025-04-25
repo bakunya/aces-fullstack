@@ -1,19 +1,23 @@
 import { HxCreateBatchModule } from "@src/adapter/http/contracts/request/hx-create-batch-module";
 import { AppError } from "@src/application/error/AppError";
 import { BatchModuleDetail, BatchModuleRepository, InsertOneData } from "@src/application/repositories/BatchModuleRepository";
+import { RegroupRepository } from "@src/application/repositories/RegroupRepository";
+import { IUsecase } from "@src/application/usecase-interface/IUsecase";
 import { Uuid } from "@src/application/uuid";
 
-export class CreateBatchModuleUsecase {
+export class CreateBatchModuleUsecase implements IUsecase<[string, HxCreateBatchModule], void> {
 	constructor(
 		private readonly batchModuleRepository: BatchModuleRepository, // Replace with actual type
 		private readonly uuid: Uuid, // Replace with actual type
+		private readonly regroupRepo: RegroupRepository
 	) {}
 
 	static create(
 		batchModuleRepository: BatchModuleRepository,
 		uuid: Uuid,
+		regroupRepo: RegroupRepository,
 	): CreateBatchModuleUsecase {
-		return new CreateBatchModuleUsecase(batchModuleRepository, uuid);
+		return new CreateBatchModuleUsecase(batchModuleRepository, uuid, regroupRepo);
 	}
 
 	async execute(batchId: string, body: HxCreateBatchModule) {
@@ -34,7 +38,11 @@ export class CreateBatchModuleUsecase {
 			batch_uuid: batchId,
 			module_uuid: body.module,
 		}
-		await this.batchModuleRepository.insertOne(insertOneData)
+
+		await Promise.allSettled([
+			this.batchModuleRepository.insertOne(insertOneData),
+			this.regroupRepo.setShouldRegroup(batchId),
+		])
 		
 	}
 

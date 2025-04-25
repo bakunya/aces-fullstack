@@ -3,15 +3,18 @@ import { ICrypt } from "@src/application/crypto/Crypt"
 import { AppError } from "@src/application/error/AppError"
 import { BatchRepository } from "@src/application/repositories/BatchRepository"
 import { PersonRepository } from "@src/application/repositories/PersonRepository"
+import { RegroupRepository } from "@src/application/repositories/RegroupRepository"
+import { IUsecase } from "@src/application/usecase-interface/IUsecase"
 import { Uuid } from "@src/application/uuid"
 import { PersonDomain } from "@src/domain/Person"
 
-export class CreatePersonUsecase {
+export class CreatePersonUsecase implements IUsecase<[string, PersonRequest[]], void> {
 	constructor(
 		private readonly personRepository: PersonRepository,
 		private readonly batchRepo: BatchRepository,
 		private readonly crypt: ICrypt,
 		private readonly uuid: Uuid,
+		private readonly regroupRepo: RegroupRepository,
 	) {}
 
 	static create(
@@ -19,8 +22,9 @@ export class CreatePersonUsecase {
 		batchRepo: BatchRepository,
 		crypt: ICrypt,
 		uuid: Uuid,
+		regroupRepo: RegroupRepository,
 	): CreatePersonUsecase {
-		return new CreatePersonUsecase(personRepository, batchRepo, crypt, uuid)
+		return new CreatePersonUsecase(personRepository, batchRepo, crypt, uuid, regroupRepo)
 	}
 
 	async execute(batchId: string, persons: PersonRequest[]): Promise<void> {
@@ -45,6 +49,10 @@ export class CreatePersonUsecase {
 			await domain.hashing(this.crypt)
 			personDomains.push(domain)
 		}
-		await this.personRepository.insertMany(personDomains)
+
+		await Promise.allSettled([
+			this.personRepository.insertMany(personDomains),
+			this.regroupRepo.setShouldRegroup(batchId),
+		])
 	}
 }

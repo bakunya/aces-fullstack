@@ -1,6 +1,6 @@
 -- Migration number: 0011 	 2025-02-26T03:27:51.298Z
 CREATE TABLE user_hashes (
-    [uuid] TEXT PRIMARY KEY,
+    [user_uuid] TEXT PRIMARY KEY,
     [hash] TEXT NOT NULL,
     [created] TEXT NOT NULL DEFAULT ((strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc'))),
     [updated] TEXT
@@ -8,10 +8,10 @@ CREATE TABLE user_hashes (
 
 CREATE TRIGGER update_user_hashes AFTER UPDATE ON user_hashes
 BEGIN
-    UPDATE user_hashes SET updated = (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')) WHERE uuid=NEW.uuid;
+    UPDATE user_hashes SET updated = (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')) WHERE user_uuid=NEW.user_uuid;
 END;
 
-INSERT INTO user_hashes (uuid, hash) VALUES
+INSERT INTO user_hashes (user_uuid, hash) VALUES
 ('3176512d-34f1-4120-8437-487c9e05f12f', '$2a$12$U/VHyJ.psOG2mDBpD.Ja1OuviwCBj8FEeBzbBd3QNSU/dg92tF9LS'),
 ('c38878cf-ff6e-45c7-8f5e-66f784f1902e', '$2a$12$U/VHyJ.psOG2mDBpD.Ja1OuviwCBj8FEeBzbBd3QNSU/dg92tF9LS'),
 ('52d3ca31-6580-42c2-e11c-82e2493ab851', '$2a$12$U/VHyJ.psOG2mDBpD.Ja1OuviwCBj8FEeBzbBd3QNSU/dg92tF9LS'),

@@ -5,6 +5,4 @@ export type ModuleGetAll = {
 	description: string
 	category: string
 	status: number
-	developer_uuid: string
-	developer_name: string
 }

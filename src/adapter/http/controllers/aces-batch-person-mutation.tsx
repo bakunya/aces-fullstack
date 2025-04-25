@@ -7,6 +7,7 @@ import { BatchRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchR
 import { HxPersonMutationRequestUrlParam, PersonMutationRequest } from "@src/adapter/http/contracts/request/hx-batch-person-mutation"
 import { PersonMutationUsecase } from "@src/application/usecase/PersonMutation"
 import { HTMX_EVENTS } from "@src/adapter/constant/htmx-events"
+import { RegroupRepositoryImpl } from "@src/infra/databases/d1/repositories/RegroupRepositoryImpl"
 
 
 export async function hxBatchPersonMutationController(c: Context) {
@@ -17,12 +18,15 @@ export async function hxBatchPersonMutationController(c: Context) {
 		PersonRepositoryImpl.create(c.env.DB),
 		BatchRepositoryImpl.create(c.env.DB),
 		Crypto.create(crypto.subtle, c.env.SUBTLE_PRIVATE_KEY), 
-		UuidImpl.create(ulidFactory())
+		UuidImpl.create(ulidFactory()),
+		RegroupRepositoryImpl.create(c.env.DB)
 	)
+	
 	await usecase.execute(batchID, body)
 
 	const trigger: Record<string, any> = { onSuccess: "Action completed successfully" }
 	trigger[`${HTMX_EVENTS.ACES_BatchPersonMutation}`] = true
+	trigger[`${HTMX_EVENTS.ACES_Regrouping}`] = true
 
 	c.res.headers.set("HX-Trigger", JSON.stringify(trigger))
 

@@ -4,7 +4,6 @@ export enum UserRole {
 	APP = 'APP',
 	ACES = 'ACES',
 	BATCH = 'BATCH',
-	MODULE = 'MODULE',
 	ASSESSOR = 'ASSESSOR',
 }
 
@@ -15,8 +14,6 @@ export class UserRoleMapping {
 				return UserRole.APP
 			case 'ACES':
 				return UserRole.ACES
-			case 'MODULE':
-				return UserRole.MODULE
 			case 'ASSESSOR':
 				return UserRole.ASSESSOR
 			case 'BATCH':
@@ -49,7 +46,6 @@ export class User {
 		role.set(UserRole.APP, userRole?.APP ?? false);
 		role.set(UserRole.ACES, userRole?.ACES ?? false);
 		role.set(UserRole.BATCH, userRole?.BATCH ?? false);
-		role.set(UserRole.MODULE, userRole?.MODULE ?? false);
 		role.set(UserRole.ASSESSOR, userRole?.ASSESSOR ?? false);
 
 		return new User(user.fullname as string, user.username as string, role, user.email as string, user.uuid as string, user.password as string)

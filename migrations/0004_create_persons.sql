@@ -12,9 +12,6 @@ CREATE TABLE persons (
 	[gender] TEXT CHECK (gender IN('perempuan', 'laki-laki')),
 	[nip] TEXT,
     --
-    [case_analysis_assessor_uuid] TEXT,
-    [intray_assessor_uuid] TEXT,
-    [interview_assessor_uuid] TEXT,
     [created] TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')),
 	[updated] TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')),
 	-- UNIQUE (batch_uuid, username, email)
@@ -28,9 +25,6 @@ CREATE INDEX idx_persons_organization_uuid ON persons (organization_uuid);
 CREATE INDEX idx_persons_nip ON persons (nip);
 CREATE INDEX idx_persons_email ON persons (email);
 CREATE INDEX idx_persons_username ON persons (username);
-CREATE INDEX idx_persons_case_analysis_assessor_uuid ON persons (case_analysis_assessor_uuid);
-CREATE INDEX idx_persons_intray_assessor_uuid ON persons (intray_assessor_uuid);
-CREATE INDEX idx_persons_interview_assessor_uuid ON persons (interview_assessor_uuid);
 
 CREATE TRIGGER update_persons AFTER UPDATE ON persons
 BEGIN

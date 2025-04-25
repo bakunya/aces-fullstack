@@ -1,9 +1,10 @@
 import { HxCreateOrganizationRequest } from "@src/adapter/http/contracts/request/hx-create-organization";
 import { OrganizationRepository } from "@src/application/repositories/OrganizationRepository";
+import { IUsecase } from "@src/application/usecase-interface/IUsecase";
 import { Uuid } from "@src/application/uuid";
 import { OrganizationEntity } from "@src/domain/Organization";
 
-export class CreateOrganizationwUsecase {
+export class CreateOrganizationwUsecase implements IUsecase<[HxCreateOrganizationRequest], void> {
 	constructor(private organizationRepository: OrganizationRepository, private uuid: Uuid) { }
 
 	async execute(data: HxCreateOrganizationRequest): Promise<undefined> {

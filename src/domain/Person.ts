@@ -14,9 +14,6 @@ export type PersonDomainValues = {
 	id?: string,
 	batchGroupId?: number,
 	organizationId?: string,
-	intrayAssessorId?: string,
-	interviewAssessorId?: string,
-	caseAnalysisAssessorId?: string,
 }
 
 export class PersonDomain {
@@ -31,9 +28,6 @@ export class PersonDomain {
 		public id?: string,
 		public batchGroupId?: number,
 		public organizationId?: string,
-		public intrayAssessorId?: string,
-		public interviewAssessorId?: string,
-		public caseAnalysisAssessorId?: string,
 	) {}
 
 	static create(data: PersonDomainValues) {
@@ -48,9 +42,6 @@ export class PersonDomain {
 			data.id,
 			data.batchGroupId,
 			data.organizationId,
-			data.intrayAssessorId,
-			data.interviewAssessorId,
-			data.caseAnalysisAssessorId,
 		)
 	}
 
@@ -67,9 +58,6 @@ export class PersonDomain {
 			row.uuid,
 			row.batch_group_id,
 			row.organization_uuid,
-			row.intray_assessor_uuid,
-			row.interview_assessor_uuid,
-			row.case_analysis_assessor_uuid,
 		)
 	}
 

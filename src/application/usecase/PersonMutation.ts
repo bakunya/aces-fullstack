@@ -3,23 +3,27 @@ import { ICrypt } from "@src/application/crypto/Crypt";
 import { AppError } from "@src/application/error/AppError";
 import { BatchRepository } from "@src/application/repositories/BatchRepository";
 import { PersonRepository } from "@src/application/repositories/PersonRepository";
+import { RegroupRepository } from "@src/application/repositories/RegroupRepository";
+import { IUsecase } from "@src/application/usecase-interface/IUsecase";
 import { Uuid } from "@src/application/uuid";
 import { PersonDomain } from "@src/domain/Person";
 
-export class PersonMutationUsecase {
+export class PersonMutationUsecase implements IUsecase<[string, PersonMutationRequest], void> {
 	constructor(
 		private readonly personRepo: PersonRepository,
 		private readonly batchRepo: BatchRepository,
 		private readonly crypt: ICrypt,
-		private readonly uuid: Uuid
+		private readonly uuid: Uuid,
+		private readonly regroupRepo: RegroupRepository
 	) { }
 
 	static create(
 		personRepo: PersonRepository,
 		batchRepo: BatchRepository,
 		crypt: ICrypt,
-		uuid: Uuid
-	) { return new PersonMutationUsecase(personRepo, batchRepo, crypt, uuid) }
+		uuid: Uuid,
+		regroupRepo: RegroupRepository
+	) { return new PersonMutationUsecase(personRepo, batchRepo, crypt, uuid, regroupRepo) }
 
 	async execute(batchId: string, personData: PersonMutationRequest) {
 		if (Boolean(personData.person_id.trim())) {
@@ -56,7 +60,15 @@ export class PersonMutationUsecase {
 			domain.setNewId(this.uuid)
 			domain.serializeGender()
 			await domain.hashing(this.crypt)
-			await this.personRepo.createOne(domain)
+			const res = await Promise.allSettled([
+				this.personRepo.createOne(domain),
+				this.regroupRepo.setShouldRegroup(batchId),
+			])
+			for (const r of res) {
+				if (r.status === "rejected") {
+					throw AppError.database(r.reason, "Failed to create person")
+				}
+			}
 		}
 	}
 }

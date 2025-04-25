@@ -1,13 +1,30 @@
 import { ModuleGetAll } from "@src/application/dto/module-get-all";
 import { BatchModuleRepository } from "@src/application/repositories/BatchModuleRepository";
 import { ModuleRepository } from "@src/application/repositories/ModuleRepository";
+import { IBatchModule } from "@src/application/usecase-interface/IBatchModule";
+import { IUsecase } from "@src/application/usecase-interface/IUsecase";
 import { TableBatchModule } from "@src/infra/databases/d1/dto/tables";
 
-export class GetBatchModuleUsecase {
+export class GetBatchModuleUsecase implements IBatchModule, IUsecase<[string], { modules: Map<string, ModuleGetAll[]>; batchModule: Map<string, (TableBatchModule & { module?: ModuleGetAll })[]> }> {
 	constructor(private readonly batchModuleRepo: BatchModuleRepository, private readonly moduleRepo: ModuleRepository) { }
 
 	static create(batchModuleRepo: BatchModuleRepository, moduleRepo: ModuleRepository) {
 		return new GetBatchModuleUsecase(batchModuleRepo, moduleRepo);
+	}
+
+	async getBatchModules(batchId: string): Promise<(TableBatchModule & { module?: ModuleGetAll })[]> {
+		const [batchModule, modules] = await Promise.all([
+			this.batchModuleRepo.getByBatch(batchId),
+			this.moduleRepo.getAll()
+		])
+		const batchModuleWithModules = batchModule.map(batchModule => {
+			const module = modules.find(module => module.uuid === batchModule.module_uuid)
+			return {
+				...batchModule,
+				module,
+			}
+		})
+		return batchModuleWithModules
 	}
 
 	async execute(batchId: string) {
@@ -15,7 +32,7 @@ export class GetBatchModuleUsecase {
 			this.batchModuleRepo.getByBatch(batchId),
 			this.moduleRepo.getAll()
 		])
-		
+
 		const filteredModules = modules.filter(module => {
 			return !batchModule.find(batchModule => batchModule.module_uuid === module.uuid)
 		})
@@ -29,7 +46,7 @@ export class GetBatchModuleUsecase {
 		})
 
 		const filteredModuleMapByCategory = new Map<string, ModuleGetAll[]>()
-		const batchModuleWithModulesMapByCategory = new Map<string, (TableBatchModule & { module?: ModuleGetAll})[]>()
+		const batchModuleWithModulesMapByCategory = new Map<string, (TableBatchModule & { module?: ModuleGetAll })[]>()
 
 		for (const module of filteredModules) {
 			if (!filteredModuleMapByCategory.has(module.category)) {

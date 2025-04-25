@@ -24,7 +24,10 @@ export function PersonTable({ persons, shouldShow }: Props) {
 				<thead className="text-xs text-gray-700 uppercase bg-gray-50">
 					<tr>
 						<th scope="col" className="px-6 py-3">
-							Nama Peserta
+							No.
+						</th>
+						<th scope="col" className="px-6 py-3">
+							Nama
 						</th>
 						<th scope="col" className="px-6 py-3">
 							NIP
@@ -44,8 +47,9 @@ export function PersonTable({ persons, shouldShow }: Props) {
 					</tr>
 				</thead>
 				<tbody>
-					{ persons.map((x) => (
+					{ persons.map((x, i) => (
 						<tr>
+							<td className="px-6 py-4">{ i + 1 }</td>
 							<td className="px-6 py-4">{ x.name }</td>
 							<td className="px-6 py-4">{ x.nip }</td>
 							<td className="px-6 py-4">{ x.email }</td>

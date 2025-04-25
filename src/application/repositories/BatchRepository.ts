@@ -9,4 +9,5 @@ export interface BatchRepository {
 	getLastBatchToken(): Promise<number>
 	createBatch(batch: CreateBatch): Promise<void>
 	updateTitle(batchId: string, title: string): Promise<void>
+	getBatchIdInSameTimestamp(batchId: string): Promise<{ uuid: string }[]>
 }

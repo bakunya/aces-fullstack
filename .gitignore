@@ -34,3 +34,4 @@ lerna-debug.log*
 .dev.vars
 public
 gaia-tmp
+tmp.ts

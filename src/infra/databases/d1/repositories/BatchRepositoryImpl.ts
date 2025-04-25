@@ -85,4 +85,23 @@ export class BatchRepositoryImpl implements BatchRepository {
 			.bind(title, batchId)
 			.run();
 	}
+
+	async getBatchIdInSameTimestamp(batchId: string) {
+		const stmt = `
+			SELECT DISTINCT CASE WHEN b1.uuid = ? THEN b2.uuid ELSE b1.uuid END AS uuid
+			FROM batches b1
+			JOIN batches b2
+				ON (
+					(DATE(b1.batch_timestamp_start) = DATE(b2.batch_timestamp_start) OR (b1.batch_timestamp_start IS NULL AND b2.batch_timestamp_start IS NULL))
+					AND
+					(DATE(b1.batch_timestamp_end) = DATE(b2.batch_timestamp_end) OR (b1.batch_timestamp_end IS NULL AND b2.batch_timestamp_end IS NULL))
+				)
+				AND b1.uuid != b2.uuid
+			WHERE b1.uuid = ? OR b2.uuid = ?;
+		`
+		return (await this.DB.prepare(stmt)
+			.bind(batchId, batchId, batchId)
+			.all())
+			.results as unknown as { uuid: string }[]
+	}
 }

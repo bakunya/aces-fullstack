@@ -1,7 +1,7 @@
 import { Context } from "@src/adapter/http/contracts/binding"
 import { GetBatchModuleUsecase } from "@src/application/usecase/GetBatchModule"
 import { ModuleRepositoryImpl } from "@src/infra/databases/d1/repositories/ModuleRepositoryImpl"
-import { BatchModuleRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchModuleRepository"
+import { BatchModuleRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchModuleRepositoryImpl"
 import { HxGetFormAddBatchModuleUrlParam } from "@src/adapter/http/contracts/request/hx-get-form-add-batch-module"
 import { FormAddBatchModule } from "@presenter/pages/aces/components/form-add-batch-module"
 

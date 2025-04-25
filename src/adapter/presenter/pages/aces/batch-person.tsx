@@ -12,6 +12,7 @@ interface PageProps {
 		uuid: string;
 		token: string;
 		title: string;
+		regrouping: number;
 		organization_uuid: string;
 		organization_name: string;
 	},
@@ -39,7 +40,14 @@ function Page({ batch, persons }: PageProps) {
 			<BatchManagementHeader batch={ batch } />
 
 			<hr className="border-gray-400 my-8" />
-			<BatchNav batchId={ batch.uuid } />
+			<div
+				hx-get={ route("get.aces.hx.batch.batch_id.batch_navbar", [batch.uuid]) }
+				hx-trigger={`${HTMX_EVENTS.ACES_Regrouping} from:body`}
+				hx-target="this"
+				hx-swap="innerHTML"
+			>
+				<BatchNav batch={ batch } />
+			</div>
 
 			<div
 				className="col-span-8"

@@ -1,5 +1,6 @@
 import { PersonRepository } from "@src/application/repositories/PersonRepository";
 import { PersonDomain } from "@src/domain/Person";
+import { BatchPersonDetailAggregation } from "@src/infra/databases/d1/dto/aggregations";
 import { TablePerson } from "@src/infra/databases/d1/dto/tables";
 
 export class PersonRepositoryImpl implements PersonRepository {
@@ -99,5 +100,30 @@ export class PersonRepositoryImpl implements PersonRepository {
 	async deletePersonInBatch(personId: string, batchId: string): Promise<void> {
 		await this.db.prepare(`DELETE FROM persons WHERE uuid = ? AND batch_uuid = ?`)
 			.bind(personId, batchId).run()
+	}
+
+	async getDetailInBatch(batchId: string): Promise<BatchPersonDetailAggregation[]> {
+		const stm = `
+		SELECT
+			persons.*,
+			organizations.name organization_name,
+			batch_groups.uuid group_uuid,
+			batch_groups.name group_name,
+			batch_groups.assessor_uuid disc_assessor_uuid,
+			user_disc.fullname disc_assessor_name,
+			batch_groupings.face_assessor_user_uuid face_assessor_uuid,
+			user_face.fullname face_assessor_name,
+			batch_groupings.case_assessor_user_uuid case_assessor_uuid,
+			user_case.fullname case_assessor_name
+		FROM persons
+		LEFT JOIN organizations ON persons.organization_uuid=organizations.uuid
+		LEFT JOIN batch_groupings ON persons.uuid=batch_groupings.person_uuid
+		LEFT JOIN batch_groups ON batch_groupings.group_uuid=batch_groups.uuid
+		LEFT JOIN users user_face ON batch_groupings.face_assessor_user_uuid=user_face.uuid
+		LEFT JOIN users user_case ON batch_groupings.case_assessor_user_uuid=user_case.uuid
+		LEFT JOIN users user_disc ON batch_groups.assessor_uuid=user_disc.uuid
+		WHERE persons.batch_uuid=?
+		`
+		return (await this.db.prepare(stm).bind(batchId).all()).results as BatchPersonDetailAggregation[]
 	}
 }

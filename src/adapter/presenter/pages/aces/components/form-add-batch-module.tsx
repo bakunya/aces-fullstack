@@ -3,15 +3,13 @@ import { route } from "@src/infra/singeleton/RouteCollection";
 type Props = {
 	batchId: string
 	availableModulesObject: Record<string, {
-        uuid: string;
-        type: string;
-        title: string;
-        description: string;
-        category: string;
-        status: number;
-        developer_uuid: string;
-        developer_name: string;
-    }[]>,
+		uuid: string
+		type: string
+		title: string
+		description: string
+		category: string
+		status: number
+	}[]>,
 	batchInModulesObject: Record<string, {
         batch_uuid: string;
         module_uuid: string;

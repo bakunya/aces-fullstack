@@ -5,7 +5,6 @@ export type TableUser = {
 	email: string;
 	role_app: number;
 	role_aces: number;
-	role_module: number;
 	role_batch: number;
 	role_assessor: number;
 	created: string;
@@ -23,9 +22,6 @@ export type TablePerson = {
 	hash: string;
 	gender: string;
 	nip: string;
-	case_analysis_assessor_uuid: string;
-	intray_assessor_uuid: string;
-	interview_assessor_uuid: string;
 	created: string;
 	updated: string;
 }
@@ -92,4 +88,56 @@ export type TableBatchModule = {
 	created: string;
 	updated?: string;
 	priority: number;
+}
+
+export interface TableBatchGroup {
+	id: number;
+	batch_uuid: string;
+	assessor_uuid: string | null;
+	name: string;
+	slot1: string | null;
+	slot2: string | null;
+	slot3: string | null;
+	slot4: string | null;
+	created: string;
+	updated: string | null;
+}
+
+export interface TableBatchGrouping {
+	id: number;
+	batch_uuid: string;
+	group_id: string;
+	person_uuid: string;
+	face_assessor_user_uuid: string | null;
+	case_assessor_user_uuid: string | null;
+	created: string;
+	updated: string | null;
+}
+
+export interface TableAssessor {
+	user_uuid: string;
+	ranking: number;
+	university: string;
+	date_of_birth: string;
+	graduation_year: number;
+	phone_number: string;
+	home_address: string;
+	ktp_number: string;
+	npwp_number: string;
+	npwp_name: string;
+	created: string;
+	updated: string | null; // Bisa null jika belum pernah diupdate
+}
+
+export interface TableAssessorBatch {
+	id: number;
+	batch_uuid: string;
+	user_uuid: string;
+	type: string; // face, disc, case
+	slot1: number; // 0, 1
+	slot2: number; // 0, 1
+	slot3: number; // 0, 1
+	slot4: number; // 0, 1
+	created: string; // YYYY-MM-DDTHH:MM:SS.sssZ
+	updated: string | null; // YYYY-MM-DDTHH:MM:SS.sssZ
 }

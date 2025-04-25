@@ -10,7 +10,7 @@ export enum ModuleCategory {
 export class ModuleCategoryMapping {
 	static fromString(category: string): ModuleCategory {
 		try {
-			const x = ModuleCategory[category as keyof typeof ModuleCategory]
+			const x = ModuleCategory[category.toUpperCase() as keyof typeof ModuleCategory]
 			if(!x) throw new Error()
 			return x
 		} catch (_) {

@@ -1,9 +1,10 @@
 import { LoginRequest } from "@src/adapter/http/contracts/request/login";
 import { Hash } from "@src/application/crypto/Hash";
 import { UserRepository } from "@src/application/repositories/UserRepository";
+import { IUsecase } from "@src/application/usecase-interface/IUsecase";
 import { User } from "@src/domain/User";
 
-export class LoginUserUsecase {
+export class LoginUserUsecase implements IUsecase<[LoginRequest], User | undefined> {
 	constructor(
 		private readonly devRepo: UserRepository,
 		private readonly hash: Hash
