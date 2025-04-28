@@ -1,9 +1,12 @@
 import { AssessorRepository } from "@src/application/repositories/AssessorRepository";
 import { ModuleCategory } from "@src/domain/ModuleType";
 import { TableAssessorBatch } from "@src/infra/databases/d1/dto/tables";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class AssessorRepositoryImpl implements AssessorRepository {
-	constructor(private db: D1Database) { }
+export class AssessorRepositoryImpl extends RepositoryImpl implements AssessorRepository {
+	constructor(db: D1Database) {
+		super(db);
+	}
 
 	static create(db: D1Database) {
 		return new AssessorRepositoryImpl(db)

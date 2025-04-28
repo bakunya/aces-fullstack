@@ -1,3 +1,4 @@
+import { Repository } from "@src/application/repositories/Repository";
 import { TableBatchModule } from "@src/infra/databases/d1/dto/tables";
 
 export type BatchModuleDetail = {
@@ -19,7 +20,7 @@ export type InsertOneData = {
 	module_uuid: string
 }
 
-export interface BatchModuleRepository {
+export interface BatchModuleRepository extends Repository {
 	getByBatch(batchId: string): Promise<TableBatchModule[]>
 	getAllDetailByBatch(batchId: string): Promise<BatchModuleDetail[]>
 	insertOne(data: InsertOneData): Promise<void>

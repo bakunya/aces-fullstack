@@ -1,8 +1,11 @@
 import { BatchModuleDetail, InsertOneData , BatchModuleRepository } from "@src/application/repositories/BatchModuleRepository";
 import { TableBatchModule, } from "@src/infra/databases/d1/dto/tables";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class BatchModuleRepositoryImpl implements BatchModuleRepository {
-	constructor(private readonly db: D1Database) {}
+export class BatchModuleRepositoryImpl extends RepositoryImpl implements BatchModuleRepository {
+	constructor(db: D1Database) {
+		super(db)
+	}
 
 	static create(db: D1Database): BatchModuleRepository {
 		return new BatchModuleRepositoryImpl(db);

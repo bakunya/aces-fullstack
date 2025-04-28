@@ -1,8 +1,9 @@
 import { BatchDTO } from "@src/application/dto/batch"
+import { Repository } from "@src/application/repositories/Repository"
 import { BatchAssessment } from "@src/domain/BatchAssessment"
 import { CreateBatch } from "@src/domain/CreateBatch"
 
-export interface BatchRepository {
+export interface BatchRepository extends Repository {
 	getBatchByToken(token: string): Promise<BatchDTO>
 	getBatchById(id: string): Promise<BatchDTO>
 	getAssessmentList(): Promise<BatchAssessment[]>

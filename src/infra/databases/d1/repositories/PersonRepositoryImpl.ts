@@ -2,9 +2,12 @@ import { PersonRepository } from "@src/application/repositories/PersonRepository
 import { PersonDomain } from "@src/domain/Person";
 import { BatchPersonDetailAggregation } from "@src/infra/databases/d1/dto/aggregations";
 import { TablePerson } from "@src/infra/databases/d1/dto/tables";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class PersonRepositoryImpl implements PersonRepository {
-	constructor(public readonly db: D1Database) { }
+export class PersonRepositoryImpl extends RepositoryImpl implements PersonRepository {
+	constructor(db: D1Database) {
+		super(db)
+	}
 
 	static create(db: D1Database): PersonRepositoryImpl {
 		return new PersonRepositoryImpl(db)

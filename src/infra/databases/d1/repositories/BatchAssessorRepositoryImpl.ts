@@ -2,9 +2,12 @@ import { BatchAssessorSlotDataToUpdate } from "@src/adapter/http/contracts/reque
 import { BatchAssessorRepository } from "@src/application/repositories/BatchAssessorRepository";
 import { BatchAssessorDomain } from "@src/domain/BatchAssessor";
 import { ModuleCategory } from "@src/domain/ModuleType";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class BatchAssessorRepositoryImpl implements BatchAssessorRepository {
-	constructor(private readonly db: D1Database) {}
+export class BatchAssessorRepositoryImpl extends RepositoryImpl implements BatchAssessorRepository {
+	constructor(db: D1Database) {
+		super(db)
+	}
 
 	static create(db: D1Database): BatchAssessorRepositoryImpl {
 		return new BatchAssessorRepositoryImpl(db);

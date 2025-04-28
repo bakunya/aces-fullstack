@@ -1,16 +1,19 @@
 import { User, UserRole } from "@src/domain/User";
 import { UserRepository } from "@src/application/repositories/UserRepository";
 import { TableUser, TableUserHash } from "@src/infra/databases/d1/dto/tables";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class UserRepositoryImpl implements UserRepository {
-	constructor(private readonly DB: D1Database) { }
+export class UserRepositoryImpl extends RepositoryImpl implements UserRepository {
+	constructor(db: D1Database) {
+		super(db)
+	}
 
 	static create(DB: D1Database): UserRepository {
 		return new UserRepositoryImpl(DB)
 	}
 
 	async getUser(username: string): Promise<User | undefined> {
-		const data = await this.DB.prepare(`SELECT users.*, user_hashes.hash FROM users JOIN user_hashes ON user_hashes.user_uuid = users.uuid WHERE email = ?`)
+		const data = await this.db.prepare(`SELECT users.*, user_hashes.hash FROM users JOIN user_hashes ON user_hashes.user_uuid = users.uuid WHERE email = ?`)
 			.bind(username)
 			.first() as unknown as TableUser & TableUserHash;
 

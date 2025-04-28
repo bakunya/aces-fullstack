@@ -1,7 +1,8 @@
+import { Repository } from "@src/application/repositories/Repository";
 import { PersonDomain } from "@src/domain/Person";
 import { BatchPersonDetailAggregation } from "@src/infra/databases/d1/dto/aggregations";
 
-export interface PersonRepository {
+export interface PersonRepository extends Repository {
 	insertMany(persons: PersonDomain[]): Promise<void>;
 	getByBatchId(batchId: string): Promise<PersonDomain[]>;
 	updateOne(person: PersonDomain): Promise<void>;

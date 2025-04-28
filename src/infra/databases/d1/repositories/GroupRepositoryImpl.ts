@@ -1,8 +1,11 @@
 import { GroupRepository } from "@src/application/repositories/GroupRepository";
 import { BatchGroupDetailAggregation, RawGroupAllocation } from "@src/infra/databases/d1/dto/aggregations";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class GroupRepositoryImpl implements GroupRepository {
-	constructor(private db: D1Database) { }
+export class GroupRepositoryImpl extends RepositoryImpl implements GroupRepository {
+	constructor(db: D1Database) {
+		super(db)
+	}
 
 	static create(db: D1Database) {
 		return new GroupRepositoryImpl(db)

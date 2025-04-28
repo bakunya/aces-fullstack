@@ -1,9 +1,10 @@
 import { RegroupRepository } from "@src/application/repositories/RegroupRepository";
 import { ICreateGroupReturn, ICreateGroupingReturn } from "@src/application/usecase-interface/IBatchRegroup";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class RegroupRepositoryImpl implements RegroupRepository {
-	constructor(private readonly db: D1Database) {
-		this.db = db;
+export class RegroupRepositoryImpl extends RepositoryImpl implements RegroupRepository {
+	constructor(db: D1Database) {
+		super(db);
 	}
 
 	static create(db: D1Database): RegroupRepositoryImpl {

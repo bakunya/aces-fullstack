@@ -1,6 +1,7 @@
+import { Repository } from "@src/application/repositories/Repository";
 import { ModuleCategory } from "@src/domain/ModuleType";
 
-export interface GroupingRepository {
+export interface GroupingRepository extends Repository {
 	getUnallocated(batchId: string, type: ModuleCategory, groupPositionIds: string[][]): Promise<{ group_id: string; person_uuid: string }[]>
 	allocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string }[]): Promise<void>
 	unAllocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string; }[]): Promise<void>

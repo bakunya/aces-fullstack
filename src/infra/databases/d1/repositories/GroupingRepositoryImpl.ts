@@ -1,8 +1,11 @@
 import { GroupingRepository } from "@src/application/repositories/GroupingRepository";
 import { ModuleCategory } from "@src/domain/ModuleType";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class GroupingRepositoryImpl implements GroupingRepository {
-	constructor(private db: D1Database) { }
+export class GroupingRepositoryImpl extends RepositoryImpl implements GroupingRepository {
+	constructor(db: D1Database) {
+		super(db)
+	}
 
 	static create(db: D1Database) {
 		return new GroupingRepositoryImpl(db)

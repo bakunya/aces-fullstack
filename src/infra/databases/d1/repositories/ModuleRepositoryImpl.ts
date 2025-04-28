@@ -3,9 +3,12 @@ import { ModuleRepository } from "@src/application/repositories/ModuleRepository
 import { TableModule, TableModuleType, TableUser } from "@src/infra/databases/d1/dto/tables";
 import { ModuleJoinModuleType } from "@src/infra/databases/d1/dto/aggregations";
 import { ModuleGetAll } from "@src/application/dto/module-get-all";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class ModuleRepositoryImpl implements ModuleRepository {
-	constructor(private readonly db: D1Database) { }
+export class ModuleRepositoryImpl extends RepositoryImpl implements ModuleRepository {
+	constructor(db: D1Database) {
+		super(db)
+	}
 
 	static create(db: D1Database): ModuleRepository {
 		return new ModuleRepositoryImpl(db)

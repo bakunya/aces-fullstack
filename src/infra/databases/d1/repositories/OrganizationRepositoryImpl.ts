@@ -2,9 +2,12 @@ import { AppError } from "@src/application/error/AppError";
 import { OrganizationRepository } from "@src/application/repositories/OrganizationRepository";
 import { OrganizationEntity } from "@src/domain/Organization";
 import { TableOrganization } from "@src/infra/databases/d1/dto/tables";
+import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
-export class OrganizationRepositoryImpl implements OrganizationRepository {
-	constructor(private readonly db: D1Database) { }
+export class OrganizationRepositoryImpl extends RepositoryImpl implements OrganizationRepository {
+	constructor(db: D1Database) {
+		super(db)
+	}
 
 	async create(data: OrganizationEntity): Promise<undefined> {
 		try {
