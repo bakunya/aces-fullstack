@@ -2,6 +2,7 @@ import { BatchAssessorRepository } from "@src/application/repositories/BatchAsse
 import { GroupingRepository } from "@src/application/repositories/GroupingRepository";
 import { ModuleCategory, ModuleCategoryMapping } from "@src/domain/ModuleType";
 import { IUsecase } from "@src/application/usecase-interface/IUsecase";
+import { AppError } from "@src/application/error/AppError";
 
 export class UnallocateAssessorUsecase implements IUsecase<[string, string, string], void> {
 	constructor(
@@ -27,10 +28,20 @@ export class UnallocateAssessorUsecase implements IUsecase<[string, string, stri
 
 	async execute(batchId: string, assessorId: string, typeRaw: string): Promise<void> {
 		const type = ModuleCategoryMapping.fromString(typeRaw);
-		if (type === ModuleCategory.DISC) {
-			await this.unallocateGroup(batchId, assessorId);
-		} else if (type === ModuleCategory.CASE || type === ModuleCategory.FACE) {
-			await this.unallocateGroupings(batchId, assessorId, type);
+		
+		try {
+			await this.batchAssessorRepo.begin();
+
+			if (type === ModuleCategory.DISC) {
+				await this.unallocateGroup(batchId, assessorId);
+			} else if (type === ModuleCategory.CASE || type === ModuleCategory.FACE) {
+				await this.unallocateGroupings(batchId, assessorId, type);
+			}
+
+			await this.batchAssessorRepo.commit();
+		} catch (err: any) {
+			await this.batchAssessorRepo.rollback();
+			throw AppError.unknown(err.message, "Internal Server Error");
 		}
 	}
 }

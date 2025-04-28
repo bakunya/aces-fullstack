@@ -1,3 +1,4 @@
+import { AppError } from "@src/application/error/AppError";
 import { BatchAssessorRepository } from "@src/application/repositories/BatchAssessorRepository";
 import { GroupingRepository } from "@src/application/repositories/GroupingRepository";
 import { GroupRepository } from "@src/application/repositories/GroupRepository";
@@ -59,13 +60,22 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 	async execute(batchId: string, userId: string, type: string) {
 		const category = ModuleCategoryMapping.fromString(type);
 		
-		const batchAssessor = BatchAssessorDomain.create(batchId, userId, type);
-		await this.batchAssessorRepo.allocate(batchAssessor);
-		
-		if(category === ModuleCategory.DISC) {
-			await this.allocateGroupAssessor(userId, batchId, category);
-		} else if(category === ModuleCategory.FACE || category === ModuleCategory.CASE) {
-			await this.allocateGroupingAssessor(userId, batchId, category);
+		try {
+			await this.groupRepo.begin();
+
+			const batchAssessor = BatchAssessorDomain.create(batchId, userId, type);
+			await this.batchAssessorRepo.allocate(batchAssessor);
+			
+			if(category === ModuleCategory.DISC) {
+				await this.allocateGroupAssessor(userId, batchId, category);
+			} else if(category === ModuleCategory.FACE || category === ModuleCategory.CASE) {
+				await this.allocateGroupingAssessor(userId, batchId, category);
+			}
+
+			await this.groupRepo.commit();
+		} catch (err: any) {
+			await this.groupRepo.rollback();
+			throw AppError.unknown(err.message, "Internal Server Error")
 		}
 	}
 }
