@@ -8,4 +8,5 @@ export interface GroupRepository extends Repository {
 	unAllocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[]): Promise<void>
 	getAllocated(batchId: string, assessorId: string): Promise<RawGroupAllocation[]>
 	getDetail(batchId: string): Promise<BatchGroupDetailAggregation[]>
+	manualPair(batchId: string, groupId: string, assessorId: string): Promise<void>
 }

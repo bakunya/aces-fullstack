@@ -9,4 +9,12 @@ export interface IAllocateAssessor {
 	 * @returns group_id[] 
 	 */
 	getGroupPosition(type: ModuleCategory, groups: RawGroupAllocation[]): string[][]
+
+	/**
+	 * 
+	 * @param type 
+	 * @param groups
+	 * @returns {  [slot: number]: group_id[] }  
+	 */
+	getGroupPositionAsObject(type: ModuleCategory, groups: RawGroupAllocation[]): Record<number, string[]>
 }

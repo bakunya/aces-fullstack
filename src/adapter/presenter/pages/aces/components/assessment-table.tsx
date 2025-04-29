@@ -6,7 +6,7 @@ interface AssessmentTableProps {
 		token: string,
 		title: string,
 		organization_name: string,
-		batch_timestamp_start?: string,
+		batch_time_start?: string,
 	}[]
 }
 
@@ -38,7 +38,7 @@ export function AssessmentTable({ assessment }: AssessmentTableProps) {
 						<td className="px-6 py-4">{ x.organization_name }</td>
 						<td className="px-6 py-4">{ x.title }</td>
 						<td className="px-6 py-4">{ x.token }</td>
-						<td className="px-6 py-4">{ x.batch_timestamp_start ?? "-" }</td>
+						<td className="px-6 py-4">{ x.batch_time_start ?? "-" }</td>
 						<td className="px-6 py-4">
 							<a href={ route("get.aces.batch.batch_id", [x.uuid]) } className="text-xs cursor-pointer px-4 py-2 bg-teal-600 text-white rounded-md">Detail</a>
 							<button className="ml-2 text-xs cursor-pointer px-4 py-2 bg-red-600 text-white rounded-md">Hapus</button>

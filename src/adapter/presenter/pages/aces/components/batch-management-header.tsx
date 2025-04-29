@@ -45,7 +45,7 @@ export function BatchManagementHeader({ batch }: Props) {
 								id="title"
 								name="title"
 								value={ batch.title }
-								className="mt-1 block w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+								className="mt-1 input w-full"
 							/>
 						</div>
 					</form>
@@ -53,11 +53,11 @@ export function BatchManagementHeader({ batch }: Props) {
 						<button
 							type="submit"
 							form="modal-update-batch-form"
-							class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+							class="btn btn-neutral"
 						>Simpan</button>
 						<form method="dialog">
-							<button
-								class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
+							<button 
+								class="btn"
 							>Close</button>
 						</form>
 					</div>

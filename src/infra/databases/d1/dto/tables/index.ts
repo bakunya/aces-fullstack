@@ -34,16 +34,16 @@ export type TableBatch = {
 	split: number;
 	status: number;
 	regrouping: number;
-	time1?: string;
-	time2?: string;
-	time3?: string;
-	time4?: string;
+	time1_start?: string;
+	time2_start?: string;
+	time3_start?: string;
+	time4_start?: string;
 	time1_end?: string;
 	time2_end?: string;
 	time3_end?: string;
 	time4_end?: string;
-	batch_timestamp_start?: string;
-	batch_timestamp_end?: string;
+	batch_time_start?: string;
+	batch_time_end?: string;
 	created: string;
 	updated?: string;
 }
@@ -116,15 +116,15 @@ export interface TableBatchGrouping {
 
 export interface TableAssessor {
 	user_uuid: string;
-	ranking: number;
-	university: string;
-	date_of_birth: string;
-	graduation_year: number;
-	phone_number: string;
-	home_address: string;
-	ktp_number: string;
-	npwp_number: string;
-	npwp_name: string;
+	ranking?: number;
+	university?: string;
+	date_of_birth?: string;
+	graduation_year?: number;
+	phone_number?: string;
+	home_address?: string;
+	ktp_number?: string;
+	npwp_number?: string;
+	npwp_name?: string;
 	created: string;
 	updated: string | null; // Bisa null jika belum pernah diupdate
 }

@@ -49,15 +49,15 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 				batches.token,
 				batches.title,
 				organizations.name,
-				batches.batch_timestamp_start 
+				batches.batch_time_start 
 			FROM batches 
 			JOIN organizations ON batches.organization_uuid = organizations.uuid
-			ORDER BY batches.batch_timestamp_start DESC
+			ORDER BY batches.batch_time_start DESC
 			`)
 			.all())
 			.results as unknown as BatchJoinOrganization[];
 
-		return data.map(item => BatchAssessment.create(item.uuid, item.token, item.title, item.name, item.batch_timestamp_start))
+		return data.map(item => BatchAssessment.create(item.uuid, item.token, item.title, item.name, item.batch_time_start))
 	}
 
 	async getLastBatchToken(): Promise<number> {
@@ -95,9 +95,9 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 			FROM batches b1
 			JOIN batches b2
 				ON (
-					(DATE(b1.batch_timestamp_start) = DATE(b2.batch_timestamp_start) OR (b1.batch_timestamp_start IS NULL AND b2.batch_timestamp_start IS NULL))
+					(DATE(b1.batch_time_start) = DATE(b2.batch_time_start) OR (b1.batch_time_start IS NULL AND b2.batch_time_start IS NULL))
 					AND
-					(DATE(b1.batch_timestamp_end) = DATE(b2.batch_timestamp_end) OR (b1.batch_timestamp_end IS NULL AND b2.batch_timestamp_end IS NULL))
+					(DATE(b1.batch_time_end) = DATE(b2.batch_time_end) OR (b1.batch_time_end IS NULL AND b2.batch_time_end IS NULL))
 				)
 				AND b1.uuid != b2.uuid
 			WHERE b1.uuid = ? OR b2.uuid = ?;
@@ -106,5 +106,14 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 			.bind(batchId, batchId, batchId)
 			.all())
 			.results as unknown as { uuid: string }[]
+	}
+
+	async updateTime(batchId: string, timeType: string, timeStart: string, timeEnd: string): Promise<void> {
+		const timeStartColumn = `${timeType}_start`
+		const timeEndColumn = `${timeType}_end`
+
+		await this.db.prepare(`UPDATE batches SET ${timeStartColumn} = ?, ${timeEndColumn} = ? WHERE uuid = ?`)
+			.bind(timeStart, timeEnd, batchId)
+			.run()
 	}
 }

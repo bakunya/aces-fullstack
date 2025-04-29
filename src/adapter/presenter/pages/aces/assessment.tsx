@@ -8,7 +8,7 @@ interface PageProps {
 		token: string,
 		title: string,
 		organization_name: string,
-		batch_timestamp_start?: string,
+		batch_time_start?: string,
 	}[]
 }
 

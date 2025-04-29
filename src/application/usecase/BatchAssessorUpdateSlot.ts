@@ -62,7 +62,7 @@ export class BatchAssessorUpdateSlotUsecase implements IUsecase<[BatchAssessorSl
 			await this.groupingRepo.unAllocateAssessorInAllSlot(data.assessorId, data.batchId, type, allocated)
 		} else if (type === ModuleCategory.DISC) {
 			const allocated = await this.groupRepo.getAllocated(data.batchId, data.assessorId)
-			const groupPositions = this.allocateAssessorUsecase.getGroupPosition(type, allocated)[slotPosition - 1].pop()
+			const groupPositions = this.allocateAssessorUsecase.getGroupPositionAsObject(type, allocated)?.[slotPosition]?.pop?.()
 			if (!groupPositions) return
 			await this.groupRepo.unAllocateAssessorInAllSlot(data.assessorId, data.batchId, [{ group_uuid: groupPositions }])
 		}

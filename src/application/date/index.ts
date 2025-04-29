@@ -1,5 +1,5 @@
 export interface Date {
 	now(): string
-	from(date: string): string
+	convert(date: string, fromTimezone: string, toTimezone: string, format?: string | null): string
 	to(utcString: string, format?: string | null, timezone?: string): string
 }

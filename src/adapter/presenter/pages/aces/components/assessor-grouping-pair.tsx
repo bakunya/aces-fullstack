@@ -1,0 +1,73 @@
+import { ModuleCategory } from "@src/domain/ModuleType"
+import { BatchAssessorDetailAggregation, BatchGroupingDetailAggregation } from "@src/infra/databases/d1/dto/aggregations"
+import { route } from "@src/infra/singeleton/RouteCollection"
+
+type AssessorDiscPair = {
+	groupings: Record<number, BatchGroupingDetailAggregation[]>,
+	assessors: BatchAssessorDetailAggregation[]
+	type: ModuleCategory.CASE | ModuleCategory.FACE
+}
+
+export function AssessorGroupingPair({ groupings, assessors, type }: AssessorDiscPair) {
+	const shouldRender = Object.values(groupings).some(x => x.length > 0)
+	if (!shouldRender) return null
+
+	const assessorByAvailability = [
+		assessors.filter(x => x.slot1 === 1),
+		assessors.filter(x => x.slot2 === 1),
+		assessors.filter(x => x.slot3 === 1),
+		assessors.filter(x => x.slot4 === 1),
+	]
+
+	return (
+		<>
+			<h1 class="mt-12 mb-5 font-semibold capitalize">Pemasangan Asesor { type.toLocaleLowerCase() }</h1>
+			{ Object.entries(groupings).map(([key, val]) => (
+				<>
+					<div class="overflow-x-auto my-5">
+						<table class="table">
+							<thead class="bg-gray-300 text-gray-500">
+								<tr>
+									<th colspan={ 3 } class="capitalize">Assessor { type.toLocaleLowerCase() } Group { key }</th>
+								</tr>
+								<tr>
+									<th>Slot</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							{ val.map((x) => (
+								<tr class="hover:bg-gray-200">
+									<td class="p-3">
+										{ x.person_name }
+									</td>
+									<td className="p-3">
+										<select
+											class="select"
+											name="assessor_id"
+											id={ `id-${type}-${x.batch_groupings_id}` }
+											hx-swap="none"
+											hx-trigger="change"
+											hx-include={ `#id-${type}-${x.batch_groupings_id}[name=assessor_id]` }
+											hx-put={ route("put.aces.hx.batch.batch_id.manual_pair.grouping.grouping_id.type.type", [x.batch_uuid, x.batch_groupings_id, type]) }
+										>
+											<option value="">---------</option>
+											{ assessorByAvailability[Number(key) - 1]?.map?.(y => (
+												<option
+													value={ y.user_uuid }
+													selected={ y.user_uuid === x[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] }
+													disabled={ Boolean(val.find(z => z[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] === y.user_uuid)) }
+												>
+													{ y.user_fullname }
+												</option>
+											)) }
+										</select>
+									</td>
+								</tr>
+							)) }
+						</table>
+					</div >
+				</>
+			)) }
+		</>
+	)
+}

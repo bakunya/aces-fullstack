@@ -25,4 +25,5 @@ export interface BatchModuleRepository extends Repository {
 	getAllDetailByBatch(batchId: string): Promise<BatchModuleDetail[]>
 	insertOne(data: InsertOneData): Promise<void>
 	deleteOne(uuid: string): Promise<void>
+	getOne(batchId: string, moduleId: string): Promise<BatchModuleDetail | null>
 }

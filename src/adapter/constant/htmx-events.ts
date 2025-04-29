@@ -9,4 +9,12 @@ export const HTMX_EVENTS = {
 	ACES_Regrouping: "ACES_Regrouping",
 	ACES_GetAssessorBucketAllocation: "ACES_GetAssessorBucketAllocation",
 	ACES_GetBatchAssessorTable: "ACES_GetBatchAssessorTable",
+	ACES_DiscManualPair: "ACES_DiscManualPair",
+	ACES_FaceManualPair: "ACES_FaceManualPair",
+	ACES_CaseManualPair: "ACES_CaseManualPair",
+	ACES_DeploymentBatchTime: "ACES_DeploymentBatchTime",
+	ACES_DeploymentTime1: "ACES_DeploymentTime1",
+	ACES_DeploymentTime2: "ACES_DeploymentTime2",
+	ACES_DeploymentTime3: "ACES_DeploymentTime3",
+	ACES_DeploymentTime4: "ACES_DeploymentTime4",
 }

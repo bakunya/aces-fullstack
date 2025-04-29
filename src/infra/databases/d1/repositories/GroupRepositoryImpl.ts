@@ -100,4 +100,9 @@ export class GroupRepositoryImpl extends RepositoryImpl implements GroupReposito
 
 		return (await this.db.prepare(stm).bind(batchId).all()).results as BatchGroupDetailAggregation[]
 	}
+
+	async manualPair(batchId: string, groupId: string, assessorId: string): Promise<void> {
+		const stm = `UPDATE batch_groups SET assessor_uuid = ? WHERE batch_uuid = ? AND uuid = ?`
+		await this.db.prepare(stm).bind(assessorId.trim() ?? null, batchId, groupId).run()
+	}
 }

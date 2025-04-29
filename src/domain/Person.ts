@@ -12,7 +12,6 @@ export type PersonDomainValues = {
 	gender: string,
 	username: string,
 	id?: string,
-	batchGroupId?: number,
 	organizationId?: string,
 }
 
@@ -26,7 +25,6 @@ export class PersonDomain {
 		public gender: string,
 		public username: string,
 		public id?: string,
-		public batchGroupId?: number,
 		public organizationId?: string,
 	) {}
 
@@ -40,7 +38,6 @@ export class PersonDomain {
 			data.gender.toLocaleLowerCase(),
 			data.username,
 			data.id,
-			data.batchGroupId,
 			data.organizationId,
 		)
 	}
@@ -56,7 +53,6 @@ export class PersonDomain {
 			row.gender,
 			row.username,
 			row.uuid,
-			row.batch_group_id,
 			row.organization_uuid,
 		)
 	}

@@ -29,6 +29,14 @@ import { acesBatchAssessorUpdateSlotController } from "@src/adapter/http/control
 import { acesGetBatchAssessorTableController } from "@src/adapter/http/controllers/aces-get-batch-assessors";
 import { acesBatchAssessorDeleteController } from "@src/adapter/http/controllers/aces-batch-assessor-delete";
 import { batchGroupingController } from "@src/adapter/http/controllers/batch-grouping";
+import { batchPairsController } from "@src/adapter/http/controllers/batch-pairs";
+import { acesBatchGroupManualPairController } from "@src/adapter/http/controllers/aces-batch-group-manual-pair";
+import { acesGetAssessorDiscPairController } from "@src/adapter/http/controllers/aces-get-assessor-disc-pair";
+import { acesBatchGroupingManualPairController } from "@src/adapter/http/controllers/aces-batch-grouping-manual-pair";
+import { acesGetAssessorGroupingsPairController } from "@src/adapter/http/controllers/aces-get-assessor-groupings-pair";
+import { batchDeploymentController } from "@src/adapter/http/controllers/batch-deployment";
+import { acesBatchDeploymentController } from "@src/adapter/http/controllers/aces-batch-deployment";
+import { acesGetBatchDeploymentController } from "@src/adapter/http/controllers/aces-get-batch-deployment";
 
 const acesRoutes = new Hono()
 
@@ -37,6 +45,8 @@ acesRoutes.get("batch/:batch_id", batchBatchDetailController)
 acesRoutes.get("batch/:batch_id/person", batchBatchPersonController)
 acesRoutes.get("batch/:batch_id/assessors", batchAssessorsController)
 acesRoutes.get("batch/:batch_id/groupings", batchGroupingController)
+acesRoutes.get("batch/:batch_id/pairs", batchPairsController)
+acesRoutes.get("batch/:batch_id/deployment", batchDeploymentController)
 acesRoutes.get("dashboard", c => c.html("Dashboard Aces"))
 acesRoutes.get("dashboard/assessment", batchAssessmentController)
 acesRoutes.get("dashboard/organization", batchOrganizationController)
@@ -63,6 +73,12 @@ acesRoutes.post("hx/batch/:batch_id/assessor/:assessor_id/allocate", acesAllocat
 acesRoutes.get("hx/batch/:batch_id/batch_assessor_table/:module_type", acesGetBatchAssessorTableController)
 acesRoutes.put("hx/batch/:batch_id/assessor/:assessor_id/update_slot/:slot_type/module/:module_type", acesBatchAssessorUpdateSlotController)
 acesRoutes.delete("hx/batch/:batch_id/assessor/:assessor_id/:module_type", acesBatchAssessorDeleteController)
+acesRoutes.get("hx/batch/:batch_id/assessor_disc_pair", acesGetAssessorDiscPairController)
+acesRoutes.get("hx/batch/:batch_id/assessor_groupings_pair/:type", acesGetAssessorGroupingsPairController)
+acesRoutes.put("hx/batch/:batch_id/manual_pair/group/:group_id", acesBatchGroupManualPairController)
+acesRoutes.put("hx/batch/:batch_id/manual_pair/grouping/:grouping_id/type/:type", acesBatchGroupingManualPairController)
+acesRoutes.put("hx/batch/:batch_id/deployment/time/:time_type", acesBatchDeploymentController)
+acesRoutes.get("hx/batch/:batch_id/deployment/time/:time_type", acesGetBatchDeploymentController)
 
 acesRoutes.route("", acesRoutes)
 

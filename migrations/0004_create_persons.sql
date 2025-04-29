@@ -2,7 +2,6 @@
 CREATE TABLE persons (
     [uuid] TEXT PRIMARY KEY, -- uuid
     [batch_uuid] TEXT NOT NULL, -- batches(id)
-	[batch_group_id] INTEGER, -- batch_groups(id)
 	[organization_uuid] TEXT NOT NULL, -- organizations(id)
     [name] TEXT NOT NULL,
     [email] TEXT NOT NULL,

@@ -20,7 +20,6 @@ export async function acesBatchAssessorDeleteController(c: Context) {
 	trigger[`${HTMX_EVENTS.ACES_GetBatchAssessorTable}_${moduleType}`] = true
 	trigger[`${HTMX_EVENTS.ACES_GetAssessorBucketAllocation}`] = true
 	c.res.headers.set("HX-Trigger", JSON.stringify(trigger))
-	c.res.headers.set("HX-Trigger", JSON.stringify(trigger))
 
 	return c.text("", 201)
 }

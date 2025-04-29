@@ -4,6 +4,7 @@ import { GroupingRepository } from "@src/application/repositories/GroupingReposi
 import { GroupRepository } from "@src/application/repositories/GroupRepository";
 import { IAllocateAssessor } from "@src/application/usecase-interface/IAllocateAssessor";
 import { IUsecase } from "@src/application/usecase-interface/IUsecase";
+import { getSlotPosition } from "@src/application/utils/get-slot-position";
 import { BatchAssessorDomain } from "@src/domain/BatchAssessor";
 import { ModuleCategory, ModuleCategoryMapping } from "@src/domain/ModuleType";
 import { RawGroupAllocation } from "@src/infra/databases/d1/dto/aggregations";
@@ -16,7 +17,7 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 	) { }
 
 	static create(
-		batchAssessorRepo: BatchAssessorRepository, 
+		batchAssessorRepo: BatchAssessorRepository,
 		groupRepo: GroupRepository,
 		groupingRepo: GroupingRepository,
 	) {
@@ -38,37 +39,27 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 	}
 
 	getGroupPosition(type: ModuleCategory, groups: RawGroupAllocation[]) {
-		return Object.values((groups)
-			.reduce((acc, curr) => {
-				if (curr.slot_module_category_1?.includes?.(type)) {
-					acc[1] = [...new Set([...acc[1], curr.group_id])] as string[]
-				}
-				if (curr.slot_module_category_2?.includes?.(type)) {
-					acc[2] = [...new Set([...acc[2], curr.group_id])] as string[]
-				}
-				if (curr.slot_module_category_3?.includes?.(type)) {
-					acc[3] = [...new Set([...acc[3], curr.group_id])] as string[]
-				}
-				if (curr.slot_module_category_4?.includes?.(type)) {
-					acc[4] = [...new Set([...acc[4], curr.group_id])] as string[]
-				}
-				return acc
-			}, { 1: [], 2: [], 3: [], 4: [] } as Record<number, string[]>))
+		return Object
+			.values(getSlotPosition<string>(groups, type, "group_id"))
 			.filter(v => v.length)
+	}
+
+	getGroupPositionAsObject(type: ModuleCategory, groups: RawGroupAllocation[]) {
+		return getSlotPosition<string>(groups, type, "group_id")
 	}
 
 	async execute(batchId: string, userId: string, type: string) {
 		const category = ModuleCategoryMapping.fromString(type);
-		
+
 		try {
 			await this.groupRepo.begin();
 
 			const batchAssessor = BatchAssessorDomain.create(batchId, userId, type);
 			await this.batchAssessorRepo.allocate(batchAssessor);
-			
-			if(category === ModuleCategory.DISC) {
+
+			if (category === ModuleCategory.DISC) {
 				await this.allocateGroupAssessor(userId, batchId, category);
-			} else if(category === ModuleCategory.FACE || category === ModuleCategory.CASE) {
+			} else if (category === ModuleCategory.FACE || category === ModuleCategory.CASE) {
 				await this.allocateGroupingAssessor(userId, batchId, category);
 			}
 

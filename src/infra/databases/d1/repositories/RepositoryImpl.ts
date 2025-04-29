@@ -6,14 +6,17 @@ export class RepositoryImpl implements Repository {
 	}
 
 	async begin(): Promise<void> {
-		this.db.prepare("BEGIN TRANSACTION").raw();
+		// await this.db.prepare("BEGIN TRANSACTION").raw();
+		console.log("Unsupported: Transaction management is not supported in D1 database.");
 	}
 
 	async commit(): Promise<void> {
-		this.db.prepare("COMMIT").raw();
+		// await this.db.prepare("COMMIT").raw();
+		console.log("Unsupported: Transaction management is not supported in D1 database.");
 	}
 
 	async rollback(): Promise<void> {
-		this.db.prepare("ROLLBACK").raw();
+		// await this.db.prepare("ROLLBACK").raw();
+		console.log("Unsupported: Transaction management is not supported in D1 database.");
 	}
 }

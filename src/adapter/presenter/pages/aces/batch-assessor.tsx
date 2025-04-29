@@ -44,12 +44,19 @@ function Page({ batch, allocation }: PageProps) {
 			<BatchManagementHeader batch={ batch } />
 
 			<hr className="border-gray-400 my-8" />
-			<BatchNav batch={ batch } />
+			<div
+				hx-get={ route("get.aces.hx.batch.batch_id.batch_navbar", [batch.uuid]) }
+				hx-trigger={ `${HTMX_EVENTS.ACES_Regrouping} from:body` }
+				hx-target="this"
+				hx-swap="innerHTML"
+			>
+				<BatchNav batch={ batch } />
+			</div>
 
 			{ match(!!allocation.groupAllocation)
 				.with(true, () => (
 					<>
-						<div className="overflow-x-auto rounded">
+						<div className="overflow-x-auto rounded mt-10">
 							<table className="table">
 								<thead>
 									<tr className="bg-gray-300">

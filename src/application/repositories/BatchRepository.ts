@@ -11,4 +11,5 @@ export interface BatchRepository extends Repository {
 	createBatch(batch: CreateBatch): Promise<void>
 	updateTitle(batchId: string, title: string): Promise<void>
 	getBatchIdInSameTimestamp(batchId: string): Promise<{ uuid: string }[]>
+	updateTime(batchId: string, timeType: string, timeStart: string, timeEnd: string): Promise<void>
 }
