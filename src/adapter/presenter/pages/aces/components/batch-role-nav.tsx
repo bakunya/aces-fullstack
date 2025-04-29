@@ -6,7 +6,9 @@ export function BatchRoleNav() {
 			<div className="relative flex h-16 items-center justify-between" >
 				<div className="flex flex-1 items-center justify-center items-stretch justify-start" >
 					<div className="flex shrink-0 items-center" >
-						<img className="h-8 w-auto" src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
+						<a href={ route("get.auth.dashboard") } >
+							<img className="h-8 w-auto" src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
+						</a>
 					</div>
 					<div className="ml-6 block">
 						<div className="flex space-x-4" >
@@ -15,6 +17,7 @@ export function BatchRoleNav() {
 						</div>
 					</div>
 				</div>
+				<a href={ route("get.auth.logout") } className="rounded-md px-3 py-2 text-sm font-medium text-gray-500"> Logout </a>
 			</div>
 		</nav>
 	)

@@ -12,6 +12,7 @@ type Props = {
 		id?: string,
 		batchGroupId?: number,
 		organizationId?: string,
+		plain?: string,
 	}[],
 	shouldShow: boolean,
 }

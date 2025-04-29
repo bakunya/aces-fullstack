@@ -1,6 +1,5 @@
 import { Context } from "@src/adapter/http/contracts/binding";
 import { UserType, UserTypeCookie } from "@src/adapter/http/contracts/cookie/user-type";
-import { Asesi } from "@src/domain/Asesi";
 import { User } from "@src/domain/User";
 import { Crypto } from "@src/infra/crypto";
 import { route } from "@src/infra/singeleton/RouteCollection";
@@ -20,7 +19,7 @@ export async function shouldGuest(c: Context, next: Next) {
 	const user = {
 		...User.remapping(userCookie),
 		type: userCookie.type
-	} as UserTypeCookie<User | Asesi>
+	} as UserTypeCookie<User>
 
 	return match(user.type)
 		.with(UserType.INTERNAL_USER, () => c.redirect(route("get.auth.dashboard")))

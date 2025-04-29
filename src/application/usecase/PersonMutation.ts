@@ -14,7 +14,7 @@ export class PersonMutationUsecase implements IUsecase<[string, PersonMutationRe
 		private readonly batchRepo: BatchRepository,
 		private readonly crypt: ICrypt,
 		private readonly uuid: Uuid,
-		private readonly regroupRepo: RegroupRepository
+		private readonly regroupRepo: RegroupRepository,
 	) { }
 
 	static create(
@@ -35,12 +35,10 @@ export class PersonMutationUsecase implements IUsecase<[string, PersonMutationRe
 				email: personData.person_email,
 				gender: personData.person_gender,
 				username: personData.person_username,
-				hash: personData.person_password.trim(),
+				hash: personData.person_password,
 			})
-			if (Boolean(personData.person_password.trim())) {
-				const hashedPassword = await this.crypt.encrypt(personData.person_password)
-				personDomain.hash = hashedPassword
-			}
+			const hashedPassword = await this.crypt.encrypt(personData.person_password)
+			personDomain.hash = hashedPassword
 			await this.personRepo.updateOne(personDomain)
 		} else {
 			// create person
@@ -59,7 +57,7 @@ export class PersonMutationUsecase implements IUsecase<[string, PersonMutationRe
 			domain.isValidEmail()
 			domain.setNewId(this.uuid)
 			domain.serializeGender()
-			await domain.hashing(this.crypt)
+			await domain.encrypt(this.crypt)
 			const res = await Promise.allSettled([
 				this.personRepo.createOne(domain),
 				this.regroupRepo.setShouldRegroup(batchId),

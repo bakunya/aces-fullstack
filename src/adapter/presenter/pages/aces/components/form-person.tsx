@@ -39,7 +39,7 @@ export function FormPerson({ batchId, shouldShow }: Props) {
 				</fieldset>
 				<fieldset class="fieldset w-full">
 					<legend class="fieldset-legend">Password<span className="text-red-600" x-show="id === undefined">*</span></legend>
-					<input type="text" x-bind:required="id === undefined" name="person_password" class="input w-full" placeholder="Type here" />
+					<input type="text" x-model="plain" name="person_password" class="input w-full" placeholder="Type here" />
 				</fieldset>
 				<div className="flex gap-3 w-full mt-8">
 					<button type="button" x-on:click="deletePerson()" class={ "btn flex-grow btn-sm btn-danger" }>Cancel</button>

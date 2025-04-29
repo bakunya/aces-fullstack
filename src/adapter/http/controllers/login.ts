@@ -33,5 +33,5 @@ export async function loginController(c: Context) {
 		sameSite: 'Strict',
 	})
 
-	return c.redirect("/user/dashboard")
+	return c.redirect("/auth/dashboard")
 }

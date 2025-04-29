@@ -11,7 +11,8 @@
 		"lint": "eslint .",
 		"migrate:local": "npx wrangler d1 migrations apply aces-fullstack --local",
 		"migrate:remote": "npx wrangler d1 migrations apply aces-fullstack --remote",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"analyze": "knip"
 	},
 	"dependencies": {
 		"@tailwindcss/cli": "^4.0.13",

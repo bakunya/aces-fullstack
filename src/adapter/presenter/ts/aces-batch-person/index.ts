@@ -1,24 +1,6 @@
-// document.getElementById('before-upload').addEventListener('click', async (e) => {
-
+import { passwordGenerator } from "@browser/utils/pass-gen";
 import Alpine from "alpinejs"
 import Papa from "papaparse"
-
-// 	const file = document.getElementById('csv').files[0];
-// 	if (!file) return;
-
-// 	try {
-// 		const participants = await toJSON(file);
-// 		document.querySelector('input[name=participants]').value = JSON.stringify(participants);
-// 		document.getElementById('process-upload').click();
-// 	} catch(er) {
-// 		const message = errorMessage[er]
-// 		if(message) {
-// 			document.getElementById("participant-error-text").innerText = message
-// 		} else {
-// 			document.getElementById("participant-error-text").innerText = "Something went wrong!"
-// 		}
-// 	}
-// });
 
 const errorMessage = {
 	"01": "Jenis kelamin tidak boleh kosong",
@@ -135,6 +117,7 @@ window.uploadedPerson = function () {
 		email: undefined,
 		gender: undefined,
 		username: undefined,
+		plain: undefined,
 		setPerson(person: any) {
 			person = JSON.parse(person) as {
 				id: string,
@@ -143,28 +126,28 @@ window.uploadedPerson = function () {
 				email: string,
 				gender: string,
 				username: string,
+				plain?: string,
 			}
-			// @ts-ignore
 			this.id = person.id
-			// @ts-ignore
 			this.nip = person.nip
-			// @ts-ignore
 			this.name = person.name
-			// @ts-ignore
+			this.plain = person.plain
 			this.email = person.email
-			// @ts-ignore
 			this.gender = person.gender
-			// @ts-ignore
 			this.username = person.username
 		},
 		deletePerson() {
+			const pass = passwordGenerator()
 			this.id = undefined
 			this.nip = undefined
-			this.hash = undefined
 			this.name = undefined
 			this.email = undefined
 			this.gender = undefined
 			this.username = undefined
+			// @ts-ignore
+			this.hash = pass
+			// @ts-ignore
+			this.plain = pass
 		}
 	}
 }

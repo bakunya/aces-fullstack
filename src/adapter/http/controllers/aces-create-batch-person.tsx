@@ -8,6 +8,7 @@ import { ulidFactory } from "ulid-workers"
 import { BatchRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchRepositoryImpl"
 import { HTMX_EVENTS } from "@src/adapter/constant/htmx-events"
 import { RegroupRepositoryImpl } from "@src/infra/databases/d1/repositories/RegroupRepositoryImpl"
+import { PasswordGenImpl } from "@src/infra/utils/PasswordGen"
 
 
 export async function acesCreateBatchPersonController(c: Context) {
@@ -21,6 +22,7 @@ export async function acesCreateBatchPersonController(c: Context) {
 		Crypto.create(crypto.subtle, c.env.SUBTLE_PRIVATE_KEY), 
 		UuidImpl.create(ulidFactory()),
 		RegroupRepositoryImpl.create(c.env.DB),
+		PasswordGenImpl.create()
 	)
 	await usecase.execute(batchID, persons)
 

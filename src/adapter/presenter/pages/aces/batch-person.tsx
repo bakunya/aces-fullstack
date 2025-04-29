@@ -27,6 +27,7 @@ interface PageProps {
 		id?: string,
 		batchGroupId?: number,
 		organizationId?: string,
+		plain?: string,
 	}[]
 }
 

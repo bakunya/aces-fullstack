@@ -11,11 +11,14 @@ export type PersonDomainValues = {
 	email: string,
 	gender: string,
 	username: string,
+	plain?: string,
 	id?: string,
 	organizationId?: string,
 }
 
 export class PersonDomain {
+	public plain?: string
+	
 	constructor(
 		public batchId: string,
 		public name: string,
@@ -57,12 +60,16 @@ export class PersonDomain {
 		)
 	}
 
-	async hashing(instance: ICrypt) {
+	async encrypt(instance: ICrypt) {
 		this.hash = await instance.encrypt(this.hash)
 	}
 
 	async compare(instance: ICrypt, plain: string) {
 		return (await instance.decrypt(plain)) === this.hash
+	}
+
+	async decrypt(instance: ICrypt) {
+		this.plain = await instance.decrypt(this.hash)
 	}
 
 	setNewId(instance: Uuid) {

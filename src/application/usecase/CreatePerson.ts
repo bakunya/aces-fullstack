@@ -1,6 +1,7 @@
 import { PersonRequest } from "@src/adapter/http/contracts/request/hx-create-person"
 import { ICrypt } from "@src/application/crypto/Crypt"
 import { AppError } from "@src/application/error/AppError"
+import { PasswordGen } from "@src/application/password-generator"
 import { BatchRepository } from "@src/application/repositories/BatchRepository"
 import { PersonRepository } from "@src/application/repositories/PersonRepository"
 import { RegroupRepository } from "@src/application/repositories/RegroupRepository"
@@ -15,6 +16,7 @@ export class CreatePersonUsecase implements IUsecase<[string, PersonRequest[]], 
 		private readonly crypt: ICrypt,
 		private readonly uuid: Uuid,
 		private readonly regroupRepo: RegroupRepository,
+		private readonly passgen: PasswordGen,
 	) {}
 
 	static create(
@@ -23,8 +25,9 @@ export class CreatePersonUsecase implements IUsecase<[string, PersonRequest[]], 
 		crypt: ICrypt,
 		uuid: Uuid,
 		regroupRepo: RegroupRepository,
+		passgen: PasswordGen,
 	): CreatePersonUsecase {
-		return new CreatePersonUsecase(personRepository, batchRepo, crypt, uuid, regroupRepo)
+		return new CreatePersonUsecase(personRepository, batchRepo, crypt, uuid, regroupRepo, passgen)
 	}
 
 	async execute(batchId: string, persons: PersonRequest[]): Promise<void> {
@@ -35,7 +38,7 @@ export class CreatePersonUsecase implements IUsecase<[string, PersonRequest[]], 
 		for (const person of persons) {
 			const domain = PersonDomain.create({
 				nip: person.nip,
-				hash: person.name,
+				hash: this.passgen.generate(),
 				name: person.name,
 				batchId: batchId,
 				email: person.email,
@@ -46,7 +49,7 @@ export class CreatePersonUsecase implements IUsecase<[string, PersonRequest[]], 
 			domain.isValidEmail()
 			domain.setNewId(this.uuid)
 			domain.serializeGender()
-			await domain.hashing(this.crypt)
+			await domain.encrypt(this.crypt)
 			personDomains.push(domain)
 		}
 

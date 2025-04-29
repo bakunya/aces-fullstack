@@ -18,6 +18,7 @@ function Page({ error }: Props) {
 								id="email"
 								name="email"
 								className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+								value={"allaccess@aces.com"}
 							/>
 						</div>
 						<div>
@@ -27,6 +28,7 @@ function Page({ error }: Props) {
 								id="password"
 								name="password"
 								className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+								value={"allaccess"}
 							/>
 						</div>
 						<button
@@ -40,21 +42,6 @@ function Page({ error }: Props) {
 				</div>
 			</div>
 			{ error && <p className="text-red-500">Invalid username or password</p> }
-			<h1 className="text-lg">Seed Data</h1>
-			<table class="table-auto border-collapse border border-gray-300 w-full bg-white rounded-lg shadow-lg">
-				<thead class="bg-gray-100">
-					<tr>
-						<th class="border border-gray-300 px-4 py-2 text-left">Username</th>
-						<th class="border border-gray-300 px-4 py-2 text-left">Password</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="hover:bg-gray-50">
-						<td class="border border-gray-300 px-4 py-2">allaccess@aces.com</td>
-						<td class="border border-gray-300 px-4 py-2">allaccess</td>
-					</tr>
-				</tbody>
-			</table>
 		</div>
 	)
 }

@@ -11,6 +11,7 @@ type Props = {
 		email: string,
 		gender: string,
 		username: string,
+		plain?: string,
 		id?: string,
 		batchGroupId?: number,
 		organizationId?: string,

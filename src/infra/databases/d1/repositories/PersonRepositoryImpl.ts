@@ -51,8 +51,8 @@ export class PersonRepositoryImpl extends RepositoryImpl implements PersonReposi
 				name=?,
 				email=?,
 				gender=?,
-				username=?
-				,hash=?
+				username=?,
+				hash=?
 			WHERE
 				uuid=?
 		`
@@ -62,16 +62,10 @@ export class PersonRepositoryImpl extends RepositoryImpl implements PersonReposi
 			person.email,
 			person.gender,
 			person.username,
-			person.id,
-			// dont rearrange the order of bind, it will be binded to the sql statement in order
 			person.hash,
+			person.id,
 		]
-
-		if (!Boolean(person.hash.trim())) {
-			sql = sql.replaceAll(",hash=?", "")
-			bind.splice(6, 1)
-		}
-
+		
 		await this.db.prepare(sql).bind(...bind).run()
 	}
 
