@@ -50,11 +50,11 @@ export function OrganizationTable({ organizations }: OrganizationTableProps) {
 								modal-submit-url={ route("post.aces.organization.organization_id.batch", [organization.uuid]) }
 								className="text-xs cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md"
 							>Tambah</button>
-							<button className="ml-2 text-xs cursor-pointer px-4 py-2 bg-teal-600 text-white rounded-md">Lihat</button>
+							{/* <button className="ml-2 text-xs cursor-pointer px-4 py-2 bg-teal-600 text-white rounded-md">Lihat</button> */}
 						</td>
 						<td className="px-6 py-4">
-							<button className="text-xs cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md">Edit</button>
-							<button className="ml-2 text-xs cursor-pointer px-4 py-2 bg-red-600 text-white rounded-md">Hapus</button>
+							{/* <button className="text-xs cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md">Edit</button>
+							<button className="ml-2 text-xs cursor-pointer px-4 py-2 bg-red-600 text-white rounded-md">Hapus</button> */}
 						</td>
 					</tr>
 				)) }
