@@ -4,6 +4,7 @@ import { BatchModuleRepository } from "@src/application/repositories/BatchModule
 import { RegroupRepository } from "@src/application/repositories/RegroupRepository";
 import { IUsecase } from "@src/application/usecase-interface/IUsecase";
 import { ModuleCategory, ModuleCategoryMapping } from "@src/domain/ModuleType";
+import { match } from "ts-pattern";
 
 export class DeleteBatchModuleUsecase implements IUsecase<[string, string], void> {
 	constructor(
@@ -25,14 +26,19 @@ export class DeleteBatchModuleUsecase implements IUsecase<[string, string], void
 		if (!module) throw AppError.notFound("Batch module not found", "Batch module not found")
 		const type = ModuleCategoryMapping.fromString(module.module_category)
 
-		if (type === ModuleCategory.DISC) {
-			await this.batchAssessorRepo.unallocateGroupAll(batchId)
-		} else if (type === ModuleCategory.CASE || type === ModuleCategory.FACE) {
-			await this.batchAssessorRepo.unallocateGroupingAll(batchId, type)
-		}
-		await Promise.all([
-			this.batchModuleRepo.deleteOne(batchModuleId),
-			this.regroupRepo.setShouldRegroup(batchId),
+		const prepared = await match(type)
+			.with(ModuleCategory.DISC, () => this.batchAssessorRepo.unallocateGroupAll(batchId, true))
+			.with(ModuleCategory.CASE, () => this.batchAssessorRepo.unallocateGroupingAll(batchId, type as ModuleCategory.CASE, true))
+			.with(ModuleCategory.FACE, () => this.batchAssessorRepo.unallocateGroupingAll(batchId, type as ModuleCategory.FACE, true))
+			.otherwise(() => Promise.resolve([]))
+
+		const prepareDelete = await this.batchModuleRepo.deleteOne(batchModuleId, true)
+		const prepareShouldRegroup = await this.regroupRepo.setShouldRegroup(batchId, true)
+
+		await this.batchModuleRepo.commit([
+			...prepared,
+			...prepareDelete,
+			...prepareShouldRegroup,
 		])
 	}
 }
