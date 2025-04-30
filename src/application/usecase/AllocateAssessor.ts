@@ -10,6 +10,8 @@ import { getSlotPosition } from "@src/application/utils/get-slot-position";
 import { BatchAssessorDomain } from "@src/domain/BatchAssessor";
 import { ModuleCategory, ModuleCategoryMapping } from "@src/domain/ModuleType";
 import { RawGroupAllocation } from "@src/infra/databases/d1/dto/aggregations";
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
+import { match } from "ts-pattern";
 
 export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[string, string, string], void> {
 	constructor(
@@ -30,18 +32,18 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 		return new AllocateAssessorUsecase(batchAssessorRepo, groupRepo, groupingRepo, batchRepo, assessorRepo);
 	}
 
-	private async allocateGroupAssessor(assessorId: string, batchId: string, type: ModuleCategory) {
+	private async allocateGroupAssessor(assessorId: string, batchId: string, type: ModuleCategory): Promise<PreparedTransaction[]> {
 		const allocation = await this.groupRepo.getSlotAllocationInBatch(batchId);
 		const groupPositions = this.getGroupPosition(type, allocation);
 		const unallocated = await this.groupRepo.getUnallocated(batchId, groupPositions);
-		await this.groupRepo.allocateAssessorInAllSlot(assessorId, batchId, unallocated)
+		return await this.groupRepo.allocateAssessorInAllSlot(assessorId, batchId, unallocated, true)
 	}
 
-	private async allocateGroupingAssessor(assessorId: string, batchId: string, type: ModuleCategory) {
+	private async allocateGroupingAssessor(assessorId: string, batchId: string, type: ModuleCategory): Promise<PreparedTransaction[]> {
 		const allocation = await this.groupRepo.getSlotAllocationInBatch(batchId);
 		const groupPositions = this.getGroupPosition(type, allocation);
 		const unallocated = await this.groupingRepo.getUnallocated(batchId, type, groupPositions);
-		await this.groupingRepo.allocateAssessorInAllSlot(assessorId, batchId, type, unallocated)
+		return await this.groupingRepo.allocateAssessorInAllSlot(assessorId, batchId, type, unallocated, true)
 	}
 
 	getGroupPosition(type: ModuleCategory, groups: RawGroupAllocation[]) {
@@ -63,12 +65,17 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 		if(!isFree) throw AppError.database("Assessor is already allocated", "Assessor is already allocated in other batch");
 
 		const batchAssessor = BatchAssessorDomain.create(batchId, userId, type);
-		await this.batchAssessorRepo.allocate(batchAssessor);
 
-		if (category === ModuleCategory.DISC) {
-			await this.allocateGroupAssessor(userId, batchId, category);
-		} else if (category === ModuleCategory.FACE || category === ModuleCategory.CASE) {
-			await this.allocateGroupingAssessor(userId, batchId, category);
-		}
+		const preparedAllocation = await this.batchAssessorRepo.allocate(batchAssessor, true);
+		const preparedAll = await match(category)
+			.with(ModuleCategory.DISC, () => this.allocateGroupAssessor(userId, batchId, category))
+			.with(ModuleCategory.FACE, () => this.allocateGroupingAssessor(userId, batchId, category))
+			.with(ModuleCategory.CASE, () => this.allocateGroupingAssessor(userId, batchId, category))
+			.otherwise(() => Promise.resolve([]))
+
+		await this.batchRepo.commit([
+			...preparedAllocation,
+			...preparedAll
+		])
 	}
 }
