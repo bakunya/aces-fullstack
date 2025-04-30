@@ -1,5 +1,6 @@
 import { Repository } from "@src/application/repositories/Repository";
 import { TableBatchModule } from "@src/infra/databases/d1/dto/tables";
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 
 export type BatchModuleDetail = {
 	module_uuid: string
@@ -21,9 +22,15 @@ export type InsertOneData = {
 }
 
 export interface BatchModuleRepository extends Repository {
+	deleteOne<T extends false>(uuid: string, inTransaction?: T): Promise<void>;
+	deleteOne<T extends true>(uuid: string, inTransaction: T): Promise<PreparedTransaction[]>;
+	deleteOne(uuid: string, inTransaction?: boolean): Promise<void | PreparedTransaction[]>;
+	
+	insertOne<T extends false>(data: InsertOneData, inTransaction?: T): Promise<void>;
+	insertOne<T extends true>(data: InsertOneData, inTransaction: T): Promise<PreparedTransaction[]>;
+	insertOne(data: InsertOneData, inTransaction?: boolean): Promise<void | PreparedTransaction[]>;
+
 	getByBatch(batchId: string): Promise<TableBatchModule[]>
 	getAllDetailByBatch(batchId: string): Promise<BatchModuleDetail[]>
-	insertOne(data: InsertOneData): Promise<void>
-	deleteOne(uuid: string): Promise<void>
 	getOne(batchId: string, moduleId: string): Promise<BatchModuleDetail | null>
 }

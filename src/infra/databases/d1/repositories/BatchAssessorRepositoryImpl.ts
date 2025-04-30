@@ -3,6 +3,7 @@ import { BatchAssessorRepository } from "@src/application/repositories/BatchAsse
 import { BatchAssessorDomain } from "@src/domain/BatchAssessor";
 import { ModuleCategory } from "@src/domain/ModuleType";
 import { BatchAssessorDetailAggregation } from "@src/infra/databases/d1/dto/aggregations";
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
 export class BatchAssessorRepositoryImpl extends RepositoryImpl implements BatchAssessorRepository {
@@ -14,64 +15,117 @@ export class BatchAssessorRepositoryImpl extends RepositoryImpl implements Batch
 		return new BatchAssessorRepositoryImpl(db);
 	}
 
-	async allocate(data: BatchAssessorDomain): Promise<void> {
+	allocate<T extends false>(data: BatchAssessorDomain, inTransaction?: T): Promise<void>;	
+	allocate<T extends true>(data: BatchAssessorDomain, inTransaction: T): Promise<PreparedTransaction[]>;
+	async allocate(data: BatchAssessorDomain, inTransaction: boolean = false):  Promise<PreparedTransaction[] | void>  {
 		const stm = `
 			INSERT INTO batch_assessors (batch_uuid, user_uuid, type)
 			VALUES (?, ?, ?)
 		`
-		await this.db.prepare(stm).bind(data.batchId, data.userId, data.type).run()
+		
+		const prepared = this.db.prepare(stm).bind(data.batchId, data.userId, data.type)
+		if (inTransaction) {
+			return [prepared] as PreparedTransaction[]
+		}
+
+		await prepared.run()
 	}
 
-	async updateSlot(data: BatchAssessorSlotDataToUpdate): Promise<void> {
+	updateSlot<T extends false>(data: BatchAssessorSlotDataToUpdate, inTransaction?: T): Promise<void>;
+	updateSlot<T extends true>(data: BatchAssessorSlotDataToUpdate, inTransaction: T): Promise<PreparedTransaction[]>;
+	async updateSlot(data: BatchAssessorSlotDataToUpdate, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		const stm = `
 			UPDATE batch_assessors
 			SET ${data.slotType} = ?
 			WHERE batch_uuid = ? AND user_uuid = ?
 		`
-		await this.db.prepare(stm).bind(data.slotStatus, data.batchId, data.assessorId).run()
+		
+		const prepared = this.db.prepare(stm).bind(data.slotStatus, data.batchId, data.assessorId)
+		if (inTransaction) {
+			return [prepared] as PreparedTransaction[]
+		}
+
+		await prepared.run()
 	}
 
-	async delete(batchId: string, assessorId: string): Promise<void> {
+
+	delete<T extends false>(batchId: string, assessorId: string, inTransaction?: T): Promise<void>;
+	delete<T extends true>(batchId: string, assessorId: string, inTransaction: T): Promise<PreparedTransaction[]>;
+	async delete(batchId: string, assessorId: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		const stm = `
 			DELETE FROM batch_assessors
 			WHERE batch_uuid = ? AND user_uuid = ?
 		`
-		await this.db.prepare(stm).bind(batchId, assessorId).run()
+		
+		const prepared = this.db.prepare(stm).bind(batchId, assessorId)
+		if (inTransaction) {
+			return [prepared] as PreparedTransaction[]
+		}
+
+		await prepared.run()
 	}
 
-	async unallocateGroupings(batchId: string, assessorId: string, type: ModuleCategory, allocated: { group_id: string; person_uuid: string; }[]): Promise<void> {
+	
+	unallocateGroupings<T extends false>(batchId: string, assessorId: string, type: ModuleCategory, allocated: { group_id: string; person_uuid: string; }[], inTransaction?: T): Promise<void>;
+	unallocateGroupings<T extends true>(batchId: string, assessorId: string, type: ModuleCategory, allocated: { group_id: string; person_uuid: string; }[], inTransaction: T): Promise<PreparedTransaction[]>;
+	async unallocateGroupings(batchId: string, assessorId: string, type: ModuleCategory, allocated: { group_id: string; person_uuid: string; }[], inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		const stm0 = this.db.prepare("DELETE FROM batch_assessors WHERE batch_uuid = ? AND user_uuid = ?")
 			.bind(batchId, assessorId)
 		const stmN = allocated.map(v => {
 			return this.db.prepare(`UPDATE batch_groupings SET ${type.toLocaleLowerCase()}_assessor_user_uuid = ? WHERE group_uuid = ? AND person_uuid = ? AND batch_uuid = ?`)
 				.bind(null, v?.group_id, v?.person_uuid, batchId)
 		})
+
+		if (inTransaction) {
+			return [stm0, ...stmN]
+		}
+
 		await this.db.batch([stm0, ...stmN])
 	}
 
-	async unallocateGroups(batchId: string, assessorId: string): Promise<void> {
-		await this.db.batch([
-			this.db.prepare("DELETE FROM batch_assessors WHERE batch_uuid = ? AND user_uuid = ?")
-				.bind(batchId, assessorId),
+	unallocateGroups<T extends false>(batchId: string, assessorId: string, inTransaction?: T): Promise<void>;
+	unallocateGroups<T extends true>(batchId: string, assessorId: string, inTransaction: T): Promise<PreparedTransaction[]>;
+	async unallocateGroups(batchId: string, assessorId: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = [
+			this.db.prepare("DELETE FROM batch_assessors WHERE batch_uuid = ? AND user_uuid = ?").bind(batchId, assessorId),
 			this.db.prepare("UPDATE batch_groups SET assessor_uuid = ? WHERE assessor_uuid = ? AND batch_uuid = ?").bind(null, assessorId, batchId)
-		])
+		]
+
+		if (inTransaction) {
+			return prepared as PreparedTransaction[]
+		}
+		await this.db.batch(prepared)
 	}
 
-	async unallocateGroupAll(batchId: string): Promise<void> {
+	unallocateGroupAll<T extends false>(batchId: string, inTransaction?: T): Promise<void>;
+	unallocateGroupAll<T extends true>(batchId: string, inTransaction: T): Promise<PreparedTransaction[]>;
+	async unallocateGroupAll(batchId: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		const stm = `DELETE FROM batch_assessors WHERE batch_uuid = ?`
-		await this.db.prepare(stm).bind(batchId).run()
+		const prepared = this.db.prepare(stm).bind(batchId)
+		
+		if (inTransaction) {
+			return [prepared] as PreparedTransaction[]
+		}
+		await prepared.run()
 	}
 
-	async unallocateGroupingAll(batchId: string, type: ModuleCategory.FACE | ModuleCategory.CASE): Promise<void> {		
+	unallocateGroupingAll<T extends false>(batchId: string, type: ModuleCategory.FACE | ModuleCategory.CASE, inTransaction?: T): Promise<void>;
+	unallocateGroupingAll<T extends true>(batchId: string, type: ModuleCategory.FACE | ModuleCategory.CASE, inTransaction: T): Promise<PreparedTransaction[]>;
+	async unallocateGroupingAll(batchId: string, type: ModuleCategory.FACE | ModuleCategory.CASE, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		const stm = `
 			UPDATE batch_groupings 
 			SET ${type.toLocaleLowerCase()}_assessor_user_uuid = ? 
 			WHERE batch_uuid = ? AND ${type.toLocaleLowerCase()}_assessor_user_uuid IS NOT NULL
 		`
-		await this.db.prepare(stm).bind(null, batchId).run()
+		const prepared = this.db.prepare(stm).bind(null, batchId)
+		
+		if (inTransaction) {
+			return [prepared] as PreparedTransaction[]
+		}
+		await prepared.run()
 	}
 
-	async getDetail(batchId: string): Promise<BatchAssessorDetailAggregation[]> {
+	async getDetail(batchId: string) {
 		const stm = `
 			SELECT
 				ba.id,

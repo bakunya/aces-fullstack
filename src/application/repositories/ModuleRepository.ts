@@ -10,7 +10,3 @@ export interface ModuleRepository extends Repository {
 	getById(uuid: string): Promise<Module>
 	getAllWithModuleType(): Promise<Module[]>
 }
-
-export interface ModuleInitializer {
-	initializeAllTable(moduleId: string, maxtime: number): Promise<void>
-}

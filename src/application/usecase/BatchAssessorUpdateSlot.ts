@@ -70,19 +70,9 @@ export class BatchAssessorUpdateSlotUsecase implements IUsecase<[BatchAssessorSl
 	}
 
 	async execute(data: BatchAssessorSlotDataToUpdate): Promise<any> {
-		try {
-			const type = ModuleCategoryMapping.fromString(data.moduleType);
-			const slotPosition = this.getSlotPosition(data.slotType);
-
-			await this.groupRepo.begin();
-
-			if (data.slotStatus === 1) await this.allocate(data, type, slotPosition);
-			else await this.unallocate(data, type, slotPosition);
-
-			await this.groupRepo.commit();
-		} catch (err: any) {
-			await this.groupRepo.rollback();
-			throw AppError.unknown(err.message, "Internal Server Error")
-		}
+		const type = ModuleCategoryMapping.fromString(data.moduleType);
+		const slotPosition = this.getSlotPosition(data.slotType);
+		if (data.slotStatus === 1) await this.allocate(data, type, slotPosition);
+		else await this.unallocate(data, type, slotPosition);
 	}
 }

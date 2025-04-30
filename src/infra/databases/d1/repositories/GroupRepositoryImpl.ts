@@ -1,5 +1,6 @@
 import { GroupRepository } from "@src/application/repositories/GroupRepository";
 import { BatchGroupDetailAggregation, RawGroupAllocation } from "@src/infra/databases/d1/dto/aggregations";
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
 export class GroupRepositoryImpl extends RepositoryImpl implements GroupRepository {
@@ -9,6 +10,50 @@ export class GroupRepositoryImpl extends RepositoryImpl implements GroupReposito
 
 	static create(db: D1Database) {
 		return new GroupRepositoryImpl(db)
+	}
+		
+	manualPair<T extends false>(batchId: string, groupId: string, assessorId: string, inTransaction?: T): Promise<void>
+	manualPair<T extends true>(batchId: string, groupId: string, assessorId: string, inTransaction: T): Promise<PreparedTransaction[]>
+	async manualPair(batchId: string, groupId: string, assessorId: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const stm = `UPDATE batch_groups SET assessor_uuid = ? WHERE batch_uuid = ? AND uuid = ?`
+		const prepared = this.db.prepare(stm).bind(assessorId.trim() ?? null, batchId, groupId)
+
+		if (inTransaction) {
+			return [prepared]
+		}
+
+		await prepared.run()
+	}
+
+	allocateAssessorInAllSlot<T extends false>(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string }[], inTransaction?: T): Promise<void>
+	allocateAssessorInAllSlot<T extends true>(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string }[], inTransaction: T): Promise<PreparedTransaction[]>
+	async allocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[], inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = data.map(v => {
+			return this.db
+				.prepare(`UPDATE batch_groups SET assessor_uuid = ? WHERE uuid = ? AND batch_uuid = ?`)
+				.bind(assessor_uuid, v.group_uuid, batch_uuid)
+		})
+		if (inTransaction) {
+			return prepared
+		}
+		await this.db.batch(prepared)
+	}
+
+	
+	unAllocateAssessorInAllSlot<T extends false>(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[], inTransaction?: T): Promise<void>
+	unAllocateAssessorInAllSlot<T extends true>(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[], inTransaction: T): Promise<PreparedTransaction[]>
+	async unAllocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[], inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = data.map(v => {
+			return this.db
+				.prepare("UPDATE batch_groups SET assessor_uuid = ? WHERE uuid = ? AND batch_uuid = ? AND assessor_uuid = ?")
+				.bind(null, v.group_uuid, batch_uuid, assessor_uuid)
+		})
+
+		if (inTransaction) {
+			return prepared
+		}
+
+		await this.db.batch(prepared)
 	}
 
 	async getSlotAllocationInBatch(batchId: string): Promise<RawGroupAllocation[]> {
@@ -48,21 +93,6 @@ export class GroupRepositoryImpl extends RepositoryImpl implements GroupReposito
 			.filter(Boolean) as { group_uuid: string }[]
 	}
 
-	async allocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[]): Promise<void> {
-		await this.db.batch(data.map(v => {
-			return this.db
-				.prepare(`UPDATE batch_groups SET assessor_uuid = ? WHERE uuid = ? AND batch_uuid = ?`)
-				.bind(assessor_uuid, v.group_uuid, batch_uuid)
-		}))
-	}
-	
-	async unAllocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[]): Promise<void> {
-		await this.db.batch(data.map(v => {
-			return this.db
-				.prepare("UPDATE batch_groups SET assessor_uuid = ? WHERE uuid = ? AND batch_uuid = ? AND assessor_uuid = ?")
-				.bind(null, v.group_uuid, batch_uuid, assessor_uuid)
-		}))
-	}
 
 	async getAllocated(batchId: string, assessorId: string): Promise<RawGroupAllocation[]> {
 		const stm = `	
@@ -99,10 +129,5 @@ export class GroupRepositoryImpl extends RepositoryImpl implements GroupReposito
 		`
 
 		return (await this.db.prepare(stm).bind(batchId).all()).results as BatchGroupDetailAggregation[]
-	}
-
-	async manualPair(batchId: string, groupId: string, assessorId: string): Promise<void> {
-		const stm = `UPDATE batch_groups SET assessor_uuid = ? WHERE batch_uuid = ? AND uuid = ?`
-		await this.db.prepare(stm).bind(assessorId.trim() ?? null, batchId, groupId).run()
 	}
 }

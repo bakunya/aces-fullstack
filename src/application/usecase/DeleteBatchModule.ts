@@ -25,23 +25,14 @@ export class DeleteBatchModuleUsecase implements IUsecase<[string, string], void
 		if (!module) throw AppError.notFound("Batch module not found", "Batch module not found")
 		const type = ModuleCategoryMapping.fromString(module.module_category)
 
-		try {
-			await this.batchAssessorRepo.begin()
-
-			if (type === ModuleCategory.DISC) {
-				await this.batchAssessorRepo.unallocateGroupAll(batchId)
-			} else if (type === ModuleCategory.CASE || type === ModuleCategory.FACE) {
-				await this.batchAssessorRepo.unallocateGroupingAll(batchId, type)
-			}
-			await Promise.all([
-				this.batchModuleRepo.deleteOne(batchModuleId),
-				this.regroupRepo.setShouldRegroup(batchId),
-			])
-
-			await this.batchAssessorRepo.commit()
-		} catch (err: any) {
-			await this.batchAssessorRepo.rollback()
-			throw AppError.unknown(err.message, "Internal Server Error")
+		if (type === ModuleCategory.DISC) {
+			await this.batchAssessorRepo.unallocateGroupAll(batchId)
+		} else if (type === ModuleCategory.CASE || type === ModuleCategory.FACE) {
+			await this.batchAssessorRepo.unallocateGroupingAll(batchId, type)
 		}
+		await Promise.all([
+			this.batchModuleRepo.deleteOne(batchModuleId),
+			this.regroupRepo.setShouldRegroup(batchId),
+		])
 	}
 }

@@ -2,6 +2,7 @@ import { PersonRepository } from "@src/application/repositories/PersonRepository
 import { PersonDomain } from "@src/domain/Person";
 import { BatchPersonDetailAggregation } from "@src/infra/databases/d1/dto/aggregations";
 import { TablePerson } from "@src/infra/databases/d1/dto/tables";
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
 export class PersonRepositoryImpl extends RepositoryImpl implements PersonRepository {
@@ -13,16 +14,12 @@ export class PersonRepositoryImpl extends RepositoryImpl implements PersonReposi
 		return new PersonRepositoryImpl(db)
 	}
 
-	async getCountByBatchId(batchId: string): Promise<number> {
-		const sql = `SELECT COUNT(*) as count FROM persons WHERE batch_uuid = ?`
-		const result = await this.db.prepare(sql).bind(batchId).first()
-		if (!result) return 0
-		return result.count as number
-	}
 
-	async insertMany(persons: PersonDomain[]): Promise<void> {
+	insertMany<T extends false>(persons: PersonDomain[], inTransaction?: T): Promise<void>;
+	insertMany<T extends true>(persons: PersonDomain[], inTransaction: T): Promise<PreparedTransaction[]>;
+	async insertMany(persons: PersonDomain[], inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		const template = `INSERT INTO persons (uuid, batch_uuid, organization_uuid, name, email, username, hash, gender, nip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-		await this.db.batch(persons.map((person) => this.db.prepare(template).bind(
+		const prepared = persons.map((person) => this.db.prepare(template).bind(
 			person.id,
 			person.batchId,
 			person.organizationId,
@@ -32,17 +29,19 @@ export class PersonRepositoryImpl extends RepositoryImpl implements PersonReposi
 			person.hash,
 			person.gender,
 			person.nip,
-		)))
+		))
+
+		if (inTransaction) {
+			return prepared
+		}
+
+		await this.db.batch(prepared)
 	}
 
-	async getByBatchId(batchId: string): Promise<PersonDomain[]> {
-		const sql = `SELECT * FROM persons WHERE batch_uuid = ? ORDER BY created DESC`
-		const results = (await this.db.prepare(sql).bind(batchId).all()).results as unknown as TablePerson[]
-		if (results.length === 0) return []
-		return results.map((row) => PersonDomain.fromRow(row))
-	}
 
-	async updateOne(person: PersonDomain): Promise<void> {
+	updateOne<T extends false>(person: PersonDomain, inTransaction?: T): Promise<void>;
+	updateOne<T extends true>(person: PersonDomain, inTransaction: T): Promise<PreparedTransaction[]>;
+	async updateOne(person: PersonDomain, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		let sql = `
 			UPDATE 
 				persons 
@@ -65,13 +64,21 @@ export class PersonRepositoryImpl extends RepositoryImpl implements PersonReposi
 			person.hash,
 			person.id,
 		]
-		
-		await this.db.prepare(sql).bind(...bind).run()
+		const prepared = this.db.prepare(sql).bind(...bind)
+
+		if (inTransaction) {
+			return [prepared]
+		}
+
+		await prepared.run()
 	}
 
-	async createOne(person: PersonDomain): Promise<void> {
+
+	createOne<T extends false>(person: PersonDomain, inTransaction?: boolean): Promise<void>;
+	createOne<T extends true>(person: PersonDomain, inTransaction: boolean): Promise<PreparedTransaction[]>;
+	async createOne(person: PersonDomain, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		const template = `INSERT INTO persons (uuid, batch_uuid, organization_uuid, name, email, username, hash, gender, nip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-		await this.db
+		const prepared = this.db
 			.prepare(template)
 			.bind(
 				person.id,
@@ -83,7 +90,28 @@ export class PersonRepositoryImpl extends RepositoryImpl implements PersonReposi
 				person.hash,
 				person.gender,
 				person.nip,
-			).run()
+			)
+
+		if (inTransaction) {
+			return [prepared]
+		}
+
+		await prepared.run()
+	}
+
+
+	deletePersonInBatch<T extends false>(personId: string, batchId: string, inTransaction?: T): Promise<void>;
+	deletePersonInBatch<T extends true>(personId: string, batchId: string, inTransaction: T): Promise<PreparedTransaction[]>;
+	async deletePersonInBatch(personId: string, batchId: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = this.db
+			.prepare(`DELETE FROM persons WHERE uuid = ? AND batch_uuid = ?`)
+			.bind(personId, batchId)
+
+		if (inTransaction) {
+			return [prepared]
+		}
+
+		await prepared.run()
 	}
 
 	async getUniqueInBatch(batch_uuid: string, username: string, email: string): Promise<PersonDomain | undefined> {
@@ -94,9 +122,19 @@ export class PersonRepositoryImpl extends RepositoryImpl implements PersonReposi
 		return PersonDomain.fromRow(data)
 	}
 
-	async deletePersonInBatch(personId: string, batchId: string): Promise<void> {
-		await this.db.prepare(`DELETE FROM persons WHERE uuid = ? AND batch_uuid = ?`)
-			.bind(personId, batchId).run()
+	async getByBatchId(batchId: string): Promise<PersonDomain[]> {
+		const sql = `SELECT * FROM persons WHERE batch_uuid = ? ORDER BY created DESC`
+		const results = (await this.db.prepare(sql).bind(batchId).all()).results as unknown as TablePerson[]
+		if (results.length === 0) return []
+		return results.map((row) => PersonDomain.fromRow(row))
+	}
+
+
+	async getCountByBatchId(batchId: string): Promise<number> {
+		const sql = `SELECT COUNT(*) as count FROM persons WHERE batch_uuid = ?`
+		const result = await this.db.prepare(sql).bind(batchId).first()
+		if (!result) return 0
+		return result.count as number
 	}
 
 	async getDetailInBatch(batchId: string): Promise<BatchPersonDetailAggregation[]> {

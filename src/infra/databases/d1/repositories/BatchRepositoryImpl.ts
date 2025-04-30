@@ -5,6 +5,7 @@ import { BatchJoinOrganization } from "@src/infra/databases/d1/dto/aggregations"
 import { BatchAssessment } from "@src/domain/BatchAssessment";
 import { CreateBatch } from "@src/domain/CreateBatch";
 import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 
 
 export class BatchRepositoryImpl extends RepositoryImpl implements BatchRepository {
@@ -14,6 +15,61 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 
 	static create(db: D1Database): BatchRepositoryImpl {
 		return new BatchRepositoryImpl(db)
+	}
+
+
+	createBatch<T extends false>(batch: CreateBatch, inTransaction?: T): Promise<void>
+	createBatch<T extends true>(batch: CreateBatch, inTransaction: T): Promise<PreparedTransaction[]>
+	async createBatch(batch: CreateBatch, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = this.db
+			.prepare(`INSERT INTO batches (uuid, organization_uuid, token, title) VALUES (?, ?, ?, ?)`)
+			.bind(batch.uuid, batch.organization_uuid, batch.token, batch.title)
+
+		if (inTransaction) {
+			return [prepared]
+		}
+
+		try {
+			await prepared.run();
+		} catch (error: any) {
+			if (error.cause.message === "UNIQUE constraint failed: batches.token: SQLITE_CONSTRAINT") {
+				throw AppError.database(error.cause.message, `Batch ${batch.title}: Token ${batch.token} already exists`)
+			}
+			throw error
+		}
+	}
+
+
+	updateTitle<T extends false>(batchId: string, title: string, inTransaction?: T): Promise<void>
+	updateTitle<T extends true>(batchId: string, title: string, inTransaction: T): Promise<PreparedTransaction[]>
+	async updateTitle(batchId: string, title: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = this.db
+			.prepare(`UPDATE batches SET title = ? WHERE uuid = ?`)
+			.bind(title, batchId)
+
+		if (inTransaction) {
+			return [prepared]
+		}
+
+		await prepared.run();
+	}
+
+
+	updateTime<T extends false>(batchId: string, timeType: string, timeStart: string, timeEnd: string, inTransaction?: T): Promise<void>
+	updateTime<T extends true>(batchId: string, timeType: string, timeStart: string, timeEnd: string, inTransaction: T): Promise<PreparedTransaction[]>
+	async updateTime(batchId: string, timeType: string, timeStart: string, timeEnd: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const timeStartColumn = `${timeType}_start`
+		const timeEndColumn = `${timeType}_end`
+
+		const prepared = this.db
+			.prepare(`UPDATE batches SET ${timeStartColumn} = ?, ${timeEndColumn} = ? WHERE uuid = ?`)
+			.bind(timeStart, timeEnd, batchId)
+
+		if (inTransaction) {
+			return [prepared]
+		}
+
+		await prepared.run()
 	}
 
 	async getBatchByToken(token: string): Promise<BatchDTO> {
@@ -41,7 +97,7 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 			organization_name: data.name,
 		}
 	}
-	
+
 	async getAssessmentList(): Promise<BatchAssessment[]> {
 		const data = (await this.db.prepare(`
 			SELECT 
@@ -63,30 +119,11 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 	async getLastBatchToken(): Promise<number> {
 		const data = await this.db.prepare(`SELECT token FROM batches ORDER BY token DESC LIMIT 1`)
 			.first() as unknown as { token: string };
-		
+
 		const integer = parseInt(data.token)
 
 		if (isNaN(integer)) throw AppError.conversion("Token is not a number");
 		return integer;
-	}
-
-	async createBatch(batch: CreateBatch): Promise<void> {
-		try {
-			await this.db.prepare(`INSERT INTO batches (uuid, organization_uuid, token, title) VALUES (?, ?, ?, ?)`)
-				.bind(batch.uuid, batch.organization_uuid, batch.token, batch.title)
-				.run();
-		} catch (error: any) {
-			if (error.cause.message === "UNIQUE constraint failed: batches.token: SQLITE_CONSTRAINT") {
-				throw AppError.database(error.cause.message, `Batch ${batch.title}: Token ${batch.token} already exists`)
-			}
-			throw error
-		}
-	}
-
-	async updateTitle(batchId: string, title: string): Promise<void> {
-		await this.db.prepare(`UPDATE batches SET title = ? WHERE uuid = ?`)
-			.bind(title, batchId)
-			.run();
 	}
 
 	async getBatchIdInSameTimestamp(batchId: string) {
@@ -106,14 +143,5 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 			.bind(batchId, batchId, batchId)
 			.all())
 			.results as unknown as { uuid: string }[]
-	}
-
-	async updateTime(batchId: string, timeType: string, timeStart: string, timeEnd: string): Promise<void> {
-		const timeStartColumn = `${timeType}_start`
-		const timeEndColumn = `${timeType}_end`
-
-		await this.db.prepare(`UPDATE batches SET ${timeStartColumn} = ?, ${timeEndColumn} = ? WHERE uuid = ?`)
-			.bind(timeStart, timeEnd, batchId)
-			.run()
 	}
 }

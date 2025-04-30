@@ -1,5 +1,5 @@
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
+
 export interface Repository {
-	begin(): Promise<void>;
-	commit(): Promise<void>;
-	rollback(): Promise<void>;
+	commit(args: PreparedTransaction[]): Promise<void>
 }

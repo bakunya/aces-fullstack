@@ -8,7 +8,6 @@ import { PersonRepository } from "@src/application/repositories/PersonRepository
 import { RegroupRepository } from "@src/application/repositories/RegroupRepository";
 import { ICreateGroupingReturn, ICreateGroupReturn } from "@src/application/usecase-interface/IBatchRegroup";
 import { Uuid } from "@src/application/uuid";
-import { AppError } from "@src/application/error/AppError";
 
 export class BatchRegrouping implements IUsecase<[string], unknown> {
 	constructor(
@@ -177,23 +176,14 @@ export class BatchRegrouping implements IUsecase<[string], unknown> {
 
 
 	async execute(batchId: string) {
-		try {
-			const persons = await this.personRepo.getByBatchId(batchId)
-			if (persons.length == 0) return;
+		const persons = await this.personRepo.getByBatchId(batchId)
+		if (persons.length == 0) return;
+		await this.regroupRepo.clean(batchId)
 
-			await this.regroupRepo.begin()
-			await this.regroupRepo.clean(batchId)
-
-			const modules = await this.batchModuleUsecase.getBatchModules(batchId);
-			const groups = this.createGroup(this.getBatchRuntimeInfo(modules, batchId), persons.length);
-			const groupings = this.createGrouping(groups, persons as { id: string }[], this.getBatchRuntimeInfo(modules, batchId));
-			await this.regroupRepo.replace(groups, groupings);
-			await this.regroupRepo.unsetShouldRegroup(batchId);
-
-			await this.regroupRepo.commit()
-		} catch (err: any) {
-			await this.regroupRepo.rollback()
-			throw AppError.unknown(err.message, "Internal Server Error")
-		}
+		const modules = await this.batchModuleUsecase.getBatchModules(batchId);
+		const groups = this.createGroup(this.getBatchRuntimeInfo(modules, batchId), persons.length);
+		const groupings = this.createGrouping(groups, persons as { id: string }[], this.getBatchRuntimeInfo(modules, batchId));
+		await this.regroupRepo.replace(groups, groupings);
+		await this.regroupRepo.unsetShouldRegroup(batchId);
 	}
 }

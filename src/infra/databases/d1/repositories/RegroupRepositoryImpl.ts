@@ -1,5 +1,6 @@
 import { RegroupRepository } from "@src/application/repositories/RegroupRepository";
 import { ICreateGroupReturn, ICreateGroupingReturn } from "@src/application/usecase-interface/IBatchRegroup";
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
 export class RegroupRepositoryImpl extends RepositoryImpl implements RegroupRepository {
@@ -11,17 +12,28 @@ export class RegroupRepositoryImpl extends RepositoryImpl implements RegroupRepo
 		return new RegroupRepositoryImpl(db);	
 	}
 
-	async clean(batchId: string): Promise<void> {
-		const stm0 = `DELETE FROM batch_groupings WHERE batch_uuid=?`;
-		const stm1 = `DELETE FROM batch_groups WHERE batch_uuid=?`;
+		
+	clean<T extends false>(batchId: string, inTransaction?: T): Promise<void>;
+	clean<T extends true>(batchId: string, inTransaction: T): Promise<PreparedTransaction[]>;
+	async clean(batchId: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const stm0 = this.db.prepare(`DELETE FROM batch_groupings WHERE batch_uuid=?`).bind(batchId);
+		const stm1 = this.db.prepare(`DELETE FROM batch_groups WHERE batch_uuid=?`).bind(batchId);
+		
+		if (inTransaction) {
+			return [stm0, stm1];
+		}
 
 		await this.db.batch([
-			this.db.prepare(stm0).bind(batchId),
-			this.db.prepare(stm1).bind(batchId),
+			stm0,
+			stm1,
 		]);
 	}
 
-	async replace(groups: ICreateGroupReturn[], groupings: ICreateGroupingReturn[]): Promise<void> {
+
+	
+	replace<T extends false>(groups: ICreateGroupReturn[], groupings: ICreateGroupingReturn[], inTransaction?: T): Promise<void>;
+	replace<T extends true>(groups: ICreateGroupReturn[], groupings: ICreateGroupingReturn[], inTransaction: T): Promise<PreparedTransaction[]>;
+	async replace(groups: ICreateGroupReturn[], groupings: ICreateGroupingReturn[], inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		const group_values = groups
 			.map((g) => `(
 				'${g.uuid}', 
@@ -57,27 +69,43 @@ export class RegroupRepositoryImpl extends RepositoryImpl implements RegroupRepo
 			) VALUES 
 		` + group_values;
 		const stm01 = 'INSERT INTO batch_groupings (batch_uuid, group_uuid, person_uuid) VALUES ' + grouping_values;
-		await this.db.batch([
+
+		const prepared = [
 			this.db.prepare(stm00),
 			this.db.prepare(stm01),
-		]);
+		]
+
+
+		if (inTransaction) {
+			return prepared;
+		}
+
+		await this.db.batch(prepared);
 	}
 
-	async setShouldRegroup(batchId: string): Promise<void> {
-		try {
-			const stm = `UPDATE batches SET regrouping=1 WHERE uuid=?`;
-			await this.db.prepare(stm).bind(batchId).run();
-		} catch (err) {
-			console.error(err);
+	
+	setShouldRegroup<T extends false>(batchId: string, inTransaction?: T): Promise<void>;
+	setShouldRegroup<T extends true>(batchId: string, inTransaction: T): Promise<PreparedTransaction[]>;
+	async setShouldRegroup(batchId: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = this.db.prepare(`UPDATE batches SET regrouping=1 WHERE uuid=?`).bind(batchId);
+
+		if (inTransaction) {
+			return [prepared];
 		}
+
+		await prepared.run();
 	}
 
-	async unsetShouldRegroup(batchId: string): Promise<void> {
-		try {
-			const stm = `UPDATE batches SET regrouping=0 WHERE uuid=?`;
-			await this.db.prepare(stm).bind(batchId).run();
-		} catch (err) {
-			console.error(err);
+	
+	unsetShouldRegroup<T extends false>(batchId: string, inTransaction?: T): Promise<void>;
+	unsetShouldRegroup<T extends true>(batchId: string, inTransaction: T): Promise<PreparedTransaction[]>;
+	async unsetShouldRegroup(batchId: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = this.db.prepare(`UPDATE batches SET regrouping=0 WHERE uuid=?`).bind(batchId)
+
+		if (inTransaction) {
+			return [prepared];
 		}
+
+		await prepared.run();
 	}
 }

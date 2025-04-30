@@ -1,0 +1,1 @@
+export type PreparedTransaction = D1PreparedStatement

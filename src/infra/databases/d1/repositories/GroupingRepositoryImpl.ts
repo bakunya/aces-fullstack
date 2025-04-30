@@ -1,6 +1,7 @@
 import { GroupingRepository } from "@src/application/repositories/GroupingRepository";
 import { ModuleCategory } from "@src/domain/ModuleType";
 import { BatchGroupingDetailAggregation } from "@src/infra/databases/d1/dto/aggregations";
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
 export class GroupingRepositoryImpl extends RepositoryImpl implements GroupingRepository {
@@ -10,6 +11,73 @@ export class GroupingRepositoryImpl extends RepositoryImpl implements GroupingRe
 
 	static create(db: D1Database) {
 		return new GroupingRepositoryImpl(db)
+	}
+
+	allocateAssessorInAllSlot<T extends false>(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string }[], inTransaction?: T): Promise<void>
+	allocateAssessorInAllSlot<T extends true>(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string }[], inTransaction: T): Promise<PreparedTransaction[]>
+	async allocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string; }[], inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = data.map(v => {
+			return this.db
+				.prepare(`
+					UPDATE 
+						batch_groupings 
+					SET ${type.toLocaleLowerCase()}_assessor_user_uuid = ? 
+					WHERE group_uuid = ? 
+					AND person_uuid = ? 
+					AND batch_uuid = ?
+				`)
+				.bind(assessor_uuid, v?.group_id, v?.person_uuid, batch_uuid)
+		})
+
+		if (inTransaction) {
+			return prepared
+		}
+
+		await this.db.batch(prepared)
+	}
+
+	
+	unAllocateAssessorInAllSlot<T extends false>(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string; }[], inTransaction?: T): Promise<void>
+	unAllocateAssessorInAllSlot<T extends true>(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string; }[], inTransaction: T): Promise<PreparedTransaction[]>
+	async unAllocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string; }[], inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = data.map(v => {
+			return this.db
+				.prepare(`
+					UPDATE 
+						batch_groupings 
+					SET ${type.toLocaleLowerCase()}_assessor_user_uuid = ? 
+					WHERE group_uuid = ? 
+					AND person_uuid = ? 
+					AND batch_uuid = ?
+					AND ${type.toLocaleLowerCase()}_assessor_user_uuid = ?
+				`)
+				.bind(null, v?.group_id, v?.person_uuid, batch_uuid, assessor_uuid)
+		})
+
+		if (inTransaction) {
+			return prepared
+		}
+
+		await this.db.batch(prepared)
+	}
+
+	
+	manualPair<T extends false>(batchId: string, assessorId: string, type: ModuleCategory, groupingId: number, inTransaction?: T): Promise<void>
+	manualPair<T extends true>(batchId: string, assessorId: string, type: ModuleCategory, groupingId: number, inTransaction: T): Promise<PreparedTransaction[]>
+	async manualPair(batchId: string, assessorId: string, type: ModuleCategory, groupingId: number, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const stm = `
+			UPDATE batch_groupings 
+			SET ${type.toLocaleLowerCase()}_assessor_user_uuid = ? 
+			WHERE id = ? 
+			AND batch_uuid = ?
+		`
+		const prepared = this.db.prepare(stm).bind(assessorId.trim() ?? null, groupingId, batchId)
+
+		if (inTransaction) {
+			return [prepared]
+		}
+
+		await prepared.run()
 	}
 
 	async getUnallocated(batchId: string, type: ModuleCategory, groupPositionIds: string[][]) {
@@ -35,38 +103,6 @@ export class GroupingRepositoryImpl extends RepositoryImpl implements GroupingRe
 			})
 			.filter(Boolean) as { group_id: string; person_uuid: string }[]
 	}
-
-	async allocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string; }[]): Promise<void> {
-		await this.db.batch(data.map(v => {
-			return this.db
-				.prepare(`
-					UPDATE 
-						batch_groupings 
-					SET ${type.toLocaleLowerCase()}_assessor_user_uuid = ? 
-					WHERE group_uuid = ? 
-					AND person_uuid = ? 
-					AND batch_uuid = ?
-				`)
-				.bind(assessor_uuid, v?.group_id, v?.person_uuid, batch_uuid)
-		}))
-	}
-
-	async unAllocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, type: ModuleCategory, data: { group_id: string; person_uuid: string; }[]): Promise<void> {
-		await this.db.batch(data.map(v => {
-			return this.db
-				.prepare(`
-					UPDATE 
-						batch_groupings 
-					SET ${type.toLocaleLowerCase()}_assessor_user_uuid = ? 
-					WHERE group_uuid = ? 
-					AND person_uuid = ? 
-					AND batch_uuid = ?
-					AND ${type.toLocaleLowerCase()}_assessor_user_uuid = ?
-				`)
-				.bind(null, v?.group_id, v?.person_uuid, batch_uuid, assessor_uuid)
-		}))
-	}
-
 
 	async getAllocated(batchId: string, assessorId: string, type: ModuleCategory): Promise<{ group_id: string; person_uuid: string; }[]> {
 		const stm = `
@@ -122,17 +158,7 @@ export class GroupingRepositoryImpl extends RepositoryImpl implements GroupingRe
 				LEFT JOIN users u2 ON a2.user_uuid = u2.uuid
 				WHERE g.batch_uuid = ?
 			`
-		
-		return (await this.db.prepare(stm).bind(batchId).all()).results as unknown as BatchGroupingDetailAggregation[]
-	}
 
-	async manualPair(batchId: string, assessorId: string, type: ModuleCategory, groupingId: number): Promise<void> {
-		const stm = `
-			UPDATE batch_groupings 
-			SET ${type.toLocaleLowerCase()}_assessor_user_uuid = ? 
-			WHERE id = ? 
-			AND batch_uuid = ?
-		`
-		await this.db.prepare(stm).bind(assessorId.trim() ?? null, groupingId, batchId).run()
+		return (await this.db.prepare(stm).bind(batchId).all()).results as unknown as BatchGroupingDetailAggregation[]
 	}
 }
