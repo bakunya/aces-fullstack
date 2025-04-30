@@ -49,4 +49,22 @@ export class AssessorRepositoryImpl extends RepositoryImpl implements AssessorRe
 		
 		return (await this.db.prepare(stm).bind(...batchId, type).all()).results as unknown as (TableAssessorBatch & { email: string, username: string, fullname: string })[];
 	}
+
+	async isAssessorFree(batchId: string[], assessorId: string, type: ModuleCategory) {
+		const stm = `
+			SELECT
+				a.user_uuid
+			FROM assessors a
+			LEFT JOIN batch_assessors ba ON ba.user_uuid=a.user_uuid
+			WHERE 
+				(
+					ba.batch_uuid 
+					NOT IN (${batchId.map(() => "?").join(",")})
+					OR ba.batch_uuid IS NULL
+				)
+				AND (ba.type IS NULL OR ba.type!=?)
+				AND a.user_uuid=?
+		`
+		return (await this.db.prepare(stm).bind(...batchId, type, assessorId).first()) != null
+	}
 }

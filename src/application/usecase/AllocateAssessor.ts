@@ -1,5 +1,7 @@
 import { AppError } from "@src/application/error/AppError";
+import { AssessorRepository } from "@src/application/repositories/AssessorRepository";
 import { BatchAssessorRepository } from "@src/application/repositories/BatchAssessorRepository";
+import { BatchRepository } from "@src/application/repositories/BatchRepository";
 import { GroupingRepository } from "@src/application/repositories/GroupingRepository";
 import { GroupRepository } from "@src/application/repositories/GroupRepository";
 import { IAllocateAssessor } from "@src/application/usecase-interface/IAllocateAssessor";
@@ -14,14 +16,18 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 		private readonly batchAssessorRepo: BatchAssessorRepository,
 		private readonly groupRepo: GroupRepository,
 		private readonly groupingRepo: GroupingRepository,
+		private readonly batchRepo: BatchRepository,
+		private readonly assessorRepo: AssessorRepository
 	) { }
 
 	static create(
 		batchAssessorRepo: BatchAssessorRepository,
 		groupRepo: GroupRepository,
 		groupingRepo: GroupingRepository,
+		batchRepo: BatchRepository,
+		assessorRepo: AssessorRepository
 	) {
-		return new AllocateAssessorUsecase(batchAssessorRepo, groupRepo, groupingRepo);
+		return new AllocateAssessorUsecase(batchAssessorRepo, groupRepo, groupingRepo, batchRepo, assessorRepo);
 	}
 
 	private async allocateGroupAssessor(assessorId: string, batchId: string, type: ModuleCategory) {
@@ -50,23 +56,19 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 
 	async execute(batchId: string, userId: string, type: string) {
 		const category = ModuleCategoryMapping.fromString(type);
+		
+		const batchIds = (await this.batchRepo.getBatchIdInSameTimestamp(batchId)).map(v => v.uuid)
+		const isFree = await this.assessorRepo.isAssessorFree([...batchIds, batchId], userId, category);
 
-		try {
-			await this.groupRepo.begin();
+		if(!isFree) throw AppError.database("Assessor is already allocated", "Assessor is already allocated in other batch");
 
-			const batchAssessor = BatchAssessorDomain.create(batchId, userId, type);
-			await this.batchAssessorRepo.allocate(batchAssessor);
+		const batchAssessor = BatchAssessorDomain.create(batchId, userId, type);
+		await this.batchAssessorRepo.allocate(batchAssessor);
 
-			if (category === ModuleCategory.DISC) {
-				await this.allocateGroupAssessor(userId, batchId, category);
-			} else if (category === ModuleCategory.FACE || category === ModuleCategory.CASE) {
-				await this.allocateGroupingAssessor(userId, batchId, category);
-			}
-
-			await this.groupRepo.commit();
-		} catch (err: any) {
-			await this.groupRepo.rollback();
-			throw AppError.unknown(err.message, "Internal Server Error")
+		if (category === ModuleCategory.DISC) {
+			await this.allocateGroupAssessor(userId, batchId, category);
+		} else if (category === ModuleCategory.FACE || category === ModuleCategory.CASE) {
+			await this.allocateGroupingAssessor(userId, batchId, category);
 		}
 	}
 }

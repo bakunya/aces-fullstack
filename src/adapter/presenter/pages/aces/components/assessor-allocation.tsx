@@ -27,15 +27,15 @@ export function AssessorAllocation(props: Props) {
 				</h3>
 				<div id={ `${type}-load-bucket` }>
 					<button 
-						class="btn btn-sm btn-neutral"
 						x-on:click={`
 							show = true; 
 							type = '${type}';
 							setTimeout(() => htmx.trigger(document.body, '${HTMX_EVENTS.ACES_GetAssessorBucketAllocation}'), 100)
-						`}
-					>
-						Tampilkan Data Asesor
-					</button>
+							`}
+						class="btn-sm btn"
+						x-bind:class={`type === '${type}' ? 'btn-neutral' : 'bg-transparent btn-outline'`}
+						x-text={`type === '${type}' ? 'Reload' : 'Tampilkan Data Asesor'`}
+					/>
 				</div>
 			</div>
 			<div className="mt-5">

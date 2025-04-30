@@ -2,7 +2,9 @@ import { Context } from "@src/adapter/http/contracts/binding";
 import { BatchAssessorSlotDataToUpdate, BatchAssessorUpdateSlotUrlParam } from "@src/adapter/http/contracts/request/batch-assessor-update-slot";
 import { AllocateAssessorUsecase } from "@src/application/usecase/AllocateAssessor";
 import { BatchAssessorUpdateSlotUsecase } from "@src/application/usecase/BatchAssessorUpdateSlot";
+import { AssessorRepositoryImpl } from "@src/infra/databases/d1/repositories/AssessorRepositoryImpl";
 import { BatchAssessorRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchAssessorRepositoryImpl";
+import { BatchRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchRepositoryImpl";
 import { GroupingRepositoryImpl } from "@src/infra/databases/d1/repositories/GroupingRepositoryImpl";
 import { GroupRepositoryImpl } from "@src/infra/databases/d1/repositories/GroupRepositoryImpl";
 
@@ -33,6 +35,9 @@ export async function acesBatchAssessorUpdateSlotController(c: Context) {
 				BatchAssessorRepositoryImpl.create(c.env.DB),
 				GroupRepositoryImpl.create(c.env.DB),
 				GroupingRepositoryImpl.create(c.env.DB),
+				BatchRepositoryImpl.create(c.env.DB),
+				AssessorRepositoryImpl.create(c.env.DB)
+				
 			)
 		)
 		.execute(data)
