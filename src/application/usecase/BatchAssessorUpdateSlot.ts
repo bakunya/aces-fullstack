@@ -6,6 +6,7 @@ import { GroupRepository } from "@src/application/repositories/GroupRepository";
 import { IAllocateAssessor } from "@src/application/usecase-interface/IAllocateAssessor";
 import { IUsecase } from "@src/application/usecase-interface/IUsecase";
 import { ModuleCategory, ModuleCategoryMapping } from "@src/domain/ModuleType";
+import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 
 export class BatchAssessorUpdateSlotUsecase implements IUsecase<[BatchAssessorSlotDataToUpdate], any> {
 	constructor(
@@ -43,30 +44,45 @@ export class BatchAssessorUpdateSlotUsecase implements IUsecase<[BatchAssessorSl
 		const allocated = await this.groupRepo.getSlotAllocationInBatch(data.batchId)
 		const groupPositions = this.allocateAssessorUsecase.getGroupPosition(type, allocated)[slotPosition - 1].pop()
 		if (!groupPositions) return
+
+		let prepared: PreparedTransaction[] = []
+		const prepared2 = await this.batchAssessorRepo.updateSlot(data, true)
+
 		if (type === ModuleCategory.CASE || type === ModuleCategory.FACE) {
 			const unallocated = (await this.groupingRepo.getUnallocated(data.batchId, type, [[groupPositions]])).pop()
 			if (!unallocated) return
-			await this.groupingRepo.allocateAssessorInAllSlot(data.assessorId, data.batchId, type, [unallocated])
+			prepared = await this.groupingRepo.allocateAssessorInAllSlot(data.assessorId, data.batchId, type, [unallocated] , true)
 		} else if (type === ModuleCategory.DISC) {
 			const unallocated = await this.groupRepo.getUnallocated(data.batchId, [[groupPositions]])
 			if (!unallocated) return
-			await this.groupRepo.allocateAssessorInAllSlot(data.assessorId, data.batchId, unallocated)
+			prepared = await this.groupRepo.allocateAssessorInAllSlot(data.assessorId, data.batchId, unallocated, true)
 		}
-		await this.batchAssessorRepo.updateSlot(data)
+
+		await this.batchAssessorRepo.commit([
+			...prepared,
+			...prepared2
+		])
 	}
 
 	private async unallocate(data: BatchAssessorSlotDataToUpdate, type: ModuleCategory, slotPosition: number) {
+		let prepared: PreparedTransaction[] = []
+		const prepared2 = await this.batchAssessorRepo.updateSlot(data, true)
+		
 		if (type === ModuleCategory.CASE || type === ModuleCategory.FACE) {
 			const allocated = await this.groupingRepo.getAllocatedFromPosition(data.batchId, data.assessorId, slotPosition, type)
 			if (!allocated) return
-			await this.groupingRepo.unAllocateAssessorInAllSlot(data.assessorId, data.batchId, type, allocated)
+			prepared = await this.groupingRepo.unAllocateAssessorInAllSlot(data.assessorId, data.batchId, type, allocated, true)
 		} else if (type === ModuleCategory.DISC) {
 			const allocated = await this.groupRepo.getAllocated(data.batchId, data.assessorId)
 			const groupPositions = this.allocateAssessorUsecase.getGroupPositionAsObject(type, allocated)?.[slotPosition]?.pop?.()
 			if (!groupPositions) return
-			await this.groupRepo.unAllocateAssessorInAllSlot(data.assessorId, data.batchId, [{ group_uuid: groupPositions }])
+			prepared = await this.groupRepo.unAllocateAssessorInAllSlot(data.assessorId, data.batchId, [{ group_uuid: groupPositions }], true)
 		}
-		await this.batchAssessorRepo.updateSlot(data)
+
+		await this.batchAssessorRepo.commit([
+			...prepared,
+			...prepared2
+		])
 	}
 
 	async execute(data: BatchAssessorSlotDataToUpdate): Promise<any> {
