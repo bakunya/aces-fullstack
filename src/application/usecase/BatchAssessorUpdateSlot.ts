@@ -49,6 +49,9 @@ export class BatchAssessorUpdateSlotUsecase implements IUsecase<[BatchAssessorSl
 		const prepared2 = await this.batchAssessorRepo.updateSlot(data, true)
 
 		if (type === ModuleCategory.CASE || type === ModuleCategory.FACE) {
+			const hasAllocated = (await this.groupingRepo.getAllocatedFromPosition(data.batchId, data.assessorId, slotPosition, type)).push()
+			if (hasAllocated) throw AppError.database("Assessor already allocated", "Assessor already allocated in this slot")
+
 			const unallocated = (await this.groupingRepo.getUnallocated(data.batchId, type, [[groupPositions]])).pop()
 			if (!unallocated) return
 			prepared = await this.groupingRepo.allocateAssessorInAllSlot(data.assessorId, data.batchId, type, [unallocated] , true)
