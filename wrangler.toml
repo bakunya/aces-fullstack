@@ -7,7 +7,7 @@ assets = { directory = "public" }
 [[d1_databases]]
 binding = "DB"
 database_name = "aces-fullstack"
-database_id = "c1e0bedb-9e16-4268-b4dc-e9ed75e41b70"
+database_id = "4d24a4f0-229c-4676-a873-5c304f9a8ff5"
 migrations_table = "d1_migrations"
 migrations_dir = "migrations"
 
