@@ -15,6 +15,7 @@ export default defineConfig({
 				"aces-batch-person": 'src/adapter/presenter/ts/aces-batch-person/index.ts',
 				"aces-batch-assessor": 'src/adapter/presenter/ts/aces-batch-assessor/index.ts',
 				"aces-batch-pairs": 'src/adapter/presenter/ts/aces-batch-pairs/index.ts',
+				"aces-batch-deployment": 'src/adapter/presenter/ts/aces-batch-deployment/index.ts',
 				"shared": 'src/adapter/presenter/ts/shared/index.ts',
 			},
 		},

@@ -179,5 +179,5 @@ function Page({ batch }: PageProps) {
 }
 
 export const BatchDeploymentPage = AcesTMLHOC(Page, {
-	// viteGenerated: ["aces-batch-detail"]
+	viteGenerated: ["aces-batch-deployment"]
 });
