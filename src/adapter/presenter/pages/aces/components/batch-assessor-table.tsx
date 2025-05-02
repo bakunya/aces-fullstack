@@ -18,7 +18,7 @@ export function BatchAssessorTable({ assessors, batch_uuid }: Props) {
 		<table className="table">
 			<thead>
 				<tr className="bg-gray-300">
-					<th className="text-left p-3">Nama</th>
+					<th className="text-left p-3">Nama (Total: {assessors.length})</th>
 					<th className="text-right p-3">Slot</th>
 				</tr>
 			</thead>
