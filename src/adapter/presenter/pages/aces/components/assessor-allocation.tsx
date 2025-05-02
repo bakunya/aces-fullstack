@@ -44,6 +44,7 @@ export function AssessorAllocation(props: Props) {
 					hx-trigger={ `${HTMX_EVENTS.ACES_GetBatchAssessorTable}_${type} from:body` }
 					hx-target="this"
 					hx-swap="innerHTML"
+					hx-indicator="#bucket-loader"
 				>
 					<BatchAssessorTable assessors={assessors} batch_uuid={batch_uuid} />
 				</div>

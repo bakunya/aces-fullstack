@@ -3,6 +3,13 @@
 @source "../components";
 @source "../ts/aces";
 @source "../ts/utils";
-@plugin "daisyui" { themes: emerald --default; }
+
+@plugin "daisyui" {
+	themes: emerald --default;
+}
 
 @import url("./quill.css");
+
+.htmx-indicator.htmx-request {
+	display: block !important;
+}
