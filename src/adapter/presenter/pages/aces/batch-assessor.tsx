@@ -119,6 +119,7 @@ function Page({ batch, allocation }: PageProps) {
 									hx-target="this"
 									hx-swap="innerHTML"
 									hx-include="#form-bucket-settings"
+									hx-indicator="#bucket-loader"
 									className="w-full pt-8 sticky top-0"
 									hx-trigger={ `${HTMX_EVENTS.ACES_GetAssessorBucketAllocation} from:body` }
 									hx-post={route('post.aces.hx.batch.batch_id.assessor_bucket_allocation', [batch.uuid])}
