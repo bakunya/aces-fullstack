@@ -34,10 +34,10 @@ export function BatchNav({ batch }: Props) {
 							<div className="flex space-x-4" >
 								<a href={ route("get.aces.batch.batch_id", [batch.uuid]) } className="rounded-md pr-2 text-sm font-medium text-gray-500">Modules</a>
 								<a href={ route("get.aces.batch.batch_id.person", [batch.uuid]) } className="rounded-md px-2 text-sm font-medium text-gray-500">Peserta</a>
+								<a href={ route("get.aces.batch.batch_id.deployment", [batch.uuid]) } className="rounded-md px-2 text-sm font-medium text-gray-500">Waktu</a>
 								<a href={ route("get.aces.batch.batch_id.assessors", [batch.uuid]) } className="rounded-md px-2 text-sm font-medium text-gray-500">Asesor</a>
-								<a href={ route("get.aces.batch.batch_id.pairs", [batch.uuid]) } className="rounded-md px-2 text-sm font-medium text-gray-500">Pemasangan</a>
 								<a href={ route("get.aces.batch.batch_id.groupings", [batch.uuid]) } className="rounded-md px-2 text-sm font-medium text-gray-500">Grouping</a>
-								<a href={ route("get.aces.batch.batch_id.deployment", [batch.uuid]) } className="rounded-md px-2 text-sm font-medium text-gray-500">Deployment</a>
+								<a href={ route("get.aces.batch.batch_id.pairs", [batch.uuid]) } className="rounded-md px-2 text-sm font-medium text-gray-500">Pemasangan</a>
 							</div>
 						</div>
 					</div>

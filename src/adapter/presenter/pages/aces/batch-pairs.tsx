@@ -53,14 +53,12 @@ function Page({ batch, groups, assessors, groupingsFace, groupingsCase }: PagePr
 				<AssessorDiscPair groups={ groups } assessors={ assessors.get(ModuleCategory.DISC) ?? [] } />
 			</div>
 
-
-			{/* hx/batch/:batch_id/assessor_groupings_pair/:type */}
-
 			<div
 				hx-get={ route("get.aces.hx.batch.batch_id.assessor_groupings_pair.type", [batch.uuid, ModuleCategory.FACE]) }
 				hx-trigger={ `${HTMX_EVENTS.ACES_FaceManualPair} from:body` }
 				hx-target="this"
 				hx-swap="innerHTML"
+				x-data={`{showSlot: ''}`}
 			>
 				<AssessorGroupingPair
 					groupings={ groupingsFace }
@@ -74,6 +72,7 @@ function Page({ batch, groups, assessors, groupingsFace, groupingsCase }: PagePr
 				hx-trigger={ `${HTMX_EVENTS.ACES_CaseManualPair} from:body` }
 				hx-target="this"
 				hx-swap="innerHTML"
+				x-data={`{showSlot: ''}`}
 			>
 				<AssessorGroupingPair
 					groupings={ groupingsCase }
@@ -86,5 +85,5 @@ function Page({ batch, groups, assessors, groupingsFace, groupingsCase }: PagePr
 }
 
 export const BatchPairsPage = AcesTMLHOC(Page, {
-	// viteGenerated: ["aces-batch-detail"]
+	viteGenerated: ["aces-batch-pairs"]
 });

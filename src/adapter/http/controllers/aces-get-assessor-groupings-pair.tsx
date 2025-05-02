@@ -10,7 +10,6 @@ export async function acesGetAssessorGroupingsPairController(c: Context) {
 	const batchId = c.req.param("batch_id")
 	const type = ModuleCategoryMapping.fromString(c.req.param("type")) as ModuleCategory.FACE | ModuleCategory.CASE
 
-
 	const [assessors, groupings] = await Promise.all([
 		BatchAssessorRepositoryImpl.create(c.env.DB).getDetail(batchId),
 		GroupingRepositoryImpl.create(c.env.DB).getDetail(batchId)

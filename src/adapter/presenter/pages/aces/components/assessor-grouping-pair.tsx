@@ -28,42 +28,54 @@ export function AssessorGroupingPair({ groupings, assessors, type }: AssessorDis
 						<table class="table">
 							<thead class="bg-gray-300 text-gray-500">
 								<tr>
-									<th colspan={ 3 } class="capitalize">Assessor { type.toLocaleLowerCase() } Group { key }</th>
+									<th colspan={ 2 } class="capitalize">
+										<div className="flex justify-between items-center">
+											<span>Assessor { type.toLocaleLowerCase() } Group { key }</span>
+											<button 
+												type="button"
+												class="btn btn-sm btn-primary"
+												x-on:click={`showSlot = (showSlot == ${key} ? '' : ${key})`}
+												x-text={`showSlot == ${key} ? 'Sembunyikan' : 'Tampilkan'`}
+											/>
+										</div>
+									</th>
 								</tr>
 								<tr>
 									<th>Slot</th>
 									<th>Action</th>
 								</tr>
 							</thead>
-							{ val.map((x) => (
-								<tr class="hover:bg-gray-200">
-									<td class="p-3">
-										{ x.person_name }
-									</td>
-									<td className="p-3">
-										<select
-											class="select"
-											name="assessor_id"
-											id={ `id-${type}-${x.batch_groupings_id}` }
-											hx-swap="none"
-											hx-trigger="change"
-											hx-include={ `#id-${type}-${x.batch_groupings_id}[name=assessor_id]` }
-											hx-put={ route("put.aces.hx.batch.batch_id.manual_pair.grouping.grouping_id.type.type", [x.batch_uuid, x.batch_groupings_id, type]) }
-										>
-											<option value="">---------</option>
-											{ assessorByAvailability[Number(key) - 1]?.map?.(y => (
-												<option
-													value={ y.user_uuid }
-													selected={ y.user_uuid === x[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] }
-													disabled={ Boolean(val.find(z => z[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] === y.user_uuid)) }
-												>
-													{ y.user_fullname }
-												</option>
-											)) }
-										</select>
-									</td>
-								</tr>
-							)) }
+							<tbody x-bind:class={`showSlot == ${key} ? '' : 'hidden'`}>
+								{ val.map((x) => (
+									<tr class="hover:bg-gray-200">
+										<td class="p-3">
+											{ x.person_name }
+										</td>
+										<td className="p-3">
+											<select
+												class="select"
+												name="assessor_id"
+												id={ `id-${type}-${x.batch_groupings_id}` }
+												hx-swap="none"
+												hx-trigger="change"
+												hx-include={ `#id-${type}-${x.batch_groupings_id}[name=assessor_id]` }
+												hx-put={ route("put.aces.hx.batch.batch_id.manual_pair.grouping.grouping_id.type.type", [x.batch_uuid, x.batch_groupings_id, type]) }
+											>
+												<option value="">---------</option>
+												{ assessorByAvailability[Number(key) - 1]?.map?.(y => (
+													<option
+														value={ y.user_uuid }
+														selected={ y.user_uuid === x[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] }
+														disabled={ Boolean(val.find(z => z[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] === y.user_uuid)) }
+													>
+														{ y.user_fullname }
+													</option>
+												)) }
+											</select>
+										</td>
+									</tr>
+								)) }
+							</tbody>
 						</table>
 					</div >
 				</>

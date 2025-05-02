@@ -12,5 +12,5 @@ export async function acesGetAssessorDiscPairController(c: Context) {
 		BatchAssessorRepositoryImpl.create(c.env.DB).getDetail(batchId)
 	])
 
-	return c.html(<AssessorDiscPair groups={ groups } assessors={ assessors.filter(x => ModuleCategoryMapping.fromString(x.type) === ModuleCategory.DISC) ?? [] } />)
+	return c.html(<AssessorDiscPair groups={ groups } show={true} assessors={ assessors.filter(x => ModuleCategoryMapping.fromString(x.type) === ModuleCategory.DISC) ?? [] } />)
 }
