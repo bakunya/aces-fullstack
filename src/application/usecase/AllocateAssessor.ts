@@ -69,7 +69,7 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 		
 		const allocated = await this.assessorAllocationUsecase.getAssessorAllocated(batchId)
 		const requreiments = await this.assessorAllocationUsecase.getAssessorRequirement(batchId)
-		if(allocated[`${type}_assessors` as keyof typeof allocated].length >= (requreiments[`max${type}` as keyof typeof requreiments] - 1)) {
+		if(allocated[`${type}_assessors` as keyof typeof allocated].length >= (requreiments[`max${type}` as keyof typeof requreiments])) {
 			throw AppError.database("Assessor is already allocated", "Assessor is already allocated in this batch");
 		}
 
