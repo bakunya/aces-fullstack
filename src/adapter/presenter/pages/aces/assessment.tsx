@@ -7,6 +7,7 @@ interface PageProps {
 		uuid: string,
 		token: string,
 		title: string,
+		type: string,
 		organization_name: string,
 		batch_time_start?: string,
 	}[]

@@ -10,7 +10,7 @@ export class CreateBatchUsecase implements IUsecase<[CreateBatchRequest], string
 	async execute(request: CreateBatchRequest) {
 		const prevToken = await this.batchRepository.getLastBatchToken();
 		const batch = CreateBatch
-			.create(this.uuid.get(), request.organization_uuid, request.title)
+			.create(this.uuid.get(), request.organization_uuid, request.title, request.type)
 			.createNextToken(prevToken);
 		await this.batchRepository.createBatch(batch);
 		return batch.uuid;

@@ -52,26 +52,33 @@ export function AssessorGroupingPair({ groupings, assessors, type }: AssessorDis
 											{ x.person_name }
 										</td>
 										<td className="p-3">
-											<select
-												class="select"
-												name="assessor_id"
-												id={ `id-${type}-${x.batch_groupings_id}` }
+											<form 
 												hx-swap="none"
-												hx-trigger="change"
-												hx-include={ `#id-${type}-${x.batch_groupings_id}[name=assessor_id]` }
+												x-data="{ disable: true }"
+												className="flex gap-2 items-center"
 												hx-put={ route("put.aces.hx.batch.batch_id.manual_pair.grouping.grouping_id.type.type", [x.batch_uuid, x.batch_groupings_id, type]) }
 											>
-												<option value="">---------</option>
-												{ assessorByAvailability[Number(key) - 1]?.map?.(y => (
-													<option
-														value={ y.user_uuid }
-														selected={ y.user_uuid === x[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] }
-														disabled={ Boolean(val.find(z => z[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] === y.user_uuid)) }
-													>
-														{ y.user_fullname }
-													</option>
-												)) }
-											</select>
+												<select
+													class="select"
+													name="assessor_id"
+													x-bind:disabled="disable"
+													id={ `id-${type}-${x.batch_groupings_id}` }
+												>
+													<option value="">---------</option>
+													{ assessorByAvailability[Number(key) - 1]?.map?.(y => (
+														<option
+															value={ y.user_uuid }
+															selected={ y.user_uuid === x[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] }
+															disabled={ Boolean(val.find(z => z[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] === y.user_uuid)) }
+														>
+															{ y.user_fullname }
+														</option>
+													)) }
+												</select>
+												<button x-show="!disable" type="submit" className="btn btn-primary"><small>Simpan</small></button>
+												<button x-show="!disable" x-on:click="disable = true" type="reset" className="btn btn-neutral"><small>Cancel</small></button>
+												<button x-show="disable" x-on:click="disable = false" type="button" className="btn btn-neutral"><small>Edit</small></button>
+											</form>
 										</td>
 									</tr>
 								)) }

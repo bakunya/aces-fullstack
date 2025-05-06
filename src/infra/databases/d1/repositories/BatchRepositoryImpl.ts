@@ -22,8 +22,8 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 	createBatch<T extends true>(batch: CreateBatch, inTransaction: T): Promise<PreparedTransaction[]>
 	async createBatch(batch: CreateBatch, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
 		const prepared = this.db
-			.prepare(`INSERT INTO batches (uuid, organization_uuid, token, title) VALUES (?, ?, ?, ?)`)
-			.bind(batch.uuid, batch.organization_uuid, batch.token, batch.title)
+			.prepare(`INSERT INTO batches (uuid, organization_uuid, token, title, type) VALUES (?, ?, ?, ?, ?)`)
+			.bind(batch.uuid, batch.organization_uuid, batch.token, batch.title, batch.type)
 
 		if (inTransaction) {
 			return [prepared]
@@ -105,7 +105,8 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 				batches.token,
 				batches.title,
 				organizations.name,
-				batches.batch_time_start 
+				batches.batch_time_start,
+				batches.type
 			FROM batches 
 			JOIN organizations ON batches.organization_uuid = organizations.uuid
 			ORDER BY batches.batch_time_start DESC
@@ -113,7 +114,7 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 			.all())
 			.results as unknown as BatchJoinOrganization[];
 
-		return data.map(item => BatchAssessment.create(item.uuid, item.token, item.title, item.name, item.batch_time_start))
+		return data.map(item => BatchAssessment.create(item.uuid, item.token, item.title, item.type, item.name, item.batch_time_start))
 	}
 
 	async getLastBatchToken(): Promise<number> {

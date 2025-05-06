@@ -8,10 +8,11 @@ import { ulidFactory } from "ulid-workers"
 
 export async function batchOrganizationCreateBatchController(c: Context) {
 	const { organization_id } = c.req.param()
-	const { title } = await c.req.parseBody()
+	const { title, type } = await c.req.parseBody()
 	const data = {
 		organization_uuid: organization_id,
-		title
+		type,
+		title,
 	} as CreateBatchRequest
 
 	const batchRepository = new BatchRepositoryImpl(c.env.DB)

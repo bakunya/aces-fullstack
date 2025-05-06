@@ -34,6 +34,7 @@ export type TableBatch = {
 	split: number;
 	status: number;
 	regrouping: number;
+	type: string;
 	time1_start?: string;
 	time2_start?: string;
 	time3_start?: string;

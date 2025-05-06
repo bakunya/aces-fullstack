@@ -1,5 +1,24 @@
 import { Date } from "@src/application/date";
 import { BatchDTO } from "@src/application/dto/batch";
+import { AppError } from "@src/application/error/AppError";
+
+export enum BatchType {
+	ASCENT = "ascent",
+	CUSTOM = "custom",
+}
+
+export class BatchTypeMapping {
+	static fromString(type: string): BatchType {
+		try {
+			type = type.toLowerCase()
+			const x = Object.entries(BatchType).find(([_, v]) => v === type)
+			if (!x) throw new Error()
+			return BatchType[x[0] as keyof typeof BatchType]
+		} catch (_) {
+			throw AppError.entity("ModuleType", "Invalid module type")
+		}
+	}
+}
 
 export class BatchDomain {
 	public readonly uuid: string;
@@ -10,6 +29,7 @@ export class BatchDomain {
 	public readonly split: number;
 	public readonly status: number;
 	public readonly regrouping: number;
+	public readonly type: BatchType;
 	public readonly time1_start_date?: string;
 	public readonly time1_start_time?: string;
 	public readonly time2_start_date?: string;
@@ -37,6 +57,7 @@ export class BatchDomain {
 	constructor(data: BatchDTO, dateInstance: Date) {
 		this.dateInstance = dateInstance;
 
+		this.type = BatchTypeMapping.fromString(data.type);
 		this.uuid = data.uuid;
 		this.token = data.token;
 		this.title = data.title;

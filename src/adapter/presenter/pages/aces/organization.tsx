@@ -18,7 +18,7 @@ interface PageProps {
 
 function Page({ organizations }: PageProps) {
 	return (
-		<div className="mx-auto w-7xl px-2 px-8">
+		<div className="mx-auto w-7xl px-2 px-8" x-data="window.modalNewBatchHandler()">
 			<BatchRoleNav />
 
 			<div className="flex justify-between">
@@ -65,29 +65,37 @@ function Page({ organizations }: PageProps) {
 				</dialog>
 			</div>
 
-			<dialog id="modal-new-batch" className="modal">
+			<dialog id="modal-new-batch" className="modal" x-bind:open="isShow()">
 				<div className="modal-box">
-					<h2 className="title text-lg font-semibold text-gray-800 mb-5"></h2>
+					<h2 className="title text-lg font-semibold text-gray-800 mb-5" x-text="modalTitle" />
 					<form
 						method="post"
 						id="modal-new-batch-form"
 						className="space-y-6 mb-5"
+						x-bind:action="submitUrl"
 					>
 						<div>
-							<input type="hidden" name="organization_uuid" />
 							<label htmlFor="title" className="block text-sm font-medium text-gray-700">Nama Batch</label>
-							<input
+							<input 
 								required
 								id="title"
 								type="text"
 								name="title"
-								className="mt-1 block w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+								placeholder="Type here" 
+								className="input mt-1 w-full" 
 							/>
+						</div>
+						<div>
+							<label htmlFor="type" className="block text-sm font-medium text-gray-700">Tipe Batch</label>
+							<select className="select mt-1 w-full" name="type" id="type">
+								<option value={"custom"}>Custom</option>
+								<option selected value={"ascent"}>Assessment Center</option>
+							</select>
 						</div>
 					</form>
 					<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-3">
 						<button type="submit" form="modal-new-batch-form" class="btn btn-neutral">Simpan</button>
-						<form method="dialog">
+						<form method="dialog" x-on:click="close()">
 							<button class="btn btn-error">Cancel</button>
 						</form>
 					</div>

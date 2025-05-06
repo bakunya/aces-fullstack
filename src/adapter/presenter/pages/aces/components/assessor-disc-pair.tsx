@@ -62,20 +62,27 @@ export function AssessorDiscPair({ groups, assessors, show = false }: AssessorDi
 											{ x.name }
 										</td>
 										<td className="p-3">
-											<select
-												class="select"
-												name="assessor_id"
-												id={ `id-${x.uuid}` }
+											<form 
 												hx-swap="none"
-												hx-trigger="change"
-												hx-include={ `#id-${x.uuid}[name=assessor_id]` }
+												x-data="{ disable: true }"
+												className="flex gap-2 items-center"
 												hx-put={ route("put.aces.hx.batch.batch_id.manual_pair.group.group_id", [x.batch_uuid, x.uuid]) }
 											>
-												<option value="">---------</option>
-												{ assessorByAvailability[i].map(y => (
-													<option disabled={ Boolean(d.find(z => z.disc_assessor_uuid === y.user_uuid)) } selected={ y.user_uuid === x.disc_assessor_uuid } value={ y.user_uuid }>{ y.user_fullname }</option>
-												)) }
-											</select>
+												<select
+													class="select"
+													name="assessor_id"
+													id={ `id-${x.uuid}` }
+													x-bind:disabled="disable"
+												>
+													<option value="">---------</option>
+													{ assessorByAvailability[i].map(y => (
+														<option disabled={ Boolean(d.find(z => z.disc_assessor_uuid === y.user_uuid)) } selected={ y.user_uuid === x.disc_assessor_uuid } value={ y.user_uuid }>{ y.user_fullname }</option>
+													)) }
+												</select>
+												<button x-show="!disable" type="submit" className="btn btn-primary"><small>Simpan</small></button>
+												<button x-show="!disable" x-on:click="disable = true" type="reset" className="btn btn-neutral"><small>Cancel</small></button>
+												<button x-show="disable" x-on:click="disable = false" type="button" className="btn btn-neutral"><small>Edit</small></button>
+											</form>
 										</td>
 									</tr>
 								)) }

@@ -6,6 +6,7 @@ type Props = {
 		uuid: string;
 		token: string;
 		title: string;
+		type: string;
 		organization_uuid: string;
 		organization_name: string;
 	},
@@ -20,6 +21,7 @@ export function BatchManagementHeader({ batch }: Props) {
 			<div className="flex flex-col">
 				<h1 className="text-2xl font-bold" id="batch-title">Batch { batch.title }</h1>
 				<p className="mt-2 text-sm text-gray-500">Token: { batch.token }</p>
+				<p className="text-sm text-gray-500">Tipe: <span className="font-semibold">{ batch.type.toUpperCase() }</span></p>
 				<p className="text-sm text-gray-500">Organization: { batch.organization_name }</p>
 			</div>
 

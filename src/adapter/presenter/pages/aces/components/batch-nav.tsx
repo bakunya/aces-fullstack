@@ -3,6 +3,7 @@ import { route } from "@src/infra/singeleton/RouteCollection";
 type Props = {
 	batch: {
 		uuid: string;
+		type: string;
 		token: string;
 		title: string;
 		regrouping: number;

@@ -15,25 +15,25 @@ document.addEventListener("DOMContentLoaded", () => {
 					}
 				})
 			})
-			.with("#modal-new-batch", () => {
-				const modalTitle = el.getAttribute("modal-title")
-				const submitUrl = el.getAttribute("modal-submit-url")
-				const modalEl = (document.querySelector(target!) as HTMLDialogElement)
-				if (!(submitUrl || modalEl)) return
-				el.addEventListener("click", () => {
-					modalEl.querySelector(".title")!.textContent = modalTitle || ""
-					const form = modalEl.querySelector("form") as HTMLFormElement
-					form.action = submitUrl!
-					modalEl?.showModal()
-					// if (target) {
-					// 	if modalEl
-					// 	modalEl?.querySelector(".title")
-					// 	const form = modalEl.querySelector("form") as HTMLFormElement
-					// 	form.setAttribute("action", submitUrl)
-					// 	modalEl?.showModal()
-					// }
-				})
-			})
+			// .with("#modal-new-batch", () => {
+				// const modalTitle = el.getAttribute("modal-title")
+				// const submitUrl = el.getAttribute("modal-submit-url")
+				// const modalEl = (document.querySelector(target!) as HTMLDialogElement)
+				// if (!(submitUrl || modalEl)) return
+				// el.addEventListener("click", () => {
+				// 	modalEl.querySelector(".title")!.textContent = modalTitle || ""
+				// 	const form = modalEl.querySelector("form") as HTMLFormElement
+				// 	form.action = submitUrl!
+				// 	modalEl?.showModal()
+				// 	// if (target) {
+				// 	// 	if modalEl
+				// 	// 	modalEl?.querySelector(".title")
+				// 	// 	const form = modalEl.querySelector("form") as HTMLFormElement
+				// 	// 	form.setAttribute("action", submitUrl)
+				// 	// 	modalEl?.showModal()
+				// 	// }
+				// })
+			// })
 			.otherwise(() => {})
 	})
 
@@ -53,5 +53,25 @@ document.body.addEventListener(HTMX_EVENTS.ACES_OrganizationCreated, () => {
 	const form = document.getElementById("form-new-organization") as HTMLFormElement
 	form.reset()
 })
+
+// @ts-ignore
+window.modalNewBatchHandler = function() {
+	return {
+		modalTitle: undefined,
+		submitUrl: undefined,
+		isShow() {
+			return this.modalTitle && this.submitUrl
+		},
+		open(title: string, url: string) {
+			console.log(title, url)
+			this.modalTitle = title as any
+			this.submitUrl = url as any
+		},
+		close() {
+			this.modalTitle = undefined
+			this.submitUrl = undefined
+		}
+	}
+}
 
 Alpine.start()

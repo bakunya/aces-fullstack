@@ -29,6 +29,3 @@ CREATE TRIGGER update_persons AFTER UPDATE ON persons
 BEGIN
     UPDATE persons SET updated = (strftime('%Y-%m-%dT%H:%M:%fZ', 'now', 'utc')) WHERE uuid=NEW.uuid;
 END;
-
-INSERT INTO persons (uuid, batch_uuid, organization_uuid, name, email, username, hash) VALUES
-('f31966e6-75c8-46a5-8199-e6c0e1b11707', 'd4acbe9d-28c8-4b25-9f29-6a53f4cbceda1', 'd1607ddc-06bd-4c71-bbbc-b0929c7173df', 'Imakara', 'imakara@aces.com', 'imakara', '$2a$12$U/VHyJ.psOG2mDBpD.Ja1OuviwCBj8FEeBzbBd3QNSU/dg92tF9LS');

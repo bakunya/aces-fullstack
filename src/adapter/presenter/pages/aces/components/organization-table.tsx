@@ -46,8 +46,7 @@ export function OrganizationTable({ organizations }: OrganizationTableProps) {
 							<button 
 								trigger="modal" 
 								data-target="#modal-new-batch"
-								modal-title={`Batch ${ organization.name }`}
-								modal-submit-url={ route("post.aces.organization.organization_id.batch", [organization.uuid]) }
+								x-on:click={`open("Batch ${ organization.name }", "${ route('post.aces.organization.organization_id.batch', [organization.uuid]) }")`}
 								className="text-xs cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md"
 							>Tambah</button>
 							{/* <button className="ml-2 text-xs cursor-pointer px-4 py-2 bg-teal-600 text-white rounded-md">Lihat</button> */}

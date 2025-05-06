@@ -25,6 +25,7 @@ export async function acesGetBatchDeploymentController(c: Context) {
 	const batch = BatchDomain.create(batchRaw, DateImpl.create())
 
 	return c.html(<BatchTimeDeployment
+		type={ batchRaw.type }
 		batchId={ batch.uuid }
 		timeType={ timeType }
 		// @ts-ignore

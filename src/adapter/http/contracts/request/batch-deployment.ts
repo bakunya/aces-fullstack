@@ -7,5 +7,6 @@ export type BatchDeploymentBody = {
 	time_start_date: string,
 	time_start_time: string,
 	time_end_date: string,
-	time_end_time: string
+	time_end_time: string,
+	type: string,
 }

@@ -16,6 +16,7 @@ export type BatchDTO = {
 	time2_end?: string;
 	time3_end?: string;
 	time4_end?: string;
+	type: string;
 	batch_time_start?: string;
 	batch_time_end?: string;
 	updated?: string;
