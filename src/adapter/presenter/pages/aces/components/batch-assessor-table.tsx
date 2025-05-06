@@ -118,6 +118,7 @@ export function BatchAssessorTable({ assessors, batch_uuid }: Props) {
 								hx-swap="none"
 								hx-post={ route("post.aces.hx.batch.batch_id.assessor.case.auto_allocate", [batch_uuid]) }
 								class="btn btn-sm btn-neutral w-full"
+								hx-disabled-elt="this"
 							>Auto Allocated</button>
 						</td>
 					</tr>

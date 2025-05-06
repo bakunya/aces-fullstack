@@ -38,7 +38,6 @@ export class AutoAllocateAssessorCaseUsecase implements IUsecase<[string], void>
 		const toSave = this
 			.splitArray(groupings, assessors.length)
 			.map((grouping, i) => {
-				console.log(i)
 				return grouping.map(g => ({
 					...g,
 					case_assessor_user_uuid: assessors[i]?.user_uuid,

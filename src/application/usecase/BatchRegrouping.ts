@@ -138,7 +138,6 @@ export class BatchRegrouping implements IUsecase<[string], unknown> {
 
 	private createGroup(info: BatchRuntimeInfo, totalPerson: number): ICreateGroupReturn[] {
 		const slots = this.customSlots(info.tokens);
-		console.log('SLOTS', slots);
 		const pattern = info.grouping == 'BY_DISC' ? this.groupPattern(totalPerson) : this.slotGroupPattern(totalPerson, info.permutation);
 		return pattern.map((g, i) => {
 			const index = i % info.permutation;

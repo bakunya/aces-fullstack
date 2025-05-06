@@ -63,7 +63,6 @@ window.modalNewBatchHandler = function() {
 			return this.modalTitle && this.submitUrl
 		},
 		open(title: string, url: string) {
-			console.log(title, url)
 			this.modalTitle = title as any
 			this.submitUrl = url as any
 		},
