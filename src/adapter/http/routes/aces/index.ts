@@ -37,6 +37,7 @@ import { acesGetAssessorGroupingsPairController } from "@src/adapter/http/contro
 import { batchDeploymentController } from "@src/adapter/http/controllers/batch-deployment";
 import { acesBatchDeploymentController } from "@src/adapter/http/controllers/aces-batch-deployment";
 import { acesGetBatchDeploymentController } from "@src/adapter/http/controllers/aces-get-batch-deployment";
+import { acesCaseAutoAllocateAssessorController } from "@src/adapter/http/controllers/aces-batch-auto-allocate-assessor-case";
 
 const acesRoutes = new Hono()
 
@@ -79,6 +80,7 @@ acesRoutes.put("hx/batch/:batch_id/manual_pair/group/:group_id", acesBatchGroupM
 acesRoutes.put("hx/batch/:batch_id/manual_pair/grouping/:grouping_id/type/:type", acesBatchGroupingManualPairController)
 acesRoutes.put("hx/batch/:batch_id/deployment/time/:time_type", acesBatchDeploymentController)
 acesRoutes.get("hx/batch/:batch_id/deployment/time/:time_type", acesGetBatchDeploymentController)
+acesRoutes.post("hx/batch/:batch_id/assessor/case/auto_allocate", acesCaseAutoAllocateAssessorController)
 
 acesRoutes.route("", acesRoutes)
 

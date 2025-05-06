@@ -69,7 +69,7 @@ export function AssessorGroupingPair({ groupings, assessors, type }: AssessorDis
 														<option
 															value={ y.user_uuid }
 															selected={ y.user_uuid === x[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] }
-															disabled={ Boolean(val.find(z => z[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] === y.user_uuid)) }
+															disabled={ type === ModuleCategory.CASE ? false : Boolean(val.find(z => z[`${type.toLocaleLowerCase()}_assessor_uuid` as keyof BatchGroupingDetailAggregation] === y.user_uuid)) }
 														>
 															{ y.user_fullname }
 														</option>

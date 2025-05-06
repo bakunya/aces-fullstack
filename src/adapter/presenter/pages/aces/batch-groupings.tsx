@@ -12,6 +12,7 @@ interface PageProps {
 	groups: BatchGroupDetailAggregation[];
 	persons: BatchPersonDetailAggregation[],
 	batch: {
+		type: string;
 		uuid: string;
 		token: string;
 		title: string;

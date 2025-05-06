@@ -142,3 +142,14 @@ export interface TableAssessorBatch {
 	created: string; // YYYY-MM-DDTHH:MM:SS.sssZ
 	updated: string | null; // YYYY-MM-DDTHH:MM:SS.sssZ
 }
+
+export interface TableBatchGrouping {
+	id: number;
+	batch_uuid: string;
+	group_uuid: string;
+	person_uuid: string;
+	face_assessor_user_uuid: string | null;
+	case_assessor_user_uuid: string | null;
+	created: string; // YYYY-MM-DDTHH:MM:SS.sssZ
+	updated: string | null; // YYYY-MM-DDTHH:MM:SS.sssZ
+}

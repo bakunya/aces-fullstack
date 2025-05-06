@@ -14,6 +14,7 @@ interface PageProps {
 		uuid: string;
 		token: string;
 		title: string;
+		type: string;
 		regrouping: number;
 		organization_uuid: string;
 		organization_name: string;

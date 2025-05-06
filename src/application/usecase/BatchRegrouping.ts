@@ -165,6 +165,7 @@ export class BatchRegrouping implements IUsecase<[string], unknown> {
 					face_assessor_user_uuid: null,
 					case_assessor_user_uuid: null,
 					group_id: groups[i].uuid,
+					group_uuid: groups[i].uuid,
 					batch_uuid: info.batch_uuid,
 					person_uuid: persons[personIndex].id,
 				});

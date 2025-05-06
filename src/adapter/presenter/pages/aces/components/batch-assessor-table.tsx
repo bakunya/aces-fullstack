@@ -13,6 +13,8 @@ type Props = {
 }
 
 export function BatchAssessorTable({ assessors, batch_uuid }: Props) {
+	const type = assessors[0]?.type.toLocaleLowerCase()
+	
 	return assessors.length 
 	? (
 		<table className="table">
@@ -31,61 +33,69 @@ export function BatchAssessorTable({ assessors, batch_uuid }: Props) {
 								className="flex gap-5 items-center justify-end"
 								x-data="{ editable: false }"
 							>
-								<input 
-									type="checkbox" 
-									name="slot1" 
-									checked={!!a.slot1} 
-									x-bind:disabled="!editable" 
-									hx-put={route('put.aces.hx.batch.batch_id.assessor.assessor_id.update_slot.slot_type.module.module_type', [batch_uuid, a.user_uuid, "slot1", a.type])}
-									hx-trigger="change"
-									id={`id-${a.user_uuid}`}
-									hx-include={`#id-${a.user_uuid}[name=slot1]`}
-									hx-swap="none"
-								/>
-								<input 
-									type="checkbox" 
-									name="slot2" 
-									checked={!!a.slot2} 
-									x-bind:disabled="!editable" 
-									hx-put={route('put.aces.hx.batch.batch_id.assessor.assessor_id.update_slot.slot_type.module.module_type', [batch_uuid, a.user_uuid, "slot2", a.type])}
-									hx-trigger="change"
-									id={`id-${a.user_uuid}`}
-									hx-include={`#id-${a.user_uuid}[name=slot2]`}
-									hx-swap="none"
-								/>
-								<input 
-									type="checkbox" 
-									name="slot3" 
-									checked={!!a.slot3} 
-									x-bind:disabled="!editable" 
-									hx-put={route('put.aces.hx.batch.batch_id.assessor.assessor_id.update_slot.slot_type.module.module_type', [batch_uuid, a.user_uuid, "slot3", a.type])}
-									hx-trigger="change"
-									id={`id-${a.user_uuid}`}
-									hx-include={`#id-${a.user_uuid}[name=slot3]`}
-									hx-swap="none"
-								/>
-								<input 
-									type="checkbox" 
-									name="slot4" 
-									checked={!!a.slot4} 
-									x-bind:disabled="!editable" 
-									hx-put={route('put.aces.hx.batch.batch_id.assessor.assessor_id.update_slot.slot_type.module.module_type', [batch_uuid, a.user_uuid, "slot4", a.type])}
-									hx-trigger="change"
-									id={`id-${a.user_uuid}`}
-									hx-include={`#id-${a.user_uuid}[name=slot4]`}
-									hx-swap="none"
-								/>
+								{ type !== "case" && (
+									<>
+										<input 
+											type="checkbox" 
+											name="slot1" 
+											checked={!!a.slot1} 
+											x-bind:disabled="!editable" 
+											hx-put={route('put.aces.hx.batch.batch_id.assessor.assessor_id.update_slot.slot_type.module.module_type', [batch_uuid, a.user_uuid, "slot1", a.type])}
+											hx-trigger="change"
+											id={`id-${a.user_uuid}`}
+											hx-include={`#id-${a.user_uuid}[name=slot1]`}
+											hx-swap="none"
+										/>
+										<input 
+											type="checkbox" 
+											name="slot2" 
+											checked={!!a.slot2} 
+											x-bind:disabled="!editable" 
+											hx-put={route('put.aces.hx.batch.batch_id.assessor.assessor_id.update_slot.slot_type.module.module_type', [batch_uuid, a.user_uuid, "slot2", a.type])}
+											hx-trigger="change"
+											id={`id-${a.user_uuid}`}
+											hx-include={`#id-${a.user_uuid}[name=slot2]`}
+											hx-swap="none"
+										/>
+										<input 
+											type="checkbox" 
+											name="slot3" 
+											checked={!!a.slot3} 
+											x-bind:disabled="!editable" 
+											hx-put={route('put.aces.hx.batch.batch_id.assessor.assessor_id.update_slot.slot_type.module.module_type', [batch_uuid, a.user_uuid, "slot3", a.type])}
+											hx-trigger="change"
+											id={`id-${a.user_uuid}`}
+											hx-include={`#id-${a.user_uuid}[name=slot3]`}
+											hx-swap="none"
+										/>
+										<input 
+											type="checkbox" 
+											name="slot4" 
+											checked={!!a.slot4} 
+											x-bind:disabled="!editable" 
+											hx-put={route('put.aces.hx.batch.batch_id.assessor.assessor_id.update_slot.slot_type.module.module_type', [batch_uuid, a.user_uuid, "slot4", a.type])}
+											hx-trigger="change"
+											id={`id-${a.user_uuid}`}
+											hx-include={`#id-${a.user_uuid}[name=slot4]`}
+											hx-swap="none"
+										/>
+									</>
+								) }
 								<div className="flex gap-2">	
-									<button x-on:click="editable = false" x-show="editable" class="btn btn-neutal btn-sm">
-										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-											<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-										</svg>
-									</button>
-									<button x-on:click="editable = true" x-show="!editable" class="btn btn-neutal btn-sm">
-										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-											<path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
-										</svg>
-									</button>
+									{ type !== "case" && (
+										<>
+											<button x-on:click="editable = false" x-show="editable" class="btn btn-neutal btn-sm">
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+													<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+												</svg>
+											</button>
+											<button x-on:click="editable = true" x-show="!editable" class="btn btn-neutal btn-sm">
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+													<path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+												</svg>
+											</button>
+										</>
+									)}
 									<button 
 										hx-swap="none"
 										class="btn btn-error btn-sm"
@@ -101,6 +111,17 @@ export function BatchAssessorTable({ assessors, batch_uuid }: Props) {
 						</td>
 					</tr>
 				)) }
+				{ type === "case" && (
+					<tr>
+						<td colspan={2}>
+							<button 
+								hx-swap="none"
+								hx-post={ route("post.aces.hx.batch.batch_id.assessor.case.auto_allocate", [batch_uuid]) }
+								class="btn btn-sm btn-neutral w-full"
+							>Auto Allocated</button>
+						</td>
+					</tr>
+				) }
 			</tbody>
 		</table>
 	)

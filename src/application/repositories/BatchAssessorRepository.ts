@@ -3,6 +3,7 @@ import { Repository } from "@src/application/repositories/Repository";
 import { BatchAssessorDomain } from "@src/domain/BatchAssessor";
 import { ModuleCategory } from "@src/domain/ModuleType";
 import { BatchAssessorDetailAggregation } from "@src/infra/databases/d1/dto/aggregations";
+import { TableAssessorBatch } from "@src/infra/databases/d1/dto/tables";
 import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 
 export interface BatchAssessorRepository extends Repository {
@@ -35,4 +36,5 @@ export interface BatchAssessorRepository extends Repository {
 	unallocateGroupingAll(batchId: string, type: ModuleCategory.FACE | ModuleCategory.CASE, inTransaction?: boolean): Promise<void | PreparedTransaction[]>;
 
 	getDetail(batchId: string): Promise<BatchAssessorDetailAggregation[]>;
+	getAllByType(batchId: string, type: ModuleCategory): Promise<TableAssessorBatch[]>
 }

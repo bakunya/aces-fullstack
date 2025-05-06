@@ -23,7 +23,7 @@ export function AssessorAllocation(props: Props) {
 		<div>
 			<div class="flex items-center justify-between">
 				<h3 class="font-bold">
-					{ title }: { minimum } - { maximum }
+					{ title } { type !== "case" && <span>: { minimum } - { maximum }</span> }
 				</h3>
 				<div id={ `${type}-load-bucket` }>
 					<button 

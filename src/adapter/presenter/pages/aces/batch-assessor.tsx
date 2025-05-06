@@ -22,6 +22,7 @@ interface PageProps {
 		token: string;
 		title: string;
 		regrouping: number;
+		type: string;
 		organization_uuid: string;
 		organization_name: string;
 	},
@@ -72,11 +73,6 @@ function Page({ batch, allocation }: PageProps) {
 										<td className="p-3">{ allocation.assessorRequirement.maxdisc }</td>
 									</tr>
 									<tr>
-										<td className="p-3">Asesor Case:</td>
-										<td className="p-3">{ allocation.assessorRequirement.mincase }</td>
-										<td className="p-3">{ allocation.assessorRequirement.maxcase }</td>
-									</tr>
-									<tr>
 										<td className="p-3">Asesor Individu:</td>
 										<td className="p-3">{ allocation.assessorRequirement.minface }</td>
 										<td className="p-3">{ allocation.assessorRequirement.maxface }</td>
@@ -87,13 +83,6 @@ function Page({ batch, allocation }: PageProps) {
 						<div className="grid grid-cols-12 gap-5" x-data="{ show: false, type: null }" x-ref="bucket_container">
 							<div className="col-span-7 mt-8">
 								<div className="flex flex-col gap-10">
-									<AssessorAllocation
-										batch_uuid={ batch.uuid }
-										type="case"
-										assessorReqs={ allocation.assessorRequirement }
-										title="Asesor Case"
-										assessors={ allocation.assessorAllocated.case_assessors }
-									/>
 									<AssessorAllocation
 										batch_uuid={ batch.uuid }
 										type="face"
@@ -107,6 +96,13 @@ function Page({ batch, allocation }: PageProps) {
 										assessorReqs={ allocation.assessorRequirement }
 										title="Asesor Group"
 										assessors={ allocation.assessorAllocated.disc_assessors }
+									/>
+									<AssessorAllocation
+										batch_uuid={ batch.uuid }
+										type="case"
+										assessorReqs={ allocation.assessorRequirement }
+										title="Asesor Case"
+										assessors={ allocation.assessorAllocated.case_assessors }
 									/>
 								</div>
 							</div>

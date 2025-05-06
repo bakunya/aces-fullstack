@@ -1,6 +1,7 @@
 import { GroupingRepository } from "@src/application/repositories/GroupingRepository";
 import { ModuleCategory } from "@src/domain/ModuleType";
 import { BatchGroupingDetailAggregation } from "@src/infra/databases/d1/dto/aggregations";
+import { TableBatchGrouping } from "@src/infra/databases/d1/dto/tables";
 import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
@@ -78,6 +79,29 @@ export class GroupingRepositoryImpl extends RepositoryImpl implements GroupingRe
 		}
 
 		await prepared.run()
+	}
+
+
+	async autoAllocateCaseAssessor<T extends false>(batchId: string, groupingData: { case_assessor_user_uuid: string, id: number }[], inTransaction?: T): Promise<void>
+	async autoAllocateCaseAssessor<T extends true>(batchId: string, groupingData: { case_assessor_user_uuid: string, id: number }[], inTransaction: T): Promise<PreparedTransaction[]>
+	async autoAllocateCaseAssessor(batchId: string, groupingData: { case_assessor_user_uuid: string, id: number }[], inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
+		const prepared = groupingData.map(v => {
+			return this.db
+				.prepare(`
+					UPDATE 
+						batch_groupings 
+					SET case_assessor_user_uuid = ? 
+					WHERE id = ? 
+					AND batch_uuid = ?
+				`)
+				.bind(v?.case_assessor_user_uuid, v?.id, batchId)
+		})
+
+		if (inTransaction) {
+			return prepared
+		}
+
+		await this.db.batch(prepared)
 	}
 
 	async getUnallocated(batchId: string, type: ModuleCategory, groupPositionIds: string[][]) {
@@ -160,5 +184,10 @@ export class GroupingRepositoryImpl extends RepositoryImpl implements GroupingRe
 			`
 
 		return (await this.db.prepare(stm).bind(batchId).all()).results as unknown as BatchGroupingDetailAggregation[]
+	}
+
+	async getAllInBatch(batchId: string): Promise<TableBatchGrouping[]> {
+		const stm = "SELECT * FROM batch_groupings WHERE batch_uuid = ?"
+		return (await this.db.prepare(stm).bind(batchId).all()).results as unknown as TableBatchGrouping[]
 	}
 }

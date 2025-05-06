@@ -3,6 +3,7 @@ import { BatchAssessorRepository } from "@src/application/repositories/BatchAsse
 import { BatchAssessorDomain } from "@src/domain/BatchAssessor";
 import { ModuleCategory } from "@src/domain/ModuleType";
 import { BatchAssessorDetailAggregation } from "@src/infra/databases/d1/dto/aggregations";
+import { TableAssessorBatch } from "@src/infra/databases/d1/dto/tables";
 import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
 import { RepositoryImpl } from "@src/infra/databases/d1/repositories/RepositoryImpl";
 
@@ -163,5 +164,12 @@ export class BatchAssessorRepositoryImpl extends RepositoryImpl implements Batch
 		`
 
 		return (await this.db.prepare(stm).bind(batchId).all()).results as unknown as BatchAssessorDetailAggregation[]
+	}
+
+	async getAllByType(batchId: string, type: ModuleCategory) {
+		const stm = 'SELECT * FROM batch_assessors WHERE batch_uuid = ? AND type = ?'
+		const prepared = this.db.prepare(stm).bind(batchId, type)
+
+		return (await prepared.all()).results as unknown as TableAssessorBatch[]
 	}
 }

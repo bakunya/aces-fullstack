@@ -35,14 +35,14 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 		return new AllocateAssessorUsecase(batchAssessorRepo, groupRepo, groupingRepo, batchRepo, assessorRepo, assessorAllocationUsecase);
 	}
 
-	private async allocateGroupAssessor(assessorId: string, batchId: string, type: ModuleCategory): Promise<PreparedTransaction[]> {
+	private async allocateDiscAssessor(assessorId: string, batchId: string, type: ModuleCategory): Promise<PreparedTransaction[]> {
 		const allocation = await this.groupRepo.getSlotAllocationInBatch(batchId);
 		const groupPositions = this.getGroupPosition(type, allocation);
 		const unallocated = await this.groupRepo.getUnallocated(batchId, groupPositions);
 		return await this.groupRepo.allocateAssessorInAllSlot(assessorId, batchId, unallocated, true)
 	}
 
-	private async allocateGroupingAssessor(assessorId: string, batchId: string, type: ModuleCategory): Promise<PreparedTransaction[]> {
+	private async allocateFaceAssessor(assessorId: string, batchId: string, type: ModuleCategory): Promise<PreparedTransaction[]> {
 		const allocation = await this.groupRepo.getSlotAllocationInBatch(batchId);
 		const groupPositions = this.getGroupPosition(type, allocation);
 		const unallocated = await this.groupingRepo.getUnallocated(batchId, type, groupPositions);
@@ -77,9 +77,8 @@ export class AllocateAssessorUsecase implements IAllocateAssessor, IUsecase<[str
 
 		const preparedAllocation = await this.batchAssessorRepo.allocate(batchAssessor, true);
 		const preparedAll = await match(category)
-			.with(ModuleCategory.DISC, () => this.allocateGroupAssessor(userId, batchId, category))
-			.with(ModuleCategory.FACE, () => this.allocateGroupingAssessor(userId, batchId, category))
-			.with(ModuleCategory.CASE, () => this.allocateGroupingAssessor(userId, batchId, category))
+			.with(ModuleCategory.DISC, () => this.allocateDiscAssessor(userId, batchId, category))
+			.with(ModuleCategory.FACE, () => this.allocateFaceAssessor(userId, batchId, category))
 			.otherwise(() => Promise.resolve([]))
 
 		await this.batchRepo.commit([

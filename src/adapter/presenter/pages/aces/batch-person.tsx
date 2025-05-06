@@ -11,6 +11,7 @@ interface PageProps {
 	batch: {
 		uuid: string;
 		token: string;
+		type: string;
 		title: string;
 		regrouping: number;
 		organization_uuid: string;
