@@ -1,4 +1,5 @@
 import { HxCreateBatchModule } from "@src/adapter/http/contracts/request/hx-create-batch-module";
+import { ModuleBinding } from "@src/application/bindings/ModuleBinding";
 import { AppError } from "@src/application/error/AppError";
 import { BatchModuleDetail, BatchModuleRepository, InsertOneData } from "@src/application/repositories/BatchModuleRepository";
 import { RegroupRepository } from "@src/application/repositories/RegroupRepository";
@@ -9,19 +10,22 @@ export class CreateBatchModuleUsecase implements IUsecase<[string, HxCreateBatch
 	constructor(
 		private readonly batchModuleRepository: BatchModuleRepository, // Replace with actual type
 		private readonly uuid: Uuid, // Replace with actual type
-		private readonly regroupRepo: RegroupRepository
+		private readonly regroupRepo: RegroupRepository,
+		private readonly moduleBind: ModuleBinding, // Replace with actual type
 	) {}
 
 	static create(
 		batchModuleRepository: BatchModuleRepository,
 		uuid: Uuid,
 		regroupRepo: RegroupRepository,
+		moduleBind: ModuleBinding, // Replace with actual type
 	): CreateBatchModuleUsecase {
-		return new CreateBatchModuleUsecase(batchModuleRepository, uuid, regroupRepo);
+		return new CreateBatchModuleUsecase(batchModuleRepository, uuid, regroupRepo, moduleBind);
 	}
 
 	async execute(batchId: string, body: HxCreateBatchModule) {
-		const usedModule = await this.batchModuleRepository.getAllDetailByBatch(batchId);
+		const modules = await this.moduleBind.getAll()
+		const usedModule = await this.batchModuleRepository.getAllDetailByBatch(batchId, modules);
 		if (!this.shouldMaxModule(usedModule)) {
 			throw AppError.usecase("max limit module", "Maximum module limit reached");
 		}

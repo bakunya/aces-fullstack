@@ -11,6 +11,7 @@ export async function batchBatchPersonController(c: Context) {
 		batchRepo.getBatchById(c.req.param("batch_id")),
 		personRepo.getByBatchId(c.req.param("batch_id")),
 	])
+
 	const persons = await Promise.all(personRaw.map(async (person) => {
 		await person.decrypt(Crypto.create(crypto.subtle, c.env.SUBTLE_PRIVATE_KEY))
 		return person

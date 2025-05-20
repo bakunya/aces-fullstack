@@ -8,7 +8,7 @@ type Props = {
 		title: string
 		description: string
 		category: string
-		status: number
+		hash?: string
 	}[]>,
 	batchInModulesObject: Record<string, {
         batch_uuid: string;

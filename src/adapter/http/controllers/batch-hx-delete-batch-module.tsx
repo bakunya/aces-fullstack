@@ -5,6 +5,7 @@ import { HxDeleteBatchModuleUrlParam } from "@src/adapter/http/contracts/request
 import { RegroupRepositoryImpl } from "@src/infra/databases/d1/repositories/RegroupRepositoryImpl"
 import { DeleteBatchModuleUsecase } from "@src/application/usecase/DeleteBatchModule"
 import { BatchAssessorRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchAssessorRepositoryImpl"
+import { ModuleBindingImpl } from "@src/infra/bindings/ModuleBindingImpl"
 
 
 export async function batchHxDeleteBatchModuleController(c: Context) {
@@ -16,6 +17,7 @@ export async function batchHxDeleteBatchModuleController(c: Context) {
 			BatchModuleRepositoryImpl.create(c.env.DB),
 			RegroupRepositoryImpl.create(c.env.DB),
 			BatchAssessorRepositoryImpl.create(c.env.DB),
+			ModuleBindingImpl.create(c.env.WEB_TEST, c.env.WEB_TEST_API_KEY)
 		)
 		.execute(batchId, batchModuleId)
 

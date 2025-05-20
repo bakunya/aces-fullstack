@@ -44,6 +44,6 @@
 		"typed-htmx": "^0.3.1",
 		"typescript": "^5.8.3",
 		"vite": "^6.0.7",
-		"wrangler": "^3.105.0"
+		"wrangler": "^4.15.2"
 	}
 }

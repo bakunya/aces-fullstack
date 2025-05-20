@@ -1,3 +1,4 @@
+import { ModuleGetAll } from "@src/application/dto/module-get-all";
 import { Repository } from "@src/application/repositories/Repository";
 import { TableBatchModule } from "@src/infra/databases/d1/dto/tables";
 import { PreparedTransaction } from "@src/infra/databases/d1/dto/transaction";
@@ -6,7 +7,7 @@ export type BatchModuleDetail = {
 	module_uuid: string
 	module_type: string
 	module_title: string
-	module_status: number
+	module_hash?: string
 	batch_uuid: string
 	batch_module_uuid: string
 	module_category: string
@@ -31,6 +32,6 @@ export interface BatchModuleRepository extends Repository {
 	insertOne(data: InsertOneData, inTransaction?: boolean): Promise<void | PreparedTransaction[]>;
 
 	getByBatch(batchId: string): Promise<TableBatchModule[]>
-	getAllDetailByBatch(batchId: string): Promise<BatchModuleDetail[]>
-	getOne(batchId: string, moduleId: string): Promise<BatchModuleDetail | null>
+	getAllDetailByBatch(batchId: string, modules: ModuleGetAll[]): Promise<BatchModuleDetail[]>
+	getOne(batchId: string, moduleId: string, modules: ModuleGetAll[]): Promise<BatchModuleDetail | null>
 }

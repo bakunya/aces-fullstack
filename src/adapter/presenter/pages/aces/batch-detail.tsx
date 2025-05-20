@@ -23,7 +23,7 @@ interface PageProps {
 		title: string
 		description: string
 		category: string
-		status: number
+		hash?: string
 	}[]>,
 	batchInModules: Map<string, {
 		batch_uuid: string;

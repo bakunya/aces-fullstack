@@ -7,6 +7,7 @@ import { HxCreateBatchModule, HxCreateBatchModuleUrlParam } from "@src/adapter/h
 import { BatchModuleRepositoryImpl } from "@src/infra/databases/d1/repositories/BatchModuleRepositoryImpl"
 import { CreateBatchModuleUsecase } from "@src/application/usecase/CreateBatchModule"
 import { RegroupRepositoryImpl } from "@src/infra/databases/d1/repositories/RegroupRepositoryImpl"
+import { ModuleBindingImpl } from "@src/infra/bindings/ModuleBindingImpl"
 
 
 export async function batchHxCreateBatchModuleController(c: Context) {
@@ -17,7 +18,8 @@ export async function batchHxCreateBatchModuleController(c: Context) {
 	const uuid = new UuidImpl(ulidFactory())
 	const regroupRepo = RegroupRepositoryImpl.create(c.env.DB)
 	const batchModuleRepository = BatchModuleRepositoryImpl.create(c.env.DB)
-	const createBatchModuleUsecase = CreateBatchModuleUsecase.create(batchModuleRepository, uuid, regroupRepo)
+	const moduleBind = ModuleBindingImpl.create(c.env.WEB_TEST, c.env.WEB_TEST_API_KEY)
+	const createBatchModuleUsecase = CreateBatchModuleUsecase.create(batchModuleRepository, uuid, regroupRepo, moduleBind)
 	
 	await createBatchModuleUsecase.execute(batchID, req)
 

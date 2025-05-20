@@ -4,5 +4,5 @@ export type ModuleGetAll = {
 	title: string
 	description: string
 	category: string
-	status: number
+	hash?: string
 }

@@ -11,6 +11,10 @@ database_id = "4d24a4f0-229c-4676-a873-5c304f9a8ff5"
 migrations_table = "d1_migrations"
 migrations_dir = "migrations"
 
+[[services]]
+binding = "WEB_TEST" 
+service = "aces-pub2"
+
 # compatibility_flags = [ "nodejs_compat" ]
 
 # [vars]

@@ -1,21 +1,21 @@
+import { ModuleBinding } from "@src/application/bindings/ModuleBinding";
 import { ModuleGetAll } from "@src/application/dto/module-get-all";
 import { BatchModuleRepository } from "@src/application/repositories/BatchModuleRepository";
-import { ModuleRepository } from "@src/application/repositories/ModuleRepository";
 import { IBatchModule } from "@src/application/usecase-interface/IBatchModule";
 import { IUsecase } from "@src/application/usecase-interface/IUsecase";
 import { TableBatchModule } from "@src/infra/databases/d1/dto/tables";
 
 export class GetBatchModuleUsecase implements IBatchModule, IUsecase<[string], { modules: Map<string, ModuleGetAll[]>; batchModule: Map<string, (TableBatchModule & { module?: ModuleGetAll })[]> }> {
-	constructor(private readonly batchModuleRepo: BatchModuleRepository, private readonly moduleRepo: ModuleRepository) { }
+	constructor(private readonly batchModuleRepo: BatchModuleRepository, private readonly moduleBinding: ModuleBinding) { }
 
-	static create(batchModuleRepo: BatchModuleRepository, moduleRepo: ModuleRepository) {
-		return new GetBatchModuleUsecase(batchModuleRepo, moduleRepo);
+	static create(batchModuleRepo: BatchModuleRepository, moduleBinding: ModuleBinding) {
+		return new GetBatchModuleUsecase(batchModuleRepo, moduleBinding);
 	}
 
 	async getBatchModules(batchId: string): Promise<(TableBatchModule & { module?: ModuleGetAll })[]> {
 		const [batchModule, modules] = await Promise.all([
 			this.batchModuleRepo.getByBatch(batchId),
-			this.moduleRepo.getAll()
+			this.moduleBinding.getAll()
 		])
 		const batchModuleWithModules = batchModule.map(batchModule => {
 			const module = modules.find(module => module.uuid === batchModule.module_uuid)
@@ -30,7 +30,7 @@ export class GetBatchModuleUsecase implements IBatchModule, IUsecase<[string], {
 	async execute(batchId: string) {
 		const [batchModule, modules] = await Promise.all([
 			this.batchModuleRepo.getByBatch(batchId),
-			this.moduleRepo.getAll()
+			this.moduleBinding.getAll()
 		])
 
 		const filteredModules = modules.filter(module => {
