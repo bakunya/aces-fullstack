@@ -24,4 +24,5 @@ export interface PersonRepository extends Repository {
 	getByBatchId(batchId: string): Promise<PersonDomain[]>;
 	getDetailInBatch(batchId: string): Promise<BatchPersonDetailAggregation[]>;
 	getUniqueInBatch(batch_uuid: string, username: string, email: string): Promise<PersonDomain | undefined>
+	getUniqueInBatchByUsername(batch_token: string, username: string): Promise<PersonDomain | undefined>
 }

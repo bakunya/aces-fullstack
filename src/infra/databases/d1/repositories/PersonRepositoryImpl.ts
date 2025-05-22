@@ -161,4 +161,19 @@ export class PersonRepositoryImpl extends RepositoryImpl implements PersonReposi
 		`
 		return (await this.db.prepare(stm).bind(batchId).all()).results as BatchPersonDetailAggregation[]
 	}
+
+	async getUniqueInBatchByUsername(batch_token: string, username: string): Promise<PersonDomain | undefined> {
+		const data = await this.db.prepare(`
+				SELECT 
+					persons.* 
+				FROM persons 
+				JOIN batches ON persons.batch_uuid = batches.uuid
+				WHERE batches.token = ? 
+				AND persons.username = ?
+			`)
+			.bind(batch_token, username)
+			.first() as unknown as TablePerson;
+		if (!data) return undefined;
+		return PersonDomain.fromRow(data)
+	}
 }

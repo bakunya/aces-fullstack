@@ -32,6 +32,7 @@ export interface BatchModuleRepository extends Repository {
 	insertOne(data: InsertOneData, inTransaction?: boolean): Promise<void | PreparedTransaction[]>;
 
 	getByBatch(batchId: string): Promise<TableBatchModule[]>
+	getByBatchToken(batchToken: string): Promise<TableBatchModule[]>
 	getAllDetailByBatch(batchId: string, modules: ModuleGetAll[]): Promise<BatchModuleDetail[]>
 	getOne(batchId: string, moduleId: string, modules: ModuleGetAll[]): Promise<BatchModuleDetail | null>
 }

@@ -27,6 +27,23 @@ export class GetBatchModuleUsecase implements IBatchModule, IUsecase<[string], {
 		return batchModuleWithModules
 	}
 
+	async getBatchModulesByToken(token: string): Promise<(TableBatchModule & { module?: ModuleGetAll })[]> {
+		const [batchModule, modules] = await Promise.all([
+			this.batchModuleRepo.getByBatchToken(token),
+			this.moduleBinding.getAll()
+		])
+
+		const batchModuleWithModules = batchModule.map(batchModule => {
+			const module = modules.find(module => module.uuid === batchModule.module_uuid)
+			return {
+				...batchModule,
+				module,
+			}
+		})
+
+		return batchModuleWithModules
+	}
+
 	async execute(batchId: string) {
 		const [batchModule, modules] = await Promise.all([
 			this.batchModuleRepo.getByBatch(batchId),

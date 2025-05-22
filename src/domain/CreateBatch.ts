@@ -15,6 +15,12 @@ export class CreateBatch {
 
 	createNextToken(prevToken: number) {
 		const nextToken = prevToken + 1;
-		return new CreateBatch(this.uuid, this.organization_uuid, this.title, this.type, String(nextToken).padStart(4, '0'));
+		return new CreateBatch(
+			this.uuid,
+			this.organization_uuid,
+			this.title,
+			this.type,
+			`ACS${String(nextToken).padStart(4, '0')}`
+		);
 	}
 }

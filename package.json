@@ -1,7 +1,7 @@
 {
 	"name": "aces-fullstack",
 	"scripts": {
-		"dev": "wrangler dev",
+		"dev": "wrangler dev --port 8787",
 		"deploy": "wrangler deploy --minify",
 		"asesor:tw": "npx @tailwindcss/cli -i src/adapter/presenter/css/asesor.css -o public/assets/css/asesor.css --watch",
 		"shared:tw": "npx @tailwindcss/cli -i src/adapter/presenter/css/shared.css -o public/assets/css/shared.css --watch",

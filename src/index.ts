@@ -8,6 +8,7 @@ import asesorRoutes from '@src/adapter/http/routes/asesor'
 import authRoutes from '@src/adapter/http/routes/auth'
 import appRoutes from '@src/adapter/http/routes/app'
 import acesRoutes from '@src/adapter/http/routes/aces'
+import apiBindRoutes from '@src/adapter/http/routes/api-bind'
 
 const app = new Hono()
 
@@ -31,6 +32,7 @@ app.post("/logout", async (c: Context) => {
 app.route("/app/", appRoutes)
 app.route("/aces/", acesRoutes)
 app.route("/asesor/", asesorRoutes)
+app.route("/api-bind/", apiBindRoutes)
 
 app.route("/auth/", authRoutes)
 

@@ -65,7 +65,7 @@ export class PersonDomain {
 	}
 
 	async compare(instance: ICrypt, plain: string) {
-		return (await instance.decrypt(plain)) === this.hash
+		return (await instance.decrypt(this.hash)) === plain
 	}
 
 	async decrypt(instance: ICrypt) {

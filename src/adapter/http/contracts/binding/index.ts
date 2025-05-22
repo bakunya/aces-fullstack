@@ -4,6 +4,7 @@ import { Context as HonoContext } from "hono";
 export type Bindings = {
 	DB: D1Database,
 	WEB_TEST: Service,
+	SELF_KEY: string
 	COOKIE_PRIVATE: string
 	WEB_TEST_API_KEY: string
 	SUBTLE_PRIVATE_KEY: string
