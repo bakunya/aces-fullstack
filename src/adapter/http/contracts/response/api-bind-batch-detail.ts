@@ -20,4 +20,6 @@ export type ApiBindBatchDetailResponse = {
 	batch_time_start?: string;
 	batch_time_end?: string;
 	updated?: string;
+	isStarted: boolean;
+	isExpired: boolean;
 }

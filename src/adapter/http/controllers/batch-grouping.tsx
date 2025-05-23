@@ -17,5 +17,7 @@ export async function batchGroupingController(c: Context) {
 		BatchModuleRepositoryImpl.create(c.env.DB).getAllDetailByBatch(batchId, moduleFromTest),
 	])
 
+	console.log(groups)
+
 	return c.html(<BatchGroupingsPage batch={batch} groups={ groups } persons={ persons } modules={ modules } />)
 }

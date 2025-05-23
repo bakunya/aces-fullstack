@@ -19,4 +19,5 @@ export interface GroupRepository extends Repository {
 	getSlotAllocationInBatch(batchId: string): Promise<RawGroupAllocation[]>
 	getAllocated(batchId: string, assessorId: string): Promise<RawGroupAllocation[]>
 	getUnallocated(batchId: string, groupPositionIds: string[][]): Promise<{ group_uuid: string }[]>
+	getByDetailByPersonId(batchId: string, personId: string): Promise<BatchGroupDetailAggregation | null>
 }

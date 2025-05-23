@@ -11,7 +11,7 @@ export class GroupRepositoryImpl extends RepositoryImpl implements GroupReposito
 	static create(db: D1Database) {
 		return new GroupRepositoryImpl(db)
 	}
-		
+
 	manualPair<T extends false>(batchId: string, groupId: string, assessorId: string, inTransaction?: T): Promise<void>
 	manualPair<T extends true>(batchId: string, groupId: string, assessorId: string, inTransaction: T): Promise<PreparedTransaction[]>
 	async manualPair(batchId: string, groupId: string, assessorId: string, inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
@@ -39,7 +39,7 @@ export class GroupRepositoryImpl extends RepositoryImpl implements GroupReposito
 		await this.db.batch(prepared)
 	}
 
-	
+
 	unAllocateAssessorInAllSlot<T extends false>(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[], inTransaction?: T): Promise<void>
 	unAllocateAssessorInAllSlot<T extends true>(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[], inTransaction: T): Promise<PreparedTransaction[]>
 	async unAllocateAssessorInAllSlot(assessor_uuid: string, batch_uuid: string, data: { group_uuid: string; }[], inTransaction: boolean = false): Promise<void | PreparedTransaction[]> {
@@ -129,5 +129,23 @@ export class GroupRepositoryImpl extends RepositoryImpl implements GroupReposito
 		`
 
 		return (await this.db.prepare(stm).bind(batchId).all()).results as BatchGroupDetailAggregation[]
+	}
+
+	async getByDetailByPersonId(batchId: string, personId: string): Promise<BatchGroupDetailAggregation | null> {
+		let stm = `
+			SELECT
+				g.*, 
+				g.assessor_uuid as disc_assessor_uuid,
+				u.fullname as disc_assessor_name, 
+				(SELECT COUNT(*) FROM batch_groupings WHERE group_uuid=g.uuid) members
+			FROM batch_groups g
+			JOIN batch_groupings bg ON g.uuid = bg.group_uuid
+			JOIN persons p ON bg.person_uuid = p.uuid
+			LEFT JOIN assessors a ON g.assessor_uuid=a.user_uuid
+			LEFT JOIN users u ON a.user_uuid = u.uuid
+			WHERE g.batch_uuid = ? AND p.uuid = ?
+		`
+
+		return await this.db.prepare(stm).bind(batchId, personId).first() as BatchGroupDetailAggregation
 	}
 }
