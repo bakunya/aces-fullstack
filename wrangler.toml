@@ -1,41 +1,25 @@
 name = "aces-fullstack"
 main = "src/index.ts"
 compatibility_date = "2025-01-15"
-
-assets = { directory = "public" }
-
+[assets]
+directory = "public"
+[[services]]
+binding = "WEB_TEST"
+service = "aces-pub"
 [[d1_databases]]
 binding = "DB"
 database_name = "aces-fullstack"
-database_id = "4d24a4f0-229c-4676-a873-5c304f9a8ff5"
-migrations_table = "d1_migrations"
-migrations_dir = "migrations"
+database_id = "f0ec84ce-60d6-4799-999c-be859db1ea21"
 
-[[services]]
-binding = "WEB_TEST" 
-service = "aces-pub2"
 
-# compatibility_flags = [ "nodejs_compat" ]
-
-# [vars]
-# MY_VAR = "my-variable"
-
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# [[r2_buckets]]
-# binding = "MY_BUCKET"
-# bucket_name = "my-bucket"
-
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "my-database"
-# database_id = ""
-
-# [ai]
-# binding = "AI"
-
-# [observability]
-# enabled = true
-# head_sampling_rate = 1
+[env.prod]
+name = "aces-fullstack-prod"
+[env.prod.assets]
+directory = "public"
+[[env.prod.services]]
+binding = "WEB_TEST"
+service = "aces-pub-prod"
+[[env.prod.d1_databases]]
+binding = "DB"
+database_name = "aces-fullstack-prod"
+database_id = "e29c138b-06a8-41f6-9de2-012271c1f444"
