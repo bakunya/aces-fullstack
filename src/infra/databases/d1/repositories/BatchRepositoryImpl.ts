@@ -117,14 +117,10 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 		return data.map(item => BatchAssessment.create(item.uuid, item.token, item.title, item.type, item.name, item.batch_time_start))
 	}
 
-	async getLastBatchToken(): Promise<number> {
+	async getLastBatchToken(): Promise<string> {
 		const data = await this.db.prepare(`SELECT token FROM batches ORDER BY token DESC LIMIT 1`)
 			.first() as unknown as { token: string };
-
-		const integer = parseInt(data.token)
-
-		if (isNaN(integer)) throw AppError.conversion("Token is not a number");
-		return integer;
+		return data.token
 	}
 
 	async getBatchIdInSameTimestamp(batchId: string) {

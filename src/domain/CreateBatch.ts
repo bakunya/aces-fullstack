@@ -13,8 +13,9 @@ export class CreateBatch {
 		return new CreateBatch(uuid, organization_uuid, title, BatchTypeMapping.fromString(batch_type));
 	}
 
-	createNextToken(prevToken: number) {
-		const nextToken = prevToken + 1;
+	createNextToken(prevToken: string) {
+		const prevTokenNum = Number(prevToken.replace('ACS', ''));
+		const nextToken = prevTokenNum + 1;
 		return new CreateBatch(
 			this.uuid,
 			this.organization_uuid,
