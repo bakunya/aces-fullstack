@@ -83,7 +83,7 @@ export class BatchDeploymentUsecase implements IUsecase<[string, string, BatchDe
 			throw AppError.request("End time must be greater than start time", "End time must be greater than start time")
 		}
 
-		if (timeType === "batch") {
+		if (timeType === "batch_time") {
 			return await this.batchRepository.updateTime(batchId, timeType, dateStart, dateEnd)
 		}
 
