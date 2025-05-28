@@ -8,12 +8,12 @@ export class OrganizationUsecase implements IUsecase, IOrganization {
 	constructor(
 		private readonly organizationRepository: OrganizationRepository,
 		private readonly date: Date
-	) {}
+	) { }
 
 
 	async all(): Promise<OrganizationEntity[]> {
 		return (await this.organizationRepository.all())
-			.map(itm => itm.formatDate((date: string) => this.date.to(date, "DD-MM-YYYY HH:mm:ss")))
+			.map(itm => itm.formatDate((date: string) => this.date.to(date, "yyyy-MM-dd HH:mm", "Asia/Jakarta")));
 	}
 
 	async execute(): Promise<unknown> {

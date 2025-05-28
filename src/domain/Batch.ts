@@ -84,7 +84,7 @@ export class BatchDomain {
 
 	private setDateTime(name: string, datetime?: string) {
 		if (!datetime) return;
-		const date = this.dateInstance.convert(datetime, "UTC", "Asia/Jakarta", "YYYY-MM-DD HH:mm:ss");
+		const date = this.dateInstance.convert(datetime, "UTC", "Asia/Jakarta", "yyyy-MM-dd HH:mm:ss");
 		const [datePart, timePart] = date.split(" ");
 		// @ts-ignore
 		this[`${name}_date`] = datePart;

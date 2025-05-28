@@ -8,6 +8,6 @@ export class GetAssessmentListUsecase implements IUsecase<BatchAssessment[]> {
 
 	async execute(): Promise<BatchAssessment[]> {
 		const data = await this.batchRepository.getAssessmentList()
-		return data.map(itm => itm.formatDate((str: string) => this.date.to(str, "YYYY-MM-DD HH:mm", "Asia/Jakarta")))
+		return data.map(itm => itm.formatDate((str: string) => this.date.to(str, "yyyy-MM-dd HH:mm", "Asia/Jakarta")))
 	}
 }

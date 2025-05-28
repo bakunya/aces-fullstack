@@ -73,10 +73,29 @@ export class BatchDeploymentUsecase implements IUsecase<[string, string, BatchDe
 		const dateEnd = this.date.convert(`${body.time_end_date} ${body.time_end_time}`, "Asia/Jakarta", "UTC")
 		const dateStart = this.date.convert(`${body.time_start_date} ${body.time_start_time}`, "Asia/Jakarta", "UTC")
 
+		console.log("dateStart", dateStart)
+		console.log("dateEnd", dateEnd)
+		console.log("BODY")
+		console.log("dateStart: ", `${body.time_start_date} ${body.time_start_time}`)
+		console.log("dateStart: ", `${body.time_end_date} ${body.time_end_time}`)
+
 		if (new Date(dateEnd).getTime() < new Date(dateStart).getTime()) {
 			throw AppError.request("End time must be greater than start time", "End time must be greater than start time")
 		}
 
-		await this.batchRepository.updateTime(batchId, timeType, dateStart, dateEnd)
+		if (timeType === "batch") {
+			return await this.batchRepository.updateTime(batchId, timeType, dateStart, dateEnd)
+		}
+
+		const batch = await this.batchRepository.getBatchById(batchId)
+		if (!batch) {
+			throw AppError.notFound("Batch not found", "Batch not found")
+		}
+
+		if (!(this.date.isBetween(dateStart, batch.batch_time_start!, batch.batch_time_end!) && this.date.isBetween(dateEnd, batch.batch_time_start!, batch.batch_time_end!))) {
+			throw AppError.request("Time must be between batch time", "Time must be between batch time")
+		}
+
+		return await this.batchRepository.updateTime(batchId, timeType, dateStart, dateEnd)		
 	}
 }
