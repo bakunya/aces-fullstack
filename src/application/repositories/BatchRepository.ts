@@ -22,4 +22,5 @@ export interface BatchRepository extends Repository {
 	getAssessmentList(): Promise<BatchAssessment[]>
 	getLastBatchToken(): Promise<string>
 	getBatchIdInSameTimestamp(batchId: string): Promise<{ uuid: string }[]>
+	getBatchesByOrganizationId(organizationId: string): Promise<BatchDTO[]>
 }

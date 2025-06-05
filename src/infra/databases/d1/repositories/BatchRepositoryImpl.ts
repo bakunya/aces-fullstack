@@ -125,20 +125,40 @@ export class BatchRepositoryImpl extends RepositoryImpl implements BatchReposito
 
 	async getBatchIdInSameTimestamp(batchId: string) {
 		const stmt = `
-			SELECT DISTINCT CASE WHEN b1.uuid = ? THEN b2.uuid ELSE b1.uuid END AS uuid
-			FROM batches b1
-			JOIN batches b2
-				ON (
-					(DATE(b1.batch_time_start) = DATE(b2.batch_time_start) OR (b1.batch_time_start IS NULL AND b2.batch_time_start IS NULL))
-					AND
-					(DATE(b1.batch_time_end) = DATE(b2.batch_time_end) OR (b1.batch_time_end IS NULL AND b2.batch_time_end IS NULL))
-				)
-				AND b1.uuid != b2.uuid
-			WHERE b1.uuid = ? OR b2.uuid = ?;
+		SELECT DISTINCT CASE WHEN b1.uuid = ? THEN b2.uuid ELSE b1.uuid END AS uuid
+		FROM batches b1
+		JOIN batches b2
+		ON (
+		(DATE(b1.batch_time_start) = DATE(b2.batch_time_start) OR (b1.batch_time_start IS NULL AND b2.batch_time_start IS NULL))
+		AND
+		(DATE(b1.batch_time_end) = DATE(b2.batch_time_end) OR (b1.batch_time_end IS NULL AND b2.batch_time_end IS NULL))
+		)
+		AND b1.uuid != b2.uuid
+		WHERE b1.uuid = ? OR b2.uuid = ?;
 		`
 		return (await this.db.prepare(stmt)
 			.bind(batchId, batchId, batchId)
 			.all())
 			.results as unknown as { uuid: string }[]
+	}
+
+	async getBatchesByOrganizationId(organizationId: string): Promise<BatchDTO[]> {
+		const data = (await this.db.prepare(`
+			SELECT 
+			batches.*, 
+			organizations.name as organization_name
+			FROM batches 
+			JOIN organizations ON batches.organization_uuid = organizations.uuid
+			WHERE batches.organization_uuid = ?
+			ORDER BY batches.created DESC
+			`)
+			.bind(organizationId)
+			.all())
+			.results as unknown as BatchJoinOrganization[];
+
+		return data.map(item => ({
+			...item,
+			organization_name: item.name,
+		}));
 	}
 }

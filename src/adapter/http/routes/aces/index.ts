@@ -38,6 +38,7 @@ import { batchDeploymentController } from "@src/adapter/http/controllers/batch-d
 import { acesBatchDeploymentController } from "@src/adapter/http/controllers/aces-batch-deployment";
 import { acesGetBatchDeploymentController } from "@src/adapter/http/controllers/aces-get-batch-deployment";
 import { acesCaseAutoAllocateAssessorController } from "@src/adapter/http/controllers/aces-batch-auto-allocate-assessor-case";
+import { organizationBatchesController } from "@src/adapter/http/controllers/organization-batches";
 
 const acesRoutes = new Hono()
 
@@ -51,6 +52,7 @@ acesRoutes.get("batch/:batch_id/deployment", batchDeploymentController)
 acesRoutes.get("dashboard", c => c.html("Dashboard Aces"))
 acesRoutes.get("dashboard/assessment", batchAssessmentController)
 acesRoutes.get("dashboard/organization", batchOrganizationController)
+acesRoutes.get("organization/:organization_id/batches", organizationBatchesController)
 acesRoutes.post("organization/:organization_id/batch", batchOrganizationCreateBatchController)
 acesRoutes.post("regrouping/:batch_id", batchRegroupingController)
 

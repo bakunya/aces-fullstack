@@ -43,13 +43,16 @@ export function OrganizationTable({ organizations }: OrganizationTableProps) {
 						<td className="px-6 py-4">{ organization.created }</td>
 						<td className="px-6 py-4">{ organization.updated }</td>
 						<td className="px-6 py-4">
-							<button 
-								trigger="modal" 
-								data-target="#modal-new-batch"
+							<button
 								x-on:click={`open("Batch ${ organization.name }", "${ route('post.aces.organization.organization_id.batch', [organization.uuid]) }")`}
+								trigger="modal"
+								data-target="#modal-new-batch"
 								className="text-xs cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md"
 							>Tambah</button>
-							{/* <button className="ml-2 text-xs cursor-pointer px-4 py-2 bg-teal-600 text-white rounded-md">Lihat</button> */}
+							<a
+								href={ route("get.aces.organization.organization_id.batches", [organization.uuid]) }
+								className="ml-2 text-xs cursor-pointer px-4 py-2 bg-teal-600 text-white rounded-md"
+							>Lihat Batch</a>
 						</td>
 						<td className="px-6 py-4">
 							{/* <button className="text-xs cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded-md">Edit</button>
