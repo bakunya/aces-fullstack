@@ -31,8 +31,16 @@ function toJSON(file: File): Promise<any[]> {
 
 				// @ts-ignore
 				const y = x.map((v) => {
-					if (!v[1]?.trim()) return reject("01")
-					if (!(v[1] === "pr" || v[1] === "lk") && !(v[1] === "perempuan" || v[1] === "laki-laki")) return reject("02")
+					const gender = v[1]?.trim()?.toLowerCase() ?? "";
+					if (!gender) return reject("01");
+					const conditions = [
+						(gender == "p" || gender == "l"),
+						(gender == "pr" || gender == "lk"),
+						(gender == "perempuan" || gender == "laki-laki"),
+					]
+					if (!conditions.some(cond => cond)) {
+						return reject("02")
+					}
 					if (!v[2]?.trim()) return reject("03")
 
 					nipTmp.push(v[2])
@@ -85,7 +93,7 @@ window.uploadPerson = function () {
 				this.fileName = file.name
 			} catch (e: any) {
 				// @ts-ignore
-				const message = errorMessage[er]
+				const message = errorMessage[e]
 				if (message) {
 					this.errorMessage = message
 				} else {

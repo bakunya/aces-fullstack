@@ -18,7 +18,7 @@ export type PersonDomainValues = {
 
 export class PersonDomain {
 	public plain?: string
-	
+
 	constructor(
 		public batchId: string,
 		public name: string,
@@ -29,7 +29,7 @@ export class PersonDomain {
 		public username: string,
 		public id?: string,
 		public organizationId?: string,
-	) {}
+	) { }
 
 	static create(data: PersonDomainValues) {
 		return new PersonDomain(
@@ -45,14 +45,14 @@ export class PersonDomain {
 		)
 	}
 
-	
+
 	static fromRow(row: TablePerson) {
 		return new PersonDomain(
 			row.batch_uuid,
 			row.name,
 			row.nip,
 			row.hash,
-			row.email,	
+			row.email,
 			row.gender,
 			row.username,
 			row.uuid,
@@ -94,13 +94,13 @@ export class PersonDomain {
 	}
 
 	serializeGender() {
-		if(this.gender === "perempuan") return
-		if(this.gender === "laki-laki") return
-		if(this.gender === "pr") {
+		if (this.gender === "perempuan") return
+		if (this.gender === "laki-laki") return
+		if (this.gender === "pr" || this.gender === "p") {
 			this.gender = "perempuan"
 			return
 		}
-		if(this.gender === "lk") {
+		if (this.gender === "lk" || this.gender === "l") {
 			this.gender = "laki-laki"
 			return
 		}
